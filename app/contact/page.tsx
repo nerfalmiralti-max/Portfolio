@@ -8,14 +8,14 @@ export const metadata: Metadata = { title: "Contact", description: "Send Altair 
 export default function ContactPage() {
   return (
     <div className="page-shell contact-page">
-      <header className="page-hero contact-hero">
+      <header className="page-hero contact-hero" data-motion="contact-signature">
         <div>
           <span className="overline">Contact · Aktau · UTC+5</span>
           <h1>{contactCopy.heading}</h1>
         </div>
         <p>{contactCopy.body}</p>
       </header>
-      <section className="contact-layout">
+      <section className="contact-layout" data-motion="contact-layout">
         <aside>
           <span className="overline">What to include</span>
           <ul>

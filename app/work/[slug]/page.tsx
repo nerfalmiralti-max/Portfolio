@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Fragment } from "react";
+import { CaseFlowDiagram } from "@/components/case-flow-diagram";
 import { ProjectVisual } from "@/components/project-visual";
 import { projects } from "@/content/projects";
 
@@ -59,7 +61,7 @@ export default async function WorkCaseStudy({ params }: Props) {
       className="case-study"
       style={{ "--project-accent": project.accent } as React.CSSProperties}
     >
-      <header className="case-hero">
+      <header className={`case-hero case-hero-${project.slug}`} data-motion="case-hero">
         <Link href="/work" className="back-link">
           <ArrowLeft size={16} /> Return to Work
         </Link>
@@ -109,6 +111,11 @@ export default async function WorkCaseStudy({ params }: Props) {
             <dd>{project.stack.join(" · ")}</dd>
           </div>
         </dl>
+        <div className="case-hero-signal" aria-hidden="true">
+          <span>{project.number}</span>
+          <i />
+          <strong>{project.slug === "99-aktau" ? "GUEST / ADMIN" : project.slug === "tuesday-lounge-bar" ? "MENU / RESERVE" : "AKTAU / ROUTE"}</strong>
+        </div>
         <ProjectVisual variant={project.slug} />
       </header>
 
@@ -124,15 +131,22 @@ export default async function WorkCaseStudy({ params }: Props) {
         </aside>
         <div className="case-content">
           {project.sections.map((section, sectionIndex) => (
-            <section id={section.id} className="case-section" key={section.id}>
-              <span className="case-section-number">
-                {String(sectionIndex + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <h2>{section.title}</h2>
-                <p>{section.body}</p>
-              </div>
-            </section>
+            <Fragment key={section.id}>
+              <section
+                id={section.id}
+                className={`case-section reveal-style-${sectionIndex % 3}`}
+                data-motion="case-section"
+              >
+                <span className="case-section-number">
+                  {String(sectionIndex + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h2>{section.title}</h2>
+                  <p>{section.body}</p>
+                </div>
+              </section>
+              {section.id === "flow" ? <CaseFlowDiagram variant={project.slug} /> : null}
+            </Fragment>
           ))}
         </div>
       </div>

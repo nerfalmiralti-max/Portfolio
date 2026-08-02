@@ -18,6 +18,7 @@ export function SelectedWorkStage() {
           <article
             className="selected-work-preview"
             style={{ "--project-accent": item.accent } as React.CSSProperties}
+            data-motion={`preview-${item.slug}`}
             key={item.slug}
           >
             <ProjectVisual variant={item.slug} />

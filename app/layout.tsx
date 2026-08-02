@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import "./motion.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MotionSystem } from "@/components/motion-system";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,13 +83,14 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
       >
         <a className="skip-link" href="#main-content">
           Skip to content
         </a>
+        <MotionSystem />
         <SiteHeader />
         <main id="main-content">{children}</main>
         <SiteFooter />

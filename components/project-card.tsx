@@ -8,6 +8,7 @@ export function ProjectCard({ project }: { project: Project }) {
     <article
       className={`project-card project-card-${project.slug}`}
       style={{ "--project-accent": project.accent } as React.CSSProperties}
+      data-motion="work-row"
     >
       <div className="project-card-copy">
         <div className="project-card-top">

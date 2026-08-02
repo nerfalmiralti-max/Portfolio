@@ -11,14 +11,14 @@ export function HomeContent() {
     <div className="home-experience">
       <PortfolioHero />
 
-      <section className="intro-section">
+      <section className="intro-section" data-motion="section-wipe">
         <h2>{homepageCopy.introductionHeading}</h2>
         <p>{homepageCopy.introductionBody}</p>
       </section>
 
       <SelectedWorkStage />
 
-      <section className="section process-section">
+      <section className="section process-section" data-motion="process-preview">
         <SectionHeading
           eyebrow="02 / How I work"
           title="My usual process"
@@ -38,7 +38,7 @@ export function HomeContent() {
         </Link>
       </section>
 
-      <section className="about-preview">
+      <section className="about-preview" data-motion="split-reveal">
         <div className="about-preview-label">
           <span className="overline">03 / About</span>
         </div>
@@ -53,7 +53,7 @@ export function HomeContent() {
         </div>
       </section>
 
-      <section className="contact-cta">
+      <section className="contact-cta" data-motion="cta-reveal">
         <span className="overline">04 / Contact</span>
         <h2>{homepageCopy.contactHeading}</h2>
         <p>{homepageCopy.contactBody}</p>

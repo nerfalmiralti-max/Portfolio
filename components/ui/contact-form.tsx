@@ -44,7 +44,7 @@ export function ContactForm() {
   };
 
   return (
-    <form className="contact-form" onSubmit={submit} noValidate>
+    <form className="contact-form" onSubmit={submit} noValidate data-motion="contact-form">
       <div className="form-row">
         <Field label="Your name" error={errors.name}><input value={values.name} onChange={(e) => update("name", e.target.value)} autoComplete="name" /></Field>
         <Field label="Email" error={errors.email}><input type="email" value={values.email} onChange={(e) => update("email", e.target.value)} autoComplete="email" /></Field>
@@ -81,7 +81,9 @@ function Field({ label, error, children }: { label: string; error?: string; chil
     <label className="field" htmlFor={id}>
       <span>{label}</span>
       {React.cloneElement(children, { id, "aria-invalid": Boolean(error), "aria-describedby": error ? `${id}-error` : undefined })}
-      {error ? <small id={`${id}-error`}>{error}</small> : null}
+      <small id={`${id}-error`} className={error ? "field-error" : "field-error is-placeholder"}>
+        {error || "No validation error"}
+      </small>
     </label>
   );
 }

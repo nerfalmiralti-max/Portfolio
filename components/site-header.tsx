@@ -57,7 +57,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="brand" aria-label="Altair Tolesh home" onClick={() => setOpen(false)}>
+        <Link href="/" className="brand" aria-label="Altair Tolesh" onClick={() => setOpen(false)}>
           <span className="monogram" aria-hidden="true">
             <i>A</i>
             <i>T</i>

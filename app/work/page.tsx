@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <div className="page-shell projects-page">
-      <header className="page-hero projects-hero">
+      <header className="page-hero projects-hero" data-motion="page-title">
         <div>
           <span className="overline">Work</span>
           <h1>Projects I have worked on</h1>
@@ -24,6 +24,7 @@ export default function WorkPage() {
         </p>
       </header>
       <section className="projects-directory" aria-label="Project directory">
+        <div className="work-trajectory" aria-hidden="true"><i /></div>
         {projects.map((project) => (
           <ProjectCard project={project} key={project.slug} />
         ))}

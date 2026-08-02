@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Journey", description: "What Altair 
 export default function JourneyPage() {
   return (
     <div className="page-shell journey-page">
-      <header className="page-hero journey-hero">
+      <header className="page-hero journey-hero" data-motion="page-title">
         <div>
           <span className="overline">Journey</span>
           <h1>What I learned from each project</h1>

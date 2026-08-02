@@ -13,7 +13,8 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="page-shell about-page">
-      <header className="page-hero about-hero">
+      <header className="page-hero about-hero" data-motion="about-signature">
+        <div className="about-hero-monogram" aria-hidden="true"><span>A</span><span>T</span></div>
         <div>
           <span className="overline">About</span>
           <h1>{aboutCopy.heading}</h1>
@@ -23,7 +24,7 @@ export default function AboutPage() {
         </div>
       </header>
 
-      <section className="about-coordinate" aria-label="Aktau coordinates">
+      <section className="about-coordinate" aria-label="Aktau coordinates" data-motion="monogram-align">
         <div className="about-coordinate-mark" aria-hidden="true">
           <span>A</span>
           <span>T</span>
@@ -35,7 +36,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="about-story">
+      <section className="about-story" data-motion="split-reveal">
         <aside className="story-aside">
           <span className="overline">At a glance</span>
           <dl>
@@ -59,6 +60,9 @@ export default function AboutPage() {
         </aside>
         <div className="story-copy">
           <p>{aboutCopy.projects}</p>
+          <div className="about-project-line" aria-label="Featured projects">
+            <span>99 AKTAU</span><i /><span>TUESDAY</span><i /><span>MANGYSTAU TRIALS</span>
+          </div>
           <p>
             Read the <Link href="/work/99-aktau">99 AKTAU case study</Link>, the{" "}
             <Link href="/work/tuesday-lounge-bar">Tuesday Lounge Bar case study</Link>, or the{" "}
@@ -68,7 +72,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="judo-story">
+      <section className="judo-story" data-motion="judo-line">
+        <svg className="judo-curve" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M12 118 C244 8 350 16 498 98 S770 164 988 30" />
+        </svg>
         <div>
           <span className="overline">Judo</span>
           <h2>Judo is part of how I learn.</h2>
@@ -78,7 +85,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="academic-direction">
+      <section className="academic-direction" data-motion="trajectory-forward">
         <span className="overline">Current direction</span>
         <h2>{aboutCopy.closing}</h2>
         <Link href="/journey" className="text-link">
