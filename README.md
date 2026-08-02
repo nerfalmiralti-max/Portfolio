@@ -29,6 +29,8 @@ npm run typecheck
 npm run build
 ```
 
+The default build targets Sites/Cloudflare Workers. `npm run build:vercel` is the verified Vercel-compatible Next.js build, and `vercel.json` selects it automatically on Vercel.
+
 ## Content and public contact details
 
 Edit `content/site.ts` to change profile facts, project statuses, case-study copy, timeline entries, experiments, capabilities, or interface translations.
