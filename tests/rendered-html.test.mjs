@@ -13,12 +13,13 @@ test("server-renders the finished portfolio", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /Altair Tolesh/);
-  assert.match(html, /working digital products/);
+  assert.match(html, /prepare it for real use/);
+  assert.match(html, /Tuesday Lounge Bar/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/);
 });
 
 test("server-renders each requested route", async () => {
-  for (const path of ["/projects", "/projects/99-aktau", "/projects/mangystau-trials", "/projects/kronos", "/about", "/journey", "/contact", "/privacy"]) {
+  for (const path of ["/projects", "/projects/99-aktau", "/projects/tuesday-lounge-bar", "/projects/mangystau-trials", "/about", "/journey", "/contact", "/privacy"]) {
     const response = await render(path);
     assert.equal(response.status, 200, path);
   }

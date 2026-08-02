@@ -2,53 +2,130 @@
 
 import Link from "next/link";
 import { ArrowUpRight, MoveRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { ProjectCard } from "@/components/project-card";
+import { useState } from "react";
 import { ProjectVisual } from "@/components/project-visual";
 import { SectionHeading } from "@/components/section-heading";
 import { projects } from "@/content/site";
 
-export function SelectedWorkStage({ title }: { title: string }) {
+export function SelectedWorkStage() {
   const [active, setActive] = useState(0);
-  const stepRefs = useRef<Array<HTMLElement | null>>([]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) return;
-      const index = Number((visible.target as HTMLElement).dataset.projectIndex || 0);
-      setActive(index);
-    }, { rootMargin: "-36% 0px -42% 0px", threshold: [0, .25, .5, .75] });
-    stepRefs.current.forEach((step) => step && observer.observe(step));
-    return () => observer.disconnect();
-  }, []);
+  const project = projects[active];
 
   return (
-    <section className="section selected-work selected-work-stage" id="selected-work" data-atmosphere={projects[active].slug}>
-      <SectionHeading eyebrow="01 / Work" title={title} body="Three products, three motion languages, and three honest stages of development." />
-      <div className="work-showcase" style={{ "--project-accent": projects[active].accent } as React.CSSProperties}>
-        <div className="work-steps">
-          {projects.map((project, index) => (
-            <article className={`work-step ${active === index ? "is-active" : ""}`} data-project-index={index} ref={(node) => { stepRefs.current[index] = node; }} key={project.slug}>
-              <div className="work-step-index"><span>{project.number}</span><i>{String(index + 1).padStart(2, "0")} / 03</i></div>
-              <p className="overline">{project.type} · {project.year}</p>
-              <h3>{project.name}</h3>
-              <p>{project.summary}</p>
-              <div className="work-tech">{project.technologies.slice(0, 5).map((tech) => <span key={tech}>{tech}</span>)}</div>
-              <Link href={`/projects/${project.slug}`} data-cursor={project.slug === "99-aktau" ? "BOOK" : project.slug === "mangystau-trials" ? "ROUTE" : "EXPLORE"} data-route-accent={project.accent} data-transition-label={project.name}>Explore case study <ArrowUpRight size={17} /></Link>
-            </article>
+    <section className="section selected-work" id="selected-work">
+      <SectionHeading
+        eyebrow="01 / Selected work"
+        title="Three projects. Three different product problems."
+        body="Each project required a different balance of business goals, user experience, visual direction, and technical implementation."
+      />
+
+      <div
+        className="work-stage"
+        style={{ "--project-accent": project.accent } as React.CSSProperties}
+      >
+        <div className="work-tabs" role="tablist" aria-label="Selected projects">
+          {projects.map((item, index) => (
+            <button
+              key={item.slug}
+              type="button"
+              role="tab"
+              aria-selected={active === index}
+              aria-controls="active-project-panel"
+              onClick={() => setActive(index)}
+              className={active === index ? "is-active" : ""}
+            >
+              <span>{item.number}</span>
+              <strong>{item.name}</strong>
+              <small>{item.type}</small>
+            </button>
           ))}
         </div>
-        <div className="work-visual-sticky" aria-live="polite">
-          <div className="work-progress"><span>PROJECT</span><div>{projects.map((project, index) => <i className={active === index ? "active" : ""} key={project.slug} />)}</div><strong>{projects[active].number} / 03</strong></div>
-          <div className="work-visual-layers">
-            {projects.map((project, index) => <div className={`work-visual-layer ${active === index ? "is-active" : ""}`} key={project.slug}><ProjectVisual variant={project.slug} /></div>)}
+
+        <div id="active-project-panel" className="work-panel" role="tabpanel">
+          <div className="work-panel-copy" key={`${project.slug}-copy`}>
+            <div className="work-panel-meta">
+              <span className="status-badge">{project.status}</span>
+              <span className="overline">{project.year}</span>
+            </div>
+            <p className="overline">{project.type}</p>
+            <h3>{project.name}</h3>
+            <p>{project.summary}</p>
+            <dl>
+              <div>
+                <dt>Main role</dt>
+                <dd>{project.role}</dd>
+              </div>
+              <div>
+                <dt>Technology</dt>
+                <dd>{project.technologies.join(" · ")}</dd>
+              </div>
+            </dl>
+            <div className="project-actions">
+              <Link href={project.caseStudyUrl} className="button button-primary">
+                View case study <ArrowUpRight size={16} />
+              </Link>
+              {project.liveUrl ? (
+                <a
+                  href={project.liveUrl}
+                  className="button button-quiet"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open live website <ArrowUpRight size={16} />
+                </a>
+              ) : null}
+            </div>
           </div>
-          <div className="work-visual-caption"><span>{projects[active].status}</span><p>{projects[active].message}</p></div>
+          <div className="work-panel-visual" key={`${project.slug}-visual`}>
+            <ProjectVisual variant={project.slug} />
+          </div>
         </div>
       </div>
-      <div className="work-mobile-stack">{projects.map((project, index) => <ProjectCard project={project} featured={index === 0} key={project.slug} />)}</div>
-      <Link className="text-link section-link" href="/projects">See every project and experiment <MoveRight size={18} /></Link>
+
+      <div className="work-mobile-stack">
+        {projects.map((item) => (
+          <article
+            className="mobile-project"
+            style={{ "--project-accent": item.accent } as React.CSSProperties}
+            key={item.slug}
+          >
+            <ProjectVisual variant={item.slug} />
+            <div className="mobile-project-copy">
+              <div>
+                <span className="project-number">{item.number}</span>
+                <span className="status-badge">{item.status}</span>
+              </div>
+              <p className="overline">{item.type}</p>
+              <h3>{item.name}</h3>
+              <p>{item.summary}</p>
+              <dl>
+                <div>
+                  <dt>Main role</dt>
+                  <dd>{item.role}</dd>
+                </div>
+                <div>
+                  <dt>Technology</dt>
+                  <dd>{item.technologies.join(" · ")}</dd>
+                </div>
+              </dl>
+              <div className="project-actions">
+                <Link href={item.caseStudyUrl} className="text-link">
+                  Case study <ArrowUpRight size={16} />
+                </Link>
+                {item.liveUrl ? (
+                  <a href={item.liveUrl} className="text-link muted-link" target="_blank" rel="noopener noreferrer">
+                    Live site <ArrowUpRight size={16} />
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <Link className="text-link section-link" href="/projects">
+        View the complete project index <MoveRight size={18} />
+      </Link>
     </section>
   );
 }

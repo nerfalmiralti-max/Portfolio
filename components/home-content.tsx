@@ -1,64 +1,151 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight, CircleCheck } from "lucide-react";
 import PortfolioHero from "@/components/ui/portfolio-hero";
 import { SectionHeading } from "@/components/section-heading";
-import { capabilities, experiments, journey } from "@/content/site";
-import { useLanguage } from "@/components/language-provider";
 import { SelectedWorkStage } from "@/components/selected-work-stage";
-import { HomeMotion } from "@/components/home-motion";
+import { capabilities, journey, processSteps, profile } from "@/content/site";
 
 export function HomeContent() {
-  const { copy } = useLanguage();
   return (
     <div className="home-experience">
-      <HomeMotion />
       <PortfolioHero />
-      <section className="proof-strip" aria-label={copy.sections.proof}>
-        <span className="overline">{copy.sections.proof}</span>
-        {["Commercial project shipped", "Full-stack product experience", "Design + development", "Based in Aktau", "Student + judo athlete"].map((item) => <div key={item}><CircleCheck size={15} />{item}</div>)}
+
+      <section className="intro-section" id="introduction">
+        <span className="overline">00 / Working principle</span>
+        <h2>A finished interface is only one part of the work.</h2>
+        <p>
+          A website also needs clear navigation, reliable forms, responsive
+          behavior, understandable content, fast loading, and a structure
+          another person can maintain. These details shape how I approach every
+          project.
+        </p>
+        <div className="intro-proof" aria-label="Portfolio facts">
+          {[
+            "Three live project links",
+            "Commercial full-stack delivery",
+            "Design and development",
+            "Based in Aktau",
+          ].map((item) => (
+            <span key={item}>
+              <CircleCheck size={15} /> {item}
+            </span>
+          ))}
+        </div>
       </section>
 
-      <SelectedWorkStage title={copy.sections.work} />
+      <SelectedWorkStage />
 
-      <section className="statement-section" data-atmosphere="philosophy">
-        <div className="statement-index"><span>02</span><small>{copy.sections.philosophy}</small></div>
-        <div><blockquote>Ideas become meaningful when they <em>survive reality.</em></blockquote><div className="philosophy-verbs" aria-label="Think. Design. Build. Ship."><span className="philosophy-verb">Think</span><span className="philosophy-verb">Design</span><span className="philosophy-verb">Build</span><span className="philosophy-verb">Ship</span></div></div>
+      <section className="section process-section" id="process">
+        <SectionHeading
+          eyebrow="02 / Process"
+          title="I work from the user’s task outward."
+          body="Visual design begins after the main problem, content, and user path are understood. This keeps the interface focused and reduces unnecessary complexity during development."
+        />
+        <ol className="process-grid">
+          {processSteps.map((step) => (
+            <li key={step.number}>
+              <span>{step.number}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section className="section capabilities-section" data-atmosphere="capabilities">
-        <SectionHeading eyebrow="03 / Practice" title={copy.sections.capabilities} body="The work crosses disciplines because useful products do too." />
+      <section className="section capabilities-section">
+        <SectionHeading
+          eyebrow="03 / Capabilities"
+          title="The parts of the process I can handle."
+          body="The goal is not to collect skill labels. It is to connect the right decisions from first structure to release."
+        />
         <div className="capability-grid">
-          {Object.entries(capabilities).map(([group, items], index) => <article key={group}><span>0{index + 1}</span><h3>{group}</h3><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></article>)}
+          {capabilities.map((capability, index) => (
+            <article key={capability.title}>
+              <span>0{index + 1}</span>
+              <h3>{capability.title}</h3>
+              <p>{capability.body}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="section journey-preview" data-atmosphere="journey">
-        <SectionHeading eyebrow="04 / Journey" title={copy.sections.journey} body="No invented dates. Just the sequence of projects, pressure, repetition, and clearer decisions." />
-        <div className="timeline-rail">
-          {journey.slice(0, 6).map((event, index) => <article key={event.title}><span className={`timeline-marker marker-${event.category.toLowerCase()}`} /><p className="overline">{event.category}</p><h3>{event.title}</h3><p>{event.story}</p><small>0{index + 1}</small></article>)}
+      <section className="about-preview">
+        <div className="about-preview-label">
+          <span className="overline">04 / About</span>
+          <span>{profile.coordinates}</span>
         </div>
-        <Link className="text-link section-link" href="/journey">Open the full journey <ArrowRight size={18} /></Link>
+        <div>
+          <h2>I learn fastest when the work has to function outside a tutorial.</h2>
+          <p>
+            I am Altair Tolesh, a student from Aktau studying at Nazarbayev
+            Intellectual School. My projects have taught me how to make clearer
+            decisions, reduce unnecessary features, solve technical problems,
+            and finish work under real constraints.
+          </p>
+          <Link href="/about" className="text-link">
+            Read the full story <ArrowRight size={17} />
+          </Link>
+        </div>
       </section>
 
-      <section className="discipline-section" data-atmosphere="judo">
-        <div className="discipline-visual" aria-hidden="true"><div className="mat-line line-a" /><div className="mat-line line-b" /><span>PRACTICE</span><span>FAILURE</span><span>ANALYSIS</span><span>ADJUSTMENT</span><span>RETURN</span></div>
-        <div className="discipline-copy"><span className="overline">05 / Judo</span><h2>Technique improves through repetition. <em>So does judgment.</em></h2><p>Judo taught me that progress is rarely visible in a single day. The same is true in development: practice, fail, analyze, adjust, and return stronger.</p><Link href="/about" className="text-link">Read the personal story <ArrowRight size={17} /></Link></div>
+      <section className="section journey-preview">
+        <SectionHeading
+          eyebrow="05 / Journey"
+          title="The work becomes more complete with every project."
+          body="Early experiments taught individual tools. Later work required those tools to operate as one system: interface, logic, deployment, and handover."
+        />
+        <div className="journey-rail">
+          {journey.slice(1, 5).map((event, index) => (
+            <article key={event.title}>
+              <span className="journey-index">0{index + 1}</span>
+              <p className="overline">{event.category}</p>
+              <h3>{event.title}</h3>
+              <p>{event.story}</p>
+            </article>
+          ))}
+        </div>
+        <Link href="/journey" className="text-link section-link">
+          Open the complete journey <ArrowRight size={17} />
+        </Link>
       </section>
 
-      <section className="section future-section" data-atmosphere="future">
-        <SectionHeading eyebrow="06 / Direction" title={copy.sections.future} />
-        <div className="goal-field">{["Strengthen engineering fundamentals", "Build with real users", "Improve English", "Explore artificial intelligence", "Prepare for international study", "Continue judo", "Develop Kronos"].map((goal, index) => <div key={goal}><span>{String(index + 1).padStart(2, "0")}</span><p>{goal}</p></div>)}</div>
+      <section className="discipline-section">
+        <div className="discipline-system" aria-hidden="true">
+          <span>01 / REPEAT</span>
+          <span>02 / REVIEW</span>
+          <span>03 / ADJUST</span>
+          <span>04 / RETURN</span>
+          <i />
+        </div>
+        <div>
+          <span className="overline">06 / Judo</span>
+          <h2>Repetition improves judgment.</h2>
+          <p>
+            Judo has taught me to focus on fundamentals, respond calmly to
+            mistakes, and return to difficult problems until the technique
+            becomes more reliable.
+          </p>
+          <Link href="/about" className="text-link">
+            About discipline and work <ArrowRight size={17} />
+          </Link>
+        </div>
       </section>
 
-      <section className="section experiment-section">
-        <SectionHeading eyebrow="07 / Experiments" title={copy.sections.experiments} body="Smaller ideas stay smaller here. They are studies, not inflated case studies." />
-        <div className="experiment-list">{experiments.map((item, index) => <div key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p><i /></div>)}</div>
-      </section>
-
-      <section className="contact-cta" data-atmosphere="contact">
-        <span className="overline">08 / Contact</span><h2>{copy.sections.contact}</h2><p>I am open to thoughtful collaborations, small commercial projects, educational opportunities, and conversations with people building useful things.</p><Link href="/contact" className="button button-primary">Start a conversation <ArrowRight size={18} /></Link>
+      <section className="contact-cta">
+        <span className="overline">07 / Contact</span>
+        <h2>Have a project that needs a clear structure and a reliable build?</h2>
+        <p>
+          I am open to selected websites, product collaborations, educational
+          opportunities, and useful feedback.
+        </p>
+        <div>
+          <Link href="/contact" className="button button-primary">
+            Discuss a project <ArrowRight size={18} />
+          </Link>
+          <Link href="/projects" className="button button-quiet">
+            View all work
+          </Link>
+        </div>
       </section>
     </div>
   );

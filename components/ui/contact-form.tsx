@@ -4,7 +4,14 @@ import React, { useState } from "react";
 import { ArrowUpRight, Check, Copy } from "lucide-react";
 import { contactSchema, type ContactValues } from "@/lib/validation";
 
-const initial: ContactValues = { name: "", email: "", type: "General conversation", subject: "", message: "", company: "" };
+const initial: ContactValues = {
+  name: "",
+  email: "",
+  type: "Website project",
+  subject: "",
+  message: "",
+  company: "",
+};
 
 export function ContactForm() {
   const [values, setValues] = useState<ContactValues>(initial);
@@ -45,7 +52,11 @@ export function ContactForm() {
       <div className="form-row">
         <Field label="Type of message" error={errors.type}>
           <select value={values.type} onChange={(e) => update("type", e.target.value)}>
-            <option>Commercial project</option><option>Collaboration</option><option>Education opportunity</option><option>Feedback</option><option>General conversation</option>
+            <option>Website project</option>
+            <option>Product collaboration</option>
+            <option>Educational opportunity</option>
+            <option>Feedback</option>
+            <option>Other</option>
           </select>
         </Field>
         <Field label="Project or opportunity" error={errors.subject}><input value={values.subject} onChange={(e) => update("subject", e.target.value)} /></Field>

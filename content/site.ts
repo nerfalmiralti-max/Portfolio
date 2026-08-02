@@ -3,19 +3,25 @@ export const profile = {
   initials: "AT",
   location: "Aktau, Kazakhstan",
   coordinates: "43.6411° N, 51.1985° E",
-  headline: "I turn ambitious ideas into working digital products.",
-  role: "Student, developer, product builder, and judo athlete",
-  currentProject: "Kronos",
-  ageVisible: true,
-  age: 14,
-  schoolVisible: true,
   school: "Nazarbayev Intellectual School in Aktau",
-  email: "",
-  github: "",
-  socials: [] as { label: string; href: string }[],
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
+  github:
+    process.env.NEXT_PUBLIC_GITHUB_URL ??
+    "https://github.com/nerfalmiralti-max",
+  availability:
+    "Open to selected website projects, collaborations, and educational opportunities.",
 } as const;
 
-export type ProjectSlug = "99-aktau" | "mangystau-trials" | "kronos";
+export type ProjectSlug =
+  | "99-aktau"
+  | "tuesday-lounge-bar"
+  | "mangystau-trials";
+
+export type ProjectSection = {
+  id: string;
+  title: string;
+  body: string;
+};
 
 export type Project = {
   slug: ProjectSlug;
@@ -26,11 +32,15 @@ export type Project = {
   year: string;
   role: string;
   summary: string;
-  message: string;
+  challenge: string;
+  contribution: string;
+  result: string;
   technologies: string[];
   accent: string;
-  metric?: string;
-  sections: { id: string; title: string; body: string }[];
+  liveUrl: string;
+  repositoryUrl: string;
+  caseStudyUrl: string;
+  sections: ProjectSection[];
 };
 
 export const projects: Project[] = [
@@ -38,173 +48,273 @@ export const projects: Project[] = [
     slug: "99-aktau",
     number: "01",
     name: "99 AKTAU",
-    type: "Commercial full-stack website",
-    status: "Completed commercial project",
+    type: "Commercial full-stack project",
+    status: "Live",
     year: "2025",
-    role: "Product design · Frontend · Backend · Deployment",
+    role: "Product structure · UI/UX · Full-stack development · Handover",
     summary:
-      "A premium booking platform for a local PlayStation club, pairing a polished customer journey with a practical admin system.",
-    message: "A real client brief carried from first decision to secure handover.",
-    technologies: ["Next.js", "TypeScript", "Tailwind", "Supabase", "Vercel"],
-    accent: "#7467ff",
-    metric: "98 performance · 100 accessibility · 100 SEO",
+      "A booking website for a PlayStation club in Aktau, built with a customer flow, administrative controls, database integration, and production deployment.",
+    challenge:
+      "The booking process had to stay simple for guests while giving the administrator enough control to review and manage every request.",
+    contribution:
+      "I planned the structure, designed the responsive interface, developed the booking flow, connected Supabase, implemented admin authentication and booking statuses, prepared the deployment, and documented the handover process.",
+    result:
+      "The finished product combines the public website and administration workflow in one maintainable system.",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Vercel"],
+    accent: "#8074ff",
+    liveUrl:
+      process.env.NEXT_PUBLIC_99_AKTAU_URL ??
+      "https://99-aktau.vercel.app/",
+    repositoryUrl: process.env.NEXT_PUBLIC_99_AKTAU_GITHUB_URL ?? "",
+    caseStudyUrl: "/projects/99-aktau",
     sections: [
-      { id: "context", title: "Context", body: "99 AKTAU needed more than a polished landing page. The club needed a clear way for guests to request a hall and for staff to manage every booking without losing the premium tone of the physical space." },
-      { id: "problem", title: "Problem", body: "Booking information could become fragmented and the customer experience had no single, trustworthy digital home. The product had to reduce uncertainty for guests while keeping staff actions quick and controlled." },
-      { id: "goals", title: "Goals", body: "Create a responsive booking flow, make status visible, give administrators a focused management surface, and prepare the project for reliable search, analytics, deployment, and handover." },
-      { id: "role", title: "My role", body: "I owned the product structure, interface design, frontend and backend implementation, deployment configuration, and project handover. It was my first completed commercial project for a real client." },
-      { id: "strategy", title: "Product strategy", body: "I separated the experience into two calm paths: a guided guest request and a compact authenticated operations view. Each screen answers one question and exposes only the next necessary action." },
-      { id: "flow", title: "User flow", body: "Guests choose a hall, enter the minimum booking details, send a request, then see its state. Staff sign in, review the queue, and accept, reject, or delete requests with deliberate feedback." },
-      { id: "system", title: "Design system", body: "A graphite interface, warm-white type, restrained violet accents, and precise status colors create a premium atmosphere without the visual noise common to gaming websites." },
-      { id: "screens", title: "Main screens", body: "The public side includes discovery, hall selection, booking details, and confirmation. The administrative side prioritizes the current queue, readable metadata, and unambiguous status actions." },
-      { id: "technical", title: "Technical implementation", body: "Next.js, TypeScript, Tailwind CSS, and Supabase connect the responsive interface to server-side booking actions and authenticated administration. Vercel handles deployment and environment configuration." },
-      { id: "challenges", title: "Challenges", body: "The difficult part was not adding features. It was keeping the booking flow simple while covering validation, data states, staff controls, security boundaries, and responsive behavior." },
-      { id: "tradeoffs", title: "Decisions and trade-offs", body: "I chose a request-based flow rather than pretending every slot was instantly confirmed. That decision made the interface more honest and matched how the club actually reviews bookings." },
-      { id: "outcome", title: "Outcome", body: "The completed site shipped with booking and administration workflows, responsive pages, search preparation, analytics preparation, and handover documentation. Verified audits reached 98 performance, 100 accessibility, 96 best practices, and 100 SEO." },
-      { id: "learned", title: "What I learned", body: "Commercial work made every invisible decision matter: permissions, empty states, environment variables, documentation, and what happens after the developer leaves the project." },
+      {
+        id: "context",
+        title: "Business context",
+        body: "99 AKTAU needed a reliable booking product, not a decorative landing page. Guests needed a clear way to choose a hall and send a request; staff needed one place to review and update it.",
+      },
+      {
+        id: "challenge",
+        title: "The central challenge",
+        body: "The customer path had to feel immediate, while the operational side needed authentication, predictable booking states, and enough context for an administrator to make a decision.",
+      },
+      {
+        id: "flow",
+        title: "Customer flow",
+        body: "A guest selects a hall, enters the booking details, submits a request, and receives a clear status. Each screen asks for one decision and exposes the next useful action.",
+      },
+      {
+        id: "admin",
+        title: "Administration",
+        body: "Authenticated staff can review requests, see the relevant details, and accept or reject a booking. The public interface and admin workflow use the same underlying status model.",
+      },
+      {
+        id: "implementation",
+        title: "Technical implementation",
+        body: "Next.js and TypeScript provide the application structure. Supabase handles persisted booking data and authentication. Validation, responsive states, deployment configuration, and handover notes complete the release path.",
+      },
+      {
+        id: "result",
+        title: "Result",
+        body: "The deployed product gives the club a clear customer journey and a practical operating surface. It also established a repeatable workflow for moving from client requirements to production handover.",
+      },
+    ],
+  },
+  {
+    slug: "tuesday-lounge-bar",
+    number: "02",
+    name: "Tuesday Lounge Bar",
+    type: "Hospitality website",
+    status: "Live",
+    year: "2026",
+    role: "Information architecture · Interface design · Frontend · Responsive build",
+    summary:
+      "A hospitality website that presents the venue’s atmosphere while keeping the menu, location, working hours, contact details, and reservation path easy to find.",
+    challenge:
+      "Hospitality sites often prioritize mood until basic information becomes difficult to access. This project had to keep the visual identity strong without slowing down the visitor’s main tasks.",
+    contribution:
+      "I organized the content hierarchy, designed the mobile and desktop interface, developed the frontend, refined the venue’s visual presentation, and created direct paths to the menu, contact information, and reservation action.",
+    result:
+      "The final structure gives the venue a stronger online presentation while keeping the most important visitor actions visible and direct.",
+    technologies: ["Next.js", "TypeScript", "Responsive UI", "Vercel"],
+    accent: "#d29a62",
+    liveUrl:
+      process.env.NEXT_PUBLIC_TUESDAY_URL ??
+      "https://tuesday-eta-eight.vercel.app/",
+    repositoryUrl: process.env.NEXT_PUBLIC_TUESDAY_GITHUB_URL ?? "",
+    caseStudyUrl: "/projects/tuesday-lounge-bar",
+    sections: [
+      {
+        id: "context",
+        title: "Hospitality context",
+        body: "A venue website has two jobs: communicate atmosphere and answer practical questions quickly. Tuesday needed both without turning the experience into a generic restaurant template.",
+      },
+      {
+        id: "visitors",
+        title: "Visitor priorities",
+        body: "The interface is organized around the questions guests ask first: what the venue feels like, what is available, where it is, when it is open, and how to reserve or make contact.",
+      },
+      {
+        id: "hierarchy",
+        title: "Information hierarchy",
+        body: "Atmosphere leads the composition, but menu, location, hours, and reservation remain visible actions. Editorial type and warm surfaces create character without reducing legibility.",
+      },
+      {
+        id: "mobile",
+        title: "Mobile-first journey",
+        body: "On smaller screens, essential venue information moves ahead of secondary storytelling. Touch targets stay large and the reservation path remains available without a long search through the page.",
+      },
+      {
+        id: "implementation",
+        title: "Frontend decisions",
+        body: "The build uses responsive layout rules, lightweight transitions, semantic content, and restrained visual effects. Large video and interaction-heavy decoration were avoided to protect mobile performance.",
+      },
+      {
+        id: "result",
+        title: "Result",
+        body: "Tuesday now has a focused digital presentation that supports discovery and decision-making while retaining the warm, evening character of the venue.",
+      },
     ],
   },
   {
     slug: "mangystau-trials",
-    number: "02",
+    number: "03",
     name: "Mangystau Trials",
-    type: "Tourism technology platform",
-    status: "Prototype · Continuing concept",
-    year: "Hackathon project",
-    role: "Product concept · UX · Frontend · Route logic",
+    type: "Tourism product prototype",
+    status: "Live prototype",
+    year: "2026",
+    role: "Product concept · User flow · Route experience · Frontend",
     summary:
-      "A personalized route-planning concept designed to make travel across Mangystau easier to understand and organize.",
-    message: "A regional problem, a deadline, an imperfect result, and a useful next direction.",
-    technologies: ["Next.js", "React", "Leaflet", "Prisma", "PostgreSQL"],
-    accent: "#4bc6c8",
+      "A route-planning concept that helps travelers organize a trip through Mangystau using their budget, available time, interests, and transport preference.",
+    challenge:
+      "Travel information about the region is spread across different sources. The product explored how those details could become one understandable route.",
+    contribution:
+      "I worked on the product concept, user flow, interface structure, route experience, interactive map, and frontend implementation during a limited hackathon timeframe.",
+    result:
+      "The project did not pass the final hackathon selection. It still became a useful lesson in prioritizing an MVP, working under time pressure, and separating essential functionality from ambitious ideas.",
+    technologies: ["Next.js", "React", "TypeScript", "Interactive map", "Vercel"],
+    accent: "#65b8bd",
+    liveUrl:
+      process.env.NEXT_PUBLIC_MANGYSTAU_TRIALS_URL ??
+      "https://mangystau-trials.vercel.app/",
+    repositoryUrl:
+      process.env.NEXT_PUBLIC_MANGYSTAU_TRIALS_GITHUB_URL ?? "",
+    caseStudyUrl: "/projects/mangystau-trials",
     sections: [
-      { id: "context", title: "Regional problem", body: "Mangystau has remarkable destinations spread across large distances. Visitors often need to combine scattered information about routes, transport, time, and cost before they can make a realistic plan." },
-      { id: "problem", title: "Target users", body: "The concept focuses on independent travelers and small groups who know what interests them but need help turning preferences and constraints into a coherent regional journey." },
-      { id: "goals", title: "Product hypothesis", body: "If a traveler can define budget, duration, interests, and transport, a route engine can reduce planning effort and make less obvious places easier to discover responsibly." },
-      { id: "role", title: "My role", body: "I worked on the product concept, UX structure, frontend, route logic, and technical implementation under the pressure of a hackathon deadline." },
-      { id: "strategy", title: "User journey", body: "The flow moves from a short preference setup to a generated route, then into a map with timing, cost estimates, saved plans, and detail views for individual destinations." },
-      { id: "flow", title: "Route generation", body: "The prototype translates constraints into a sequence of destinations. The central design question was how to make the route feel personalized while keeping the logic explainable to the traveler." },
-      { id: "system", title: "Map experience", body: "Map, route line, destination cards, and budget summary work as one coordinated surface. Landscape-inspired forms and cyan route marks connect the interface to the geography without imitating a travel brochure." },
-      { id: "screens", title: "Technical decisions", body: "React and Next.js support the application shell, Leaflet handles map exploration, and the data model was explored through Prisma with PostgreSQL or Supabase as potential persistence layers." },
-      { id: "technical", title: "Hackathon experience", body: "The project was created during a hackathon and did not pass the final selection. That result is part of the case study, not something to hide or rewrite." },
-      { id: "challenges", title: "What did not work", body: "The first version tried to solve too much inside the available time. Route quality, data depth, and the clarity of the main promise needed stronger prioritization." },
-      { id: "tradeoffs", title: "Decisions and trade-offs", body: "I kept the route generator as a testable prototype rather than presenting incomplete hotel and transport integrations as finished functionality." },
-      { id: "outcome", title: "What I learned", body: "A competition result is one kind of feedback. The more useful lesson was learning to reduce scope, show the core hypothesis faster, and separate a persuasive demo from a dependable product." },
-      { id: "learned", title: "Future potential", body: "The concept can continue through better regional data, route safety notes, seasonal constraints, local business integrations, and testing with actual Mangystau travelers." },
+      {
+        id: "context",
+        title: "Regional context",
+        body: "Mangystau has remarkable destinations, but planning a realistic trip often means collecting route, time, cost, and transport information from disconnected sources.",
+      },
+      {
+        id: "hypothesis",
+        title: "Product hypothesis",
+        body: "If a traveler can define budget, trip length, interests, and transport, a planning system can turn those constraints into a route that is easier to understand and compare.",
+      },
+      {
+        id: "flow",
+        title: "Route experience",
+        body: "The flow moves from a short preference setup to a suggested sequence of destinations, then into a map with distance, time, and budget context.",
+      },
+      {
+        id: "scope",
+        title: "Hackathon scope",
+        body: "The first version tried to cover too much within the available time. The useful correction was to make the core route hypothesis visible before expanding the data and integrations around it.",
+      },
+      {
+        id: "implementation",
+        title: "Technical direction",
+        body: "The prototype uses a React and Next.js application shell with a map-led interface. Route lines, destination cards, and budget summaries are treated as one coordinated surface.",
+      },
+      {
+        id: "result",
+        title: "Honest result",
+        body: "The project did not reach the hackathon final. That outcome clarified how to reduce scope, present the main value sooner, and distinguish a persuasive prototype from a dependable released product.",
+      },
     ],
+  },
+];
+
+export const processSteps = [
+  {
+    number: "01",
+    title: "Understand",
+    body: "Define the business goal, main visitor task, required content, technical limits, and project scope.",
   },
   {
-    slug: "kronos",
-    number: "03",
-    name: "Kronos",
-    type: "Productivity and life-planning system",
-    status: "In development · Ongoing experiment",
-    year: "Current",
-    role: "Concept · UX direction · Visual design · Frontend architecture",
-    summary:
-      "A visual planning system that makes time visible across today, months, years, and long-term goals.",
-    message: "An exploration of whether seeing time clearly can change how it is used.",
-    technologies: ["React", "Next.js", "TypeScript", "Expo", "Supabase", "PWA"],
-    accent: "#d5ff67",
-    sections: [
-      { id: "context", title: "Context", body: "Most planning tools are good at storing tasks but weak at showing the scale of time around them. Kronos began with a question: what changes when progress through a day, month, or year becomes visible?" },
-      { id: "problem", title: "Problem", body: "A long task list can create activity without direction. People need a way to connect immediate focus with larger goals without turning life into an exhausting dashboard." },
-      { id: "goals", title: "Goals", body: "Explore a calm planning system for today, goals, calendar, focus, and progress. Make time understandable at a glance while keeping every percentage grounded in a real period or intention." },
-      { id: "role", title: "My role", body: "Kronos is my ongoing product experiment. I lead the concept, UX direction, visual language, frontend architecture, and the decisions about what should be tested next." },
-      { id: "strategy", title: "Product strategy", body: "The product starts with visibility before automation. Today, focus, and long-range progress form a connected system, but each module must prove that it reduces friction before it becomes permanent." },
-      { id: "flow", title: "User flow", body: "A user opens Today, sees current progress, chooses one meaningful focus, checks goals in context, and reviews time at different scales without leaving the same visual language." },
-      { id: "system", title: "Design system", body: "Rings, calendar fields, quiet grids, and a restrained acid-lime accent give time a physical presence. Light and dark themes are being explored without changing the information hierarchy." },
-      { id: "screens", title: "Main screens", body: "Current concepts include Today, Goals, Calendar, Focus Timer, and Analytics. These are interface explorations, not claims of launched functionality." },
-      { id: "technical", title: "Technical implementation", body: "The idea has moved between Expo and React Native experiments and a web-based Next.js direction. TypeScript, Supabase, PWA support, and reusable progress components are under evaluation." },
-      { id: "challenges", title: "Challenges", body: "The main challenge is preventing progress visualization from becoming pressure. The system should support intentional choices, not reward users for turning every moment into a metric." },
-      { id: "tradeoffs", title: "Decisions and trade-offs", body: "I am moving toward a web product to iterate faster across devices, while keeping the mobile interaction lessons from the earlier application concept." },
-      { id: "outcome", title: "Current state", body: "Kronos remains in development. The strongest result so far is a clearer product thesis and a reusable visual system for testing how different time scales relate." },
-      { id: "learned", title: "What I am learning", body: "An unfinished product still needs honest boundaries. Good product work includes deciding which attractive ideas not to present as ready." },
-    ],
+    number: "02",
+    title: "Structure",
+    body: "Build the sitemap, navigation, content hierarchy, user flows, and mobile behavior.",
   },
-];
-
-export const journey = [
-  { period: "Early stage", category: "Learn", title: "Started learning web development", story: "Moved from consuming technology to understanding how interfaces and systems are made.", lesson: "The fastest way to understand a tool is to make something with it." },
-  { period: "Exploration", category: "Build", title: "Built early product experiments", story: "Tested landing pages, mobile concepts, maps, motion, and small interface systems.", lesson: "Small projects reveal which questions are worth pursuing." },
-  { period: "Hackathon", category: "Compete", title: "Created Mangystau Trials", story: "Built a personalized tourism route prototype under a deadline. It did not reach the final selection.", lesson: "An unsuccessful result can still expose a stronger product direction." },
-  { period: "Commercial work", category: "Build", title: "Shipped 99 AKTAU", story: "Designed, developed, deployed, and documented a complete booking website for a real client.", lesson: "Shipping includes the quiet work: states, security, deployment, and handover." },
-  { period: "Ongoing", category: "Train", title: "Kept returning to the mat", story: "Balanced school, product work, and judo training through repetition rather than perfect routines.", lesson: "Progress often becomes visible only after the work has accumulated." },
-  { period: "Now", category: "Build", title: "Developing Kronos", story: "Exploring how a planning system can show time without making life feel mechanical.", lesson: "A clear product thesis matters more than a long feature list." },
-  { period: "Ahead", category: "Future", title: "Larger products and international study", story: "Improving English, engineering fundamentals, and product judgment while preparing for global opportunities.", lesson: "Ambition becomes useful when it produces today’s next step." },
+  {
+    number: "03",
+    title: "Design",
+    body: "Set the typography, spacing, components, interaction states, and responsive rules.",
+  },
+  {
+    number: "04",
+    title: "Build",
+    body: "Develop the frontend, connect required services, validate input, and implement the main logic.",
+  },
+  {
+    number: "05",
+    title: "Verify",
+    body: "Test layouts, forms, error states, accessibility, SEO, and the production build.",
+  },
+  {
+    number: "06",
+    title: "Deliver",
+    body: "Prepare deployment, environment details, documentation, and the handover path.",
+  },
 ] as const;
 
-export const experiments = [
-  "Interactive football interface",
-  "AI-assisted video editing concept",
-  "Mobile application studies",
-  "Tourism interface experiments",
-  "Motion and design-system tests",
-  "AI-assisted development workflows",
-];
-
-export const capabilities = {
-  Product: ["Product thinking", "User flows", "Feature prioritization", "MVP planning"],
-  Design: ["UI/UX", "Responsive design", "Interaction design", "Design systems"],
-  Engineering: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Supabase", "APIs", "Deployment"],
-  Execution: ["Client communication", "Debugging", "Testing", "Documentation", "Project handover"],
-};
-
-export const translations = {
-  en: {
-    nav: { work: "Work", about: "About", journey: "Journey", contact: "Contact" },
-    status: "Building Kronos",
-    language: "Language",
-    theme: "Toggle color theme",
-    menu: "Open navigation",
-    close: "Close navigation",
-    hero: {
-      eyebrow: "Altair Tolesh — Aktau, Kazakhstan",
-      title: "I turn ambitious ideas into working digital products.",
-      intro: "I am a student, developer, and product builder focused on thoughtful interfaces, useful technology, and real-world execution.",
-      work: "Explore my work",
-      journey: "My journey",
-      note: "14 years old. Building seriously.",
-    },
-    sections: { proof: "Proof, not promises", work: "Selected work", philosophy: "A working principle", capabilities: "How I build", journey: "The trajectory so far", discipline: "Built through repetition", future: "What I am building toward", experiments: "Playground", contact: "Have an idea worth building?" },
-    footer: "This is not a finished career. It is the beginning of a serious trajectory.",
+export const capabilities = [
+  {
+    title: "Product structure",
+    body: "Site architecture, user flows, feature priorities, content hierarchy, and mobile-first planning.",
   },
-  ru: {
-    nav: { work: "Проекты", about: "Обо мне", journey: "Путь", contact: "Контакт" },
-    status: "Создаю Kronos",
-    language: "Язык",
-    theme: "Сменить тему",
-    menu: "Открыть навигацию",
-    close: "Закрыть навигацию",
-    hero: {
-      eyebrow: "Алтаир Толеш — Актау, Казахстан",
-      title: "Я превращаю амбициозные идеи в работающие цифровые продукты.",
-      intro: "Я школьник, разработчик и создатель продуктов. Мне важны продуманные интерфейсы, полезные технологии и реальная реализация.",
-      work: "Смотреть проекты",
-      journey: "Мой путь",
-      note: "14 лет. Серьёзный подход к делу.",
-    },
-    sections: { proof: "Факты вместо обещаний", work: "Избранные проекты", philosophy: "Рабочий принцип", capabilities: "Как я создаю", journey: "Путь до сегодняшнего дня", discipline: "Результат повторения", future: "К чему я иду", experiments: "Эксперименты", contact: "Есть идея, которую стоит воплотить?" },
-    footer: "Это не завершённая карьера. Это начало серьёзной траектории.",
+  {
+    title: "Interface design",
+    body: "Typography, spacing systems, responsive layouts, reusable components, interaction states, and motion direction.",
   },
-  kk: {
-    nav: { work: "Жобалар", about: "Мен туралы", journey: "Жолым", contact: "Байланыс" },
-    status: "Kronos жасап жатырмын",
-    language: "Тіл",
-    theme: "Түсті ауыстыру",
-    menu: "Навигацияны ашу",
-    close: "Навигацияны жабу",
-    hero: {
-      eyebrow: "Алтаир Толеш — Ақтау, Қазақстан",
-      title: "Мен өршіл идеяларды жұмыс істейтін цифрлық өнімдерге айналдырамын.",
-      intro: "Мен ойластырылған интерфейстерге, пайдалы технологияға және нақты іске асыруға көңіл бөлетін оқушы, әзірлеуші және өнім жасаушымын.",
-      work: "Жобаларды көру",
-      journey: "Менің жолым",
-      note: "14 жаста. Іске байыппен қараймын.",
-    },
-    sections: { proof: "Уәде емес, дәлел", work: "Таңдаулы жобалар", philosophy: "Жұмыс қағидасы", capabilities: "Қалай жасаймын", journey: "Бүгінге дейінгі жол", discipline: "Қайталау арқылы қалыптастым", future: "Қай бағытта өсіп келемін", experiments: "Тәжірибелер", contact: "Іске асыруға тұрарлық идеяңыз бар ма?" },
-    footer: "Бұл аяқталған мансап емес. Бұл маңызды жолдың басталуы.",
+  {
+    title: "Development",
+    body: "React, Next.js, TypeScript, Tailwind CSS, forms, authentication, Supabase, APIs, and deployment.",
   },
-} as const;
+  {
+    title: "Release preparation",
+    body: "Production builds, environment variables, SEO foundations, analytics setup, documentation, and handover.",
+  },
+] as const;
 
-export type Locale = keyof typeof translations;
+export const journey = [
+  {
+    period: "Early stage",
+    category: "Learn",
+    title: "Began learning web development",
+    story: "Early interface experiments made individual tools understandable by putting them inside small working projects.",
+    lesson: "A tool becomes useful when it is connected to a concrete problem.",
+  },
+  {
+    period: "Hackathon",
+    category: "Compete",
+    title: "Developed Mangystau Trials",
+    story: "Built a regional travel-planning prototype under a deadline. It did not reach the final selection.",
+    lesson: "A clear MVP matters more than a long list of partially proven features.",
+  },
+  {
+    period: "Commercial work",
+    category: "Build",
+    title: "Built and delivered 99 AKTAU",
+    story: "Connected the public booking path, administration workflow, database, deployment, and handover.",
+    lesson: "Shipping includes the quiet work after the interface looks complete.",
+  },
+  {
+    period: "Client-facing work",
+    category: "Build",
+    title: "Developed Tuesday Lounge Bar",
+    story: "Balanced atmosphere with direct access to the information and actions a venue visitor needs.",
+    lesson: "Visual direction is strongest when it supports the visitor’s decision.",
+  },
+  {
+    period: "Ongoing",
+    category: "Train",
+    title: "Continued judo training",
+    story: "Training reinforced a practical loop: repeat the fundamentals, review mistakes, adjust, and return.",
+    lesson: "Reliable technique is built through consistent correction.",
+  },
+  {
+    period: "Now",
+    category: "Learn",
+    title: "Strengthening product and engineering judgment",
+    story: "Current work focuses on performance, clearer systems, stronger writing, and client-ready execution.",
+    lesson: "Progress becomes visible when separate skills begin working as one process.",
+  },
+  {
+    period: "Ahead",
+    category: "Future",
+    title: "Preparing for larger projects and international study",
+    story: "Improving English, engineering fundamentals, and product thinking while preparing for global opportunities.",
+    lesson: "A long-term direction is useful when it changes the quality of today’s work.",
+  },
+] as const;

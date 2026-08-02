@@ -1,16 +1,16 @@
 # Altair Tolesh — Portfolio
 
-A multi-page portfolio for Altair Tolesh, a student, developer, product builder, and judo athlete from Aktau, Kazakhstan.
+A multi-page portfolio for Altair Tolesh, a product designer and web developer from Aktau, Kazakhstan.
 
 ## Routes
 
 - `/` — portfolio overview
-- `/projects` — work directory and experiments
-- `/projects/99-aktau` — commercial booking-platform case study
-- `/projects/mangystau-trials` — tourism-platform case study
-- `/projects/kronos` — planning-product case study
-- `/about` — personal story, education, judo, and direction
-- `/journey` — interactive timeline
+- `/projects` — selected work directory
+- `/projects/99-aktau` — commercial booking-system case study
+- `/projects/tuesday-lounge-bar` — hospitality website case study
+- `/projects/mangystau-trials` — tourism product case study
+- `/about` — personal story, education, and judo
+- `/journey` — project and learning timeline
 - `/contact` — privacy-conscious contact flow
 - `/privacy` — privacy information
 
@@ -29,17 +29,10 @@ npm run typecheck
 npm run build
 ```
 
-The default build targets Sites/Cloudflare Workers. `npm run build:vercel` is the verified Vercel-compatible Next.js build, and `vercel.json` selects it automatically on Vercel.
+The default build targets Sites/Cloudflare Workers. `npm run build:vercel` is the Vercel-compatible Next.js build selected by `vercel.json`.
 
-## Content and public contact details
+## Public links
 
-Edit `content/site.ts` to change profile facts, project statuses, case-study copy, timeline entries, experiments, capabilities, or interface translations.
+Project links are centralized in `content/site.ts`. The three live URLs supplied for the portfolio are included as safe defaults. Copy `.env.example` to `.env.local` to override any public domain, repository link, contact email, or GitHub profile without changing source code.
 
-Copy `.env.example` to `.env.local` when a public domain or contact email is available:
-
-```text
-NEXT_PUBLIC_SITE_URL=https://your-domain.example
-NEXT_PUBLIC_CONTACT_EMAIL=hello@example.com
-```
-
-When no public email is configured, the contact form validates the message and offers a local copy instead of claiming it was sent.
+An external-link action is rendered only when its URL is present. When no public email is configured, the contact form validates the message and offers a local copy instead of claiming it was sent.
