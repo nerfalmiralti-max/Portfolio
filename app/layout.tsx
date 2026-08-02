@@ -5,6 +5,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/components/language-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { ExperienceLayer } from "@/components/experience-layer";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -19,8 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: base,
     title: { default: "Altair Tolesh — Product Builder and Developer", template: "%s — Altair Tolesh" },
     description: "Portfolio of Altair Tolesh, a student and product builder from Aktau creating thoughtful digital products, commercial websites, and technology experiments.",
-    openGraph: { title: "Altair Tolesh — Ideas into working products", description: "Student, developer, product builder, and athlete from Aktau, Kazakhstan.", type: "website", images: [{ url: new URL("/og.png", base).toString(), width: 1731, height: 909, alt: "Altair Tolesh — turning ambitious ideas into working digital products" }] },
-    twitter: { card: "summary_large_image", title: "Altair Tolesh — Product Builder", description: "Turning ambitious ideas into working digital products.", images: [new URL("/og.png", base).toString()] },
+    openGraph: { title: "Altair Tolesh — Ideas into working products", description: "Student, developer, product builder, and athlete from Aktau, Kazakhstan.", type: "website", images: [{ url: new URL("/og-motion.png", base).toString(), width: 1731, height: 909, alt: "Altair Tolesh — turning ambitious ideas into working digital products" }] },
+    twitter: { card: "summary_large_image", title: "Altair Tolesh — Product Builder", description: "Turning ambitious ideas into working digital products.", images: [new URL("/og-motion.png", base).toString()] },
   };
 }
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased`}>
         <LanguageProvider>
+          <ExperienceLayer />
           <a className="skip-link" href="#main-content">Skip to content</a>
           <SiteHeader />
           <main id="main-content">{children}</main>

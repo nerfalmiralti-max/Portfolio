@@ -53,7 +53,7 @@ export function ContactForm() {
       <Field label="Message" error={errors.message}><textarea rows={7} value={values.message} onChange={(e) => update("message", e.target.value)} /></Field>
       <label className="honeypot" aria-hidden="true">Company<input value={values.company} onChange={(e) => update("company", e.target.value)} tabIndex={-1} autoComplete="off" /></label>
       <div className="form-submit">
-        <button className="button button-primary" type="submit">Prepare message <ArrowUpRight size={17} /></button>
+        <button className={`button button-primary ${state === "sent" ? "is-success" : ""}`} type="submit">{state === "sent" ? <>Message ready <Check size={17} /></> : state === "ready" ? <>Message checked <Check size={17} /></> : <>Prepare message <ArrowUpRight size={17} /></>}</button>
         <p>Only share information you are comfortable making part of a professional conversation.</p>
       </div>
       {state === "ready" ? (
