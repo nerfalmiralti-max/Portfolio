@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
-import { profile, projects } from "@/content/site";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { profile, homepageCopy } from "@/content/profile";
+import { projects } from "@/content/projects";
 
 export default function PortfolioHero() {
   return (
@@ -8,24 +9,17 @@ export default function PortfolioHero() {
       <div className="hero-copy">
         <p className="eyebrow">
           <span className="eyebrow-line" />
-          ALTAIR TOLESH · PRODUCT DESIGN AND DEVELOPMENT
+          {homepageCopy.heroLabel}
         </p>
-        <h1>
-          I design the <em>structure</em>, build the system, and prepare it for real use.
-        </h1>
-        <p className="hero-intro">
-          I am a student and developer from Aktau. My work covers the full
-          website process: organizing content, designing the interface,
-          connecting real functionality, testing the main user flows, and
-          preparing the project for deployment.
-        </p>
+        <h1>{homepageCopy.heroHeading}</h1>
+        <p className="hero-intro">{homepageCopy.heroBody}</p>
         <div className="hero-actions">
-          <a href="#selected-work" className="button button-primary">
-            View selected projects <ArrowRight size={17} />
-          </a>
-          <a href="#process" className="button button-quiet">
-            See how I work
-          </a>
+          <Link href="/work" className="button button-primary">
+            View my work <ArrowRight size={17} />
+          </Link>
+          <Link href="/about" className="button button-quiet">
+            About me
+          </Link>
         </div>
         <p className="availability-note">
           <span /> {profile.availability}
@@ -60,14 +54,9 @@ export default function PortfolioHero() {
           ))}
         </div>
         <p className="trajectory-caption">
-          Strategy <i /> UX <i /> Interface <i /> Development <i /> Release
+          Structure <i /> Design <i /> Frontend <i /> Services <i /> Deployment
         </p>
       </div>
-
-      <a href="#introduction" className="scroll-cue" aria-label="Continue to introduction">
-        <span>Continue</span>
-        <ArrowDown size={16} />
-      </a>
     </section>
   );
 }

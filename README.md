@@ -1,18 +1,21 @@
-# Altair Tolesh — Portfolio
+# Altair Tolesh Portfolio
 
-A multi-page portfolio for Altair Tolesh, a product designer and web developer from Aktau, Kazakhstan.
+A multi-page portfolio for Altair Tolesh, a student and web developer from Aktau, Kazakhstan.
 
 ## Routes
 
-- `/` — portfolio overview
-- `/projects` — selected work directory
-- `/projects/99-aktau` — commercial booking-system case study
-- `/projects/tuesday-lounge-bar` — hospitality website case study
-- `/projects/mangystau-trials` — tourism product case study
-- `/about` — personal story, education, and judo
-- `/journey` — project and learning timeline
-- `/contact` — privacy-conscious contact flow
-- `/privacy` — privacy information
+- `/` - short portfolio overview
+- `/work` - project directory
+- `/work/99-aktau` - commercial website case study
+- `/work/tuesday-lounge-bar` - lounge bar website case study
+- `/work/mangystau-trials` - hackathon project case study
+- `/about` - school, learning, projects, and judo
+- `/process` - working process and current skills
+- `/journey` - factual project timeline
+- `/contact` - project enquiry form
+- `/privacy` - privacy information
+
+Legacy `/projects` URLs redirect to their matching `/work` routes.
 
 ## Local development
 
@@ -29,10 +32,10 @@ npm run typecheck
 npm run build
 ```
 
-The default build targets Sites/Cloudflare Workers. `npm run build:vercel` is the Vercel-compatible Next.js build selected by `vercel.json`.
+The default build targets Sites and Cloudflare Workers. `npm run build:vercel` runs the Vercel-compatible Next.js build configured by `vercel.json`.
 
-## Public links
+## Public links and copy
 
-Project links are centralized in `content/site.ts`. The three live URLs supplied for the portfolio are included as safe defaults. Copy `.env.example` to `.env.local` to override any public domain, repository link, contact email, or GitHub profile without changing source code.
+Public copy is stored in `content/profile.ts`, `content/projects.ts`, `content/process.ts`, `content/journey.ts`, and `content/navigation.ts`. The three supplied live project URLs are included as defaults.
 
-An external-link action is rendered only when its URL is present. When no public email is configured, the contact form validates the message and offers a local copy instead of claiming it was sent.
+Copy `.env.example` to `.env.local` to override a project URL, public repository, contact email, or GitHub profile. External actions render only when their URL exists. If no public email is configured, the contact form checks the message and offers a local copy instead of claiming it was sent.

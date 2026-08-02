@@ -32,9 +32,9 @@ export async function generateMetadata(): Promise<Metadata> {
     headerList.get("x-forwarded-proto") ||
     (host.includes("localhost") ? "http" : "https");
   const base = new URL(`${protocol}://${host}`);
-  const title = "Altair Tolesh — Product Designer and Web Developer";
+  const title = "Altair Tolesh — Web Designer and Developer";
   const description =
-    "Portfolio of Altair Tolesh, a developer from Aktau working across product structure, UI/UX design, frontend development, backend integration, and deployment.";
+    "Altair Tolesh is a student from Aktau who designs, builds, and deploys websites.";
 
   return {
     metadataBase: base,
@@ -51,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: new URL("/og.png", base).toString(),
           width: 1730,
           height: 909,
-          alt: "Altair Tolesh — product design and development portfolio",
+          alt: "Altair Tolesh web design and development portfolio",
         },
       ],
     },
@@ -73,10 +73,10 @@ export default function RootLayout({
     name: "Altair Tolesh",
     homeLocation: { "@type": "Place", name: "Aktau, Kazakhstan" },
     knowsAbout: [
-      "Product design",
-      "User experience design",
+      "Web design",
+      "Responsive layout",
       "Web development",
-      "Frontend engineering",
+      "Next.js",
     ],
   };
 

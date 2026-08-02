@@ -1,32 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-
-const navigation = [
-  { label: "Work", href: "/projects" },
-  { label: "About", href: "/about" },
-  { label: "Journey", href: "/journey" },
-  { label: "Contact", href: "/contact" },
-];
+import { navigation } from "@/content/navigation";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusable = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>("a, button") ?? [],
+    );
+    focusable[0]?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        menuButtonRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== "Tab" || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
     };
   }, [open]);
+
+  const isCurrent = (href: string) =>
+    href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="brand" aria-label="Altair Tolesh home">
+        <Link href="/" className="brand" aria-label="Altair Tolesh home" onClick={() => setOpen(false)}>
           <span className="monogram" aria-hidden="true">
             <i>A</i>
             <i>T</i>
@@ -36,10 +67,7 @@ export function SiteHeader() {
 
         <nav className="desktop-nav" aria-label="Primary navigation">
           {navigation.map((item) => {
-            const current =
-              item.href === "/projects"
-                ? pathname.startsWith("/projects")
-                : pathname === item.href;
+            const current = isCurrent(item.href);
             return (
               <Link
                 href={item.href}
@@ -58,11 +86,12 @@ export function SiteHeader() {
             <i /> Available for selected work
           </span>
           <Link href="/contact" className="header-contact">
-            Start a project
+            Discuss a project
           </Link>
           <button
             className="menu-button"
             type="button"
+            ref={menuButtonRef}
             onClick={() => setOpen((current) => !current)}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -75,6 +104,7 @@ export function SiteHeader() {
 
       <div
         id="mobile-menu"
+        ref={menuRef}
         className={`mobile-menu ${open ? "is-open" : ""}`}
         aria-hidden={!open}
         inert={!open ? true : undefined}
@@ -82,7 +112,12 @@ export function SiteHeader() {
         <div className="mobile-menu-inner">
           <span className="overline">Navigate</span>
           {navigation.map((item, index) => (
-            <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>
+            <Link
+              href={item.href}
+              key={item.href}
+              onClick={() => setOpen(false)}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
+            >
               <span>0{index + 1}</span>
               {item.label}
             </Link>

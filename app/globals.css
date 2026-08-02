@@ -1732,33 +1732,6 @@ main {
   font-size: 9px;
 }
 
-.scroll-progress {
-  position: fixed;
-  z-index: 110;
-  top: var(--header-height);
-  right: 0;
-  left: 0;
-  height: 2px;
-  pointer-events: none;
-}
-
-.scroll-progress i {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--project-accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  animation: scroll-progress linear;
-  animation-timeline: scroll();
-}
-
-@keyframes scroll-progress {
-  to {
-    transform: scaleX(1);
-  }
-}
-
 .case-study {
   --project-accent: var(--accent);
   padding-top: var(--header-height);
@@ -2558,6 +2531,301 @@ main {
   line-height: 1.75;
 }
 
+/* Multi-page content layout */
+.intro-section {
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.75fr);
+  align-items: start;
+}
+
+.intro-section h2 {
+  max-width: 900px;
+}
+
+.selected-work-list {
+  border-top: 1px solid var(--border);
+}
+
+.selected-work-preview {
+  min-height: 560px;
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(360px, 0.86fr);
+  border: 1px solid var(--border);
+  border-top: 0;
+  background: var(--surface);
+}
+
+.selected-work-preview:nth-child(even) {
+  grid-template-columns: minmax(360px, 0.86fr) minmax(420px, 1fr);
+}
+
+.selected-work-preview:nth-child(even) .project-visual {
+  order: 2;
+}
+
+.selected-work-preview .project-visual {
+  min-height: 560px;
+}
+
+.selected-work-preview-copy {
+  padding: clamp(30px, 4.5vw, 68px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.selected-work-preview-copy > div:first-child {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selected-work-preview-copy > .overline {
+  margin: auto 0 12px;
+}
+
+.selected-work-preview-copy h3 {
+  margin: 0 0 18px;
+  font-size: clamp(42px, 5vw, 76px);
+  font-weight: 520;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.selected-work-preview-copy > p:not(.overline) {
+  max-width: 590px;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.68;
+}
+
+.selected-work-preview-copy .project-role {
+  margin-top: 8px;
+  font-family: var(--font-geist-sans), sans-serif;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.selected-work-preview-copy .project-actions {
+  margin-top: 20px;
+}
+
+.process-page,
+.journey-page {
+  overflow: clip;
+}
+
+.process-example {
+  margin: 0 var(--page-gutter);
+  padding: clamp(40px, 6vw, 80px);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+}
+
+.process-example > p {
+  max-width: 900px;
+  margin: 24px 0 20px;
+  font-size: clamp(24px, 3.2vw, 46px);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.process-directory {
+  width: min(var(--content-width), calc(100% - var(--page-gutter) * 2));
+  margin: clamp(80px, 10vw, 150px) auto;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.process-directory li {
+  min-height: 190px;
+  padding: 34px 0;
+  display: grid;
+  grid-template-columns: 0.22fr 1fr;
+  gap: clamp(30px, 6vw, 100px);
+  align-items: start;
+  border-bottom: 1px solid var(--border);
+}
+
+.process-directory li > span {
+  color: var(--accent);
+  font-family: var(--font-instrument-serif), serif;
+  font-size: 46px;
+}
+
+.process-directory h2 {
+  margin: 0 0 16px;
+  font-size: clamp(34px, 4.2vw, 66px);
+  font-weight: 520;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.process-directory p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.skills-directory {
+  padding: clamp(90px, 11vw, 160px) var(--page-gutter);
+  border-top: 1px solid var(--border);
+  background: var(--surface-soft);
+}
+
+.skills-directory > header {
+  margin-bottom: 54px;
+}
+
+.skills-directory h2 {
+  margin: 16px 0 0;
+  font-size: clamp(44px, 6vw, 88px);
+  font-weight: 520;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.skills-directory > div {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--border);
+}
+
+.skills-directory article {
+  min-height: 300px;
+  padding: 28px;
+  border-right: 1px solid var(--border);
+}
+
+.skills-directory article:last-child {
+  border-right: 0;
+}
+
+.skills-directory h3 {
+  margin: 0 0 30px;
+  font-size: 24px;
+  font-weight: 520;
+}
+
+.skills-directory ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skills-directory li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.case-return {
+  padding: 36px var(--page-gutter) 80px;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--border);
+}
+
+.about-hero > div:last-child p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.story-copy a {
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.journey-page .journey-timeline,
+.journey-timeline {
+  width: min(var(--content-width), calc(100% - var(--page-gutter) * 2));
+  margin: 0 auto;
+  padding: clamp(70px, 9vw, 130px) 0;
+}
+
+.journey-line {
+  width: 100%;
+  height: auto;
+  margin-bottom: 58px;
+  overflow: visible;
+}
+
+.journey-line line {
+  stroke: var(--border-strong);
+  stroke-width: 2;
+}
+
+.journey-line circle {
+  fill: var(--background);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.journey-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+.journey-list article {
+  min-height: 390px;
+  padding: clamp(28px, 4vw, 52px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.journey-list .journey-period {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  color: var(--quiet);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.journey-list .overline {
+  margin-top: auto;
+}
+
+.journey-list h2 {
+  margin: 12px 0 18px;
+  font-size: clamp(30px, 3.5vw, 52px);
+  font-weight: 520;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.journey-list article > p:not(.overline) {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.journey-list .journey-lesson {
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.contact-direct-actions {
+  margin: 28px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
 @media (max-width: 1180px) {
   .build-status {
     display: none;
@@ -2578,6 +2846,18 @@ main {
 
   .capability-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .skills-directory > div {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .skills-directory article:nth-child(2) {
+    border-right: 0;
+  }
+
+  .skills-directory article:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--border);
   }
 
   .capability-grid article {
@@ -2707,6 +2987,32 @@ main {
 
   .intro-section,
   .section-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .selected-work-preview,
+  .selected-work-preview:nth-child(even) {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .selected-work-preview:nth-child(even) .project-visual {
+    order: 0;
+  }
+
+  .selected-work-preview .project-visual {
+    min-height: 520px;
+  }
+
+  .process-directory li {
+    grid-template-columns: 100px 1fr;
+  }
+
+  .journey-line {
+    display: none;
+  }
+
+  .journey-list {
     grid-template-columns: 1fr;
   }
 
@@ -2980,6 +3286,7 @@ main {
   }
 
   .mobile-project .project-visual,
+  .selected-work-preview .project-visual,
   .project-card .project-visual,
   .case-hero > .project-visual {
     min-height: 430px;
@@ -3016,6 +3323,38 @@ main {
   .process-grid,
   .capability-grid {
     grid-template-columns: 1fr;
+  }
+
+  .selected-work-preview-copy {
+    padding: 28px 22px 36px;
+  }
+
+  .selected-work-preview-copy > .overline {
+    margin-top: 48px;
+  }
+
+  .process-directory li {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .skills-directory > div {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-directory article,
+  .skills-directory article:nth-child(2) {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skills-directory article:last-child {
+    border-bottom: 0;
+  }
+
+  .journey-list article {
+    min-height: 0;
   }
 
   .process-grid li,
@@ -3116,8 +3455,7 @@ main {
     transition-duration: 0.01ms !important;
   }
 
-  .trajectory-line i,
-  .scroll-progress i {
+  .trajectory-line i {
     transform: scaleX(1);
   }
 }

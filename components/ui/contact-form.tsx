@@ -59,18 +59,18 @@ export function ContactForm() {
             <option>Other</option>
           </select>
         </Field>
-        <Field label="Project or opportunity" error={errors.subject}><input value={values.subject} onChange={(e) => update("subject", e.target.value)} /></Field>
+        <Field label="Project name or subject" error={errors.subject}><input value={values.subject} onChange={(e) => update("subject", e.target.value)} /></Field>
       </div>
       <Field label="Message" error={errors.message}><textarea rows={7} value={values.message} onChange={(e) => update("message", e.target.value)} /></Field>
       <label className="honeypot" aria-hidden="true">Company<input value={values.company} onChange={(e) => update("company", e.target.value)} tabIndex={-1} autoComplete="off" /></label>
       <div className="form-submit">
-        <button className={`button button-primary ${state === "sent" ? "is-success" : ""}`} type="submit">{state === "sent" ? <>Message ready <Check size={17} /></> : state === "ready" ? <>Message checked <Check size={17} /></> : <>Prepare message <ArrowUpRight size={17} /></>}</button>
-        <p>Only share information you are comfortable making part of a professional conversation.</p>
+        <button className={`button button-primary ${state === "sent" ? "is-success" : ""}`} type="submit">{state === "sent" ? <>Draft ready <Check size={17} /></> : state === "ready" ? <>Message checked <Check size={17} /></> : <>Check message <ArrowUpRight size={17} /></>}</button>
+        <p>The form checks the details before opening email or preparing a local copy.</p>
       </div>
       {state === "ready" ? (
-        <div className="form-state" role="status"><div><strong>Message checked.</strong><p>Public email delivery is not configured yet. Copy your draft so nothing is lost.</p></div><button type="button" onClick={copyDraft}><Copy size={16} /> Copy draft</button></div>
+        <div className="form-state" role="status"><div><strong>Your message is ready.</strong><p>A public email address is not configured yet. Copy the draft and send it through your preferred contact method.</p></div><button type="button" onClick={copyDraft}><Copy size={16} /> Copy draft</button></div>
       ) : null}
-      {state === "sent" ? <div className="form-state success" role="status"><Check size={18} /><p>{publicEmail ? "Your email app is ready with the message." : "Draft copied to your clipboard."}</p></div> : null}
+      {state === "sent" ? <div className="form-state success" role="status"><Check size={18} /><p>{publicEmail ? "Your email application opened with the message." : "The draft was copied to your clipboard."}</p></div> : null}
     </form>
   );
 }

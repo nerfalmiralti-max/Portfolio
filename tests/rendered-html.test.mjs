@@ -13,14 +13,24 @@ test("server-renders the finished portfolio", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /Altair Tolesh/);
-  assert.match(html, /prepare it for real use/);
+  assert.match(html, /design and build websites for real projects/);
   assert.match(html, /Tuesday Lounge Bar/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/);
 });
 
 test("server-renders each requested route", async () => {
-  for (const path of ["/projects", "/projects/99-aktau", "/projects/tuesday-lounge-bar", "/projects/mangystau-trials", "/about", "/journey", "/contact", "/privacy"]) {
+  for (const path of ["/work", "/work/99-aktau", "/work/tuesday-lounge-bar", "/work/mangystau-trials", "/about", "/process", "/journey", "/contact", "/privacy"]) {
     const response = await render(path);
     assert.equal(response.status, 200, path);
   }
+});
+
+test("legacy project routes redirect to Work", async () => {
+  const workResponse = await render("/projects");
+  assert.equal(workResponse.status, 307);
+  assert.equal(workResponse.headers.get("location"), "http://localhost/work");
+
+  const caseResponse = await render("/projects/99-aktau");
+  assert.equal(caseResponse.status, 307);
+  assert.equal(caseResponse.headers.get("location"), "http://localhost/work/99-aktau");
 });

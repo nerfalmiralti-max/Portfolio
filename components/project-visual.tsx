@@ -1,4 +1,4 @@
-import type { ProjectSlug } from "@/content/site";
+import type { ProjectSlug } from "@/content/projects";
 
 export function ProjectVisual({
   variant,

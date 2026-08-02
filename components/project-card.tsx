@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import type { Project } from "@/content/site";
+import type { Project } from "@/content/projects";
 import { ProjectVisual } from "@/components/project-visual";
 
 export function ProjectCard({ project }: { project: Project }) {
@@ -18,10 +18,12 @@ export function ProjectCard({ project }: { project: Project }) {
           {project.type} · {project.year}
         </p>
         <h3>{project.name}</h3>
-        <p className="project-summary">{project.summary}</p>
-        <p className="project-role">{project.role}</p>
+        <p className="project-summary">{project.shortDescription}</p>
+        <p className="project-role">
+          <strong>My role:</strong> {project.role.join(", ")}.
+        </p>
         <div className="tech-list" aria-label="Technology">
-          {project.technologies.map((tech) => (
+          {project.stack.map((tech) => (
             <span key={tech}>{tech}</span>
           ))}
         </div>
@@ -36,7 +38,17 @@ export function ProjectCard({ project }: { project: Project }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Open live website <ArrowUpRight aria-hidden="true" size={17} />
+              {project.liveLabel} <ArrowUpRight aria-hidden="true" size={17} />
+            </a>
+          ) : null}
+          {project.repositoryUrl ? (
+            <a
+              href={project.repositoryUrl}
+              className="text-link muted-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View code <ArrowUpRight aria-hidden="true" size={17} />
             </a>
           ) : null}
         </div>

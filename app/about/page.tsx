@@ -1,40 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { profile } from "@/content/site";
+import { aboutCopy, profile } from "@/content/profile";
 
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Altair Tolesh on learning through real projects, studying in Aktau, judo, and the direction ahead.",
+    "About Altair Tolesh, a student and web developer from Aktau.",
   alternates: { canonical: "/about" },
 };
-
-const principles = [
-  "Start with the user’s task.",
-  "Make the main path obvious.",
-  "Keep unfinished work honest.",
-  "Use motion only when it adds meaning.",
-  "Test the release, not only the mockup.",
-  "Leave the project maintainable.",
-];
 
 export default function AboutPage() {
   return (
     <div className="page-shell about-page">
       <header className="page-hero about-hero">
         <div>
-          <span className="overline">About / Personal context</span>
-          <h1>
-            I learn fastest when the work has to function
-            <em> outside a tutorial.</em>
-          </h1>
+          <span className="overline">About</span>
+          <h1>{aboutCopy.heading}</h1>
         </div>
-        <p>
-          I am Altair Tolesh, a student from Aktau. Web development interests me
-          because it connects research, structure, visual decisions, code, and
-          the practical work required after release.
-        </p>
+        <div>
+          {aboutCopy.opening.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </div>
       </header>
 
       <section className="about-coordinate" aria-label="Aktau coordinates">
@@ -43,7 +29,7 @@ export default function AboutPage() {
           <span>T</span>
         </div>
         <div>
-          <span className="overline">Point of origin</span>
+          <span className="overline">Based in</span>
           <strong>{profile.coordinates}</strong>
           <p>Aktau, on the Caspian coast of Kazakhstan.</p>
         </div>
@@ -67,73 +53,36 @@ export default function AboutPage() {
             </div>
             <div>
               <dt>Current focus</dt>
-              <dd>Product design, frontend engineering, and client-ready delivery</dd>
+              <dd>Web design, frontend development, and stronger English</dd>
             </div>
           </dl>
         </aside>
         <div className="story-copy">
+          <p>{aboutCopy.projects}</p>
           <p>
-            I became interested in web development because it combines several
-            kinds of work: understanding a problem, organizing information,
-            designing an interface, writing the code, and checking whether the
-            result works for another person.
+            Read the <Link href="/work/99-aktau">99 AKTAU case study</Link>, the{" "}
+            <Link href="/work/tuesday-lounge-bar">Tuesday Lounge Bar case study</Link>, or the{" "}
+            <Link href="/work/mangystau-trials">Mangystau Trials case study</Link> for the project details.
           </p>
-          <p>
-            My portfolio includes commercial work, a hospitality website, and a
-            tourism prototype created during a hackathon. Each project has
-            taught me to make clearer decisions, reduce unnecessary features,
-            solve technical problems, and finish work under real constraints.
-          </p>
-          <p>
-            Mangystau Trials did not pass its hackathon’s final selection. I keep
-            that result in the case study because it changed how I prioritize an
-            MVP and present the most important product hypothesis.
-          </p>
-        </div>
-      </section>
-
-      <section className="principles-section">
-        <span className="overline">Principles in practice</span>
-        <div>
-          {principles.map((principle, index) => (
-            <article key={principle}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h2>{principle}</h2>
-            </article>
-          ))}
+          <p>{aboutCopy.education}</p>
         </div>
       </section>
 
       <section className="judo-story">
         <div>
-          <span className="overline">Discipline / Judo</span>
-          <h2>Repetition improves judgment.</h2>
+          <span className="overline">Judo</span>
+          <h2>Judo is part of how I learn.</h2>
         </div>
         <div>
-          <p>
-            Judo is not separate from the way I work. Training has taught me to
-            focus on fundamentals, respond calmly to mistakes, and return to
-            difficult problems until the technique becomes more reliable.
-          </p>
-          <p>
-            The same loop applies to product work: build, test, notice the weak
-            point, adjust, and verify again.
-          </p>
+          <p>{aboutCopy.judo}</p>
         </div>
       </section>
 
       <section className="academic-direction">
-        <span className="overline">Long-term direction</span>
-        <h2>
-          Strengthen engineering and product skills, study internationally, and
-          build useful products beyond a portfolio page.
-        </h2>
-        <p>
-          The immediate work is concrete: stronger fundamentals, better English,
-          clearer product decisions, real users, and more dependable releases.
-        </p>
+        <span className="overline">Current direction</span>
+        <h2>{aboutCopy.closing}</h2>
         <Link href="/journey" className="text-link">
-          See the trajectory <ArrowRight size={18} />
+          View my journey <ArrowRight size={18} />
         </Link>
       </section>
     </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { profile } from "@/content/site";
+import { navigation } from "@/content/navigation";
+import { profile } from "@/content/profile";
 
 export function SiteFooter() {
   return (
@@ -10,7 +11,7 @@ export function SiteFooter() {
           <i>A</i>
           <i>T</i>
         </span>
-        <p>Built with attention to clarity, performance, and maintainability.</p>
+        <p>Design and development by Altair Tolesh.</p>
       </div>
       <div className="footer-grid">
         <div>
@@ -19,13 +20,15 @@ export function SiteFooter() {
         </div>
         <div>
           <span className="overline">Navigate</span>
-          <Link href="/projects">Projects</Link>
-          <Link href="/about">About</Link>
-          <Link href="/journey">Journey</Link>
+          {navigation.slice(1, 4).map((item) => (
+            <Link href={item.href} key={item.href}>{item.label}</Link>
+          ))}
         </div>
         <div>
           <span className="overline">Continue</span>
+          <Link href="/journey">Journey</Link>
           <Link href="/contact">Contact</Link>
+          {profile.email ? <a href={`mailto:${profile.email}`}>Email</a> : null}
           {profile.github ? (
             <a href={profile.github} target="_blank" rel="noopener noreferrer">
               GitHub <ArrowUpRight size={14} />
@@ -35,7 +38,7 @@ export function SiteFooter() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Altair Tolesh</span>
-        <span>Designed and developed in Aktau, Kazakhstan.</span>
+        <span>Altair Tolesh · Aktau, Kazakhstan</span>
         <Link href="/privacy">Privacy</Link>
       </div>
     </footer>
