@@ -95,7 +95,7 @@ export function HomeContent() {
             title={homepageCopy.processHeading}
             body={homepageCopy.processBody}
           />
-          <ol className="process-list" data-reveal>
+          <ol className="process-list" data-reveal-stagger>
             {processSteps.map((step) => (
               <li key={step.number}>
                 <p className="label">{step.number}</p>

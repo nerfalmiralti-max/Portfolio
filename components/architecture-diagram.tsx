@@ -13,7 +13,7 @@ export function ArchitectureDiagram({
 }) {
   return (
     <figure className="architecture-figure">
-      <div className="architecture">
+      <div className="architecture" data-reveal-sequence>
         {layers.map((layer) => (
           <div className="architecture-layer" key={layer.layer}>
             <span>{layer.layer}</span>

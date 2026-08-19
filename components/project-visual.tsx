@@ -63,7 +63,7 @@ export function ProjectVisual({ variant }: { variant: ProjectSlug }) {
       </p>
 
       <div className="visual-body" aria-hidden="true">
-        <ol className="visual-flow">
+        <ol className="visual-flow" data-reveal-sequence>
           {schematic.steps.map((step, index) => (
             <li key={step}>
               <span>{String(index + 1).padStart(2, "0")}</span>

@@ -70,7 +70,7 @@ export default function AboutPage() {
             title="How I work on a website"
             body="The steps change with the project. The order does not. Each one below carries a real example."
           />
-          <ol className="process-list" data-reveal>
+          <ol className="process-list" data-reveal-stagger>
             {processSteps.map((step) => (
               <li key={step.number}>
                 <p className="label">{step.number}</p>
@@ -118,7 +118,7 @@ export default function AboutPage() {
             title="What I currently build with"
             body="Grouped by what it is for. The projects show how much of each I have actually used."
           />
-          <div className="skill-groups" data-reveal>
+          <div className="skill-groups" data-reveal-stagger>
             {skillGroups.map((group) => (
               <div key={group.title}>
                 <h3>{group.title}</h3>

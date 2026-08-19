@@ -615,10 +615,12 @@ main {
    ========================================================================== */
 
 .featured {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: clamp(var(--space-6), 4vw, var(--space-9));
   align-items: center;
+  overflow: hidden;
   padding: clamp(var(--space-6), 3.5vw, var(--space-8));
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -627,10 +629,6 @@ main {
 
 /* A hairline of the project's own colour, so the flagship reads as flagship
    before a single word is parsed. */
-.featured {
-  position: relative;
-  overflow: hidden;
-}
 
 .featured::before {
   content: "";

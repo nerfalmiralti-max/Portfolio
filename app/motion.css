@@ -1,9 +1,6 @@
 /**
  * Motion system.
  *
- * Two entrances only: a CSS-driven one for the hero (runs at first paint, needs
- * no JS) and one scroll reveal primitive for everything below the fold.
- *
  * `html[data-motion]` is the single switch:
  *   absent  — scripting is off or motion is reduced. Nothing below applies and
  *             the page renders as plain, fully visible content.
@@ -13,18 +10,32 @@
  *             cannot be trusted to finish (a backgrounded tab freezes both
  *             transitions and animations, which would otherwise strand content
  *             at `opacity: 0`).
+ *
+ * There are exactly four hidden states, and the escape hatch at the bottom
+ * mirrors all four. Nothing else on the site may start invisible — if a new
+ * effect needs to, it belongs in one of these primitives so it stays covered.
+ *
+ *   .hero-*             load entrance, no observer, no dependency on hydration
+ *   [data-reveal]       the element itself, on scroll
+ *   [data-reveal-stagger]   direct children, short walk (a row of peers)
+ *   [data-reveal-sequence]  direct children, longer walk (something that reads
+ *                           in order: a flow, a stack, a set of layers)
  */
 
-/* ---- Scroll reveal ------------------------------------------------------ */
+/* ==========================================================================
+   1. Scroll reveal
+   ========================================================================== */
 
 [data-motion="on"] [data-reveal],
-[data-motion="on"] [data-reveal-stagger] > * {
+[data-motion="on"] [data-reveal-stagger] > *,
+[data-motion="on"] [data-reveal-sequence] > * {
   opacity: 0;
   transform: translateY(var(--reveal-shift));
 }
 
 [data-motion="on"] [data-reveal].is-visible,
-[data-motion="on"] [data-reveal-stagger].is-visible > * {
+[data-motion="on"] [data-reveal-stagger].is-visible > *,
+[data-motion="on"] [data-reveal-sequence].is-visible > * {
   opacity: 1;
   transform: none;
   transition:
@@ -32,21 +43,82 @@
     transform var(--dur-enter) var(--ease-out);
 }
 
-/* Stagger only where a list genuinely reads in sequence, capped at four steps
-   so nothing waits behind a long queue. */
+/* Peers: a quick walk, capped at four so nothing waits behind a long queue. */
 [data-motion="on"] [data-reveal-stagger].is-visible > *:nth-child(2) {
+  transition-delay: 50ms;
+}
+[data-motion="on"] [data-reveal-stagger].is-visible > *:nth-child(3) {
+  transition-delay: 100ms;
+}
+[data-motion="on"] [data-reveal-stagger].is-visible > *:nth-child(n + 4) {
+  transition-delay: 150ms;
+}
+
+/* Sequences: slower and further, because the order is the point. A booking
+   flow that appears all at once says nothing; one that walks says "step,
+   then step, then step". */
+[data-motion="on"] [data-reveal-sequence] > * {
+  transform: translateY(calc(var(--reveal-shift) * 0.6));
+}
+
+[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(1) {
   transition-delay: 60ms;
 }
-
-[data-motion="on"] [data-reveal-stagger].is-visible > *:nth-child(3) {
-  transition-delay: 120ms;
+[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(2) {
+  transition-delay: 150ms;
+}
+[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(3) {
+  transition-delay: 240ms;
+}
+[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(4) {
+  transition-delay: 330ms;
+}
+[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(n + 5) {
+  transition-delay: 420ms;
 }
 
-[data-motion="on"] [data-reveal-stagger].is-visible > *:nth-child(n + 4) {
-  transition-delay: 180ms;
+/* The connector between flow steps draws downward as the step it leads to
+   arrives, so the line reads as the link between them rather than decoration. */
+[data-motion="on"] .visual-flow li::after {
+  transform: scaleY(0);
+  transform-origin: top;
 }
 
-/* ---- Hero entrance ------------------------------------------------------ */
+[data-motion="on"] .visual-flow.is-visible li::after {
+  transform: scaleY(1);
+  transition: transform var(--dur-ui) var(--ease-out);
+}
+
+[data-motion="on"] .visual-flow.is-visible li:nth-child(1)::after {
+  transition-delay: 130ms;
+}
+[data-motion="on"] .visual-flow.is-visible li:nth-child(2)::after {
+  transition-delay: 220ms;
+}
+[data-motion="on"] .visual-flow.is-visible li:nth-child(n + 3)::after {
+  transition-delay: 310ms;
+}
+
+/* The flagship's accent edge draws down as the card arrives. */
+[data-motion="on"] .featured::before {
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+[data-motion="on"] .featured.is-visible::before {
+  transform: scaleY(1);
+  transition: transform var(--dur-enter) 120ms var(--ease-out);
+}
+
+/* The opening statement of a case study gets a slower entrance than the
+   sections under it. It is the sentence the whole page rests on. */
+[data-motion="on"] .case-block[data-tone="lede"].is-visible {
+  transition-duration: 620ms;
+}
+
+/* ==========================================================================
+   2. Hero entrance
+   ========================================================================== */
 /* Above the fold, so it animates on load rather than on scroll. No observer
    involved, and no dependency on hydration having finished. */
 
@@ -55,28 +127,40 @@
 [data-motion="on"] .hero-intro,
 [data-motion="on"] .hero-actions,
 [data-motion="on"] .hero-availability,
-[data-motion="on"] .evidence-strip {
+[data-motion="on"] .hero-evidence {
   animation: enter var(--dur-enter) var(--ease-out) both;
 }
 
 [data-motion="on"] .hero h1 {
   animation-delay: 60ms;
 }
-
 [data-motion="on"] .hero-intro {
   animation-delay: 120ms;
 }
-
 [data-motion="on"] .hero-actions {
   animation-delay: 180ms;
 }
-
 [data-motion="on"] .hero-availability {
   animation-delay: 220ms;
 }
+[data-motion="on"] .hero-evidence {
+  animation-delay: 240ms;
+}
 
-[data-motion="on"] .evidence-strip {
-  animation-delay: 260ms;
+/* Each evidence row arrives after the panel it sits in, so the three facts
+   read as a list being counted out rather than a block appearing. */
+[data-motion="on"] .evidence-strip > div {
+  animation: enter var(--dur-enter) var(--ease-out) both;
+}
+
+[data-motion="on"] .evidence-strip > div:nth-child(1) {
+  animation-delay: 320ms;
+}
+[data-motion="on"] .evidence-strip > div:nth-child(2) {
+  animation-delay: 400ms;
+}
+[data-motion="on"] .evidence-strip > div:nth-child(3) {
+  animation-delay: 480ms;
 }
 
 @keyframes enter {
@@ -86,36 +170,114 @@
   }
 }
 
-/* ---- Escape hatch ------------------------------------------------------- */
+/* ==========================================================================
+   3. Hover and focus
+   ========================================================================== */
+/* Feedback only. Nothing here moves unless a pointer or a key put it there. */
+
+.project-visual {
+  transition:
+    border-color var(--dur-ui) var(--ease-out),
+    transform var(--dur-ui) var(--ease-out);
+}
+
+.project-row:hover .project-visual,
+.featured:hover .project-visual {
+  border-color: color-mix(in srgb, var(--project-accent, var(--accent)) 40%, transparent);
+  transform: translateY(-2px);
+}
+
+/* The step numbers pick up the project colour on hover, which ties the card
+   to the schematic beside it. */
+.visual-flow li span {
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+.project-row:hover .visual-flow li span,
+.featured:hover .visual-flow li span {
+  color: var(--project-accent, var(--accent-text));
+}
+
+.featured::before {
+  transition: width var(--dur-ui) var(--ease-out);
+}
+
+.featured:hover::before {
+  width: 3px;
+}
+
+/* Architecture rows lift their parts on hover so a layer reads as one unit. */
+.architecture-layer {
+  transition: background-color var(--dur-micro) var(--ease-out);
+}
+
+.architecture-layer:hover {
+  background: var(--surface-raised);
+}
+
+.stack-list li,
+.evidence-chip {
+  transition:
+    border-color var(--dur-micro) var(--ease-out),
+    color var(--dur-micro) var(--ease-out);
+}
+
+.stack-list li:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* The whole card is the target, so its hover drives the inner arrow. */
+.case-next a svg {
+  transition: transform var(--dur-micro) var(--ease-out);
+}
+
+.case-next a:hover svg {
+  transform: translateX(3px);
+}
+
+.case-next a:first-child:hover svg {
+  transform: translateX(-3px);
+}
+
+/* ==========================================================================
+   4. Escape hatch
+   ========================================================================== */
 /* `!important` is correct here: this rule exists precisely to beat an
-   in-flight transition that can no longer complete. */
+   in-flight transition that can no longer complete. It must stay in sync with
+   every hidden state declared above. */
 
 [data-motion="off"] [data-reveal],
 [data-motion="off"] [data-reveal-stagger],
 [data-motion="off"] [data-reveal-stagger] > *,
+[data-motion="off"] [data-reveal-sequence],
+[data-motion="off"] [data-reveal-sequence] > *,
+[data-motion="off"] .visual-flow li::after,
+[data-motion="off"] .featured::before,
 [data-motion="off"] .hero-label,
 [data-motion="off"] .hero h1,
 [data-motion="off"] .hero-intro,
 [data-motion="off"] .hero-actions,
 [data-motion="off"] .hero-availability,
-[data-motion="off"] .evidence-strip {
+[data-motion="off"] .hero-evidence,
+[data-motion="off"] .evidence-strip > div {
   opacity: 1 !important;
   transform: none !important;
   transition: none !important;
   animation: none !important;
 }
 
-/* ---- Hover affordances -------------------------------------------------- */
-
-.project-row .project-visual,
-.featured .project-visual {
-  transition: border-color var(--dur-ui) var(--ease-out);
-}
-
-.project-row:hover .project-visual,
-.featured:hover .project-visual {
-  border-color: color-mix(in srgb, var(--project-accent, var(--accent)) 40%, transparent);
-}
+/* ==========================================================================
+   5. Reduced motion
+   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   html {

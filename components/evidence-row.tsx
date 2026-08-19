@@ -31,7 +31,7 @@ export function EvidenceRow({
   label?: string;
 }) {
   return (
-    <ul className="evidence-row" aria-label={label}>
+    <ul className="evidence-row" aria-label={label} data-reveal-stagger>
       {evidence.map((item) => {
         const Icon = icons[item.kind];
         return (
