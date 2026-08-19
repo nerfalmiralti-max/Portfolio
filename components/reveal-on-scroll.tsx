@@ -35,7 +35,7 @@ export function RevealOnScroll() {
 
     const targets = Array.from(
       document.querySelectorAll<HTMLElement>(
-        "[data-reveal], [data-reveal-stagger], [data-reveal-sequence]",
+        "[data-reveal], [data-reveal-stagger]",
       ),
     );
     if (targets.length === 0) return;

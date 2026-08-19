@@ -6,36 +6,302 @@
  *             the page renders as plain, fully visible content.
  *   "on"    — animate.
  *   "off"   — escape hatch. Cancels everything the motion system owns, even
- *             mid-transition, and forces content visible. Set when an animation
- *             cannot be trusted to finish (a backgrounded tab freezes both
- *             transitions and animations, which would otherwise strand content
- *             at `opacity: 0`).
+ *             mid-transition, and forces content visible. Set when an
+ *             animation cannot be trusted to finish (a backgrounded tab
+ *             freezes both transitions and animations, which would otherwise
+ *             strand content at `opacity: 0`).
  *
- * There are exactly four hidden states, and the escape hatch at the bottom
- * mirrors all four. Nothing else on the site may start invisible — if a new
- * effect needs to, it belongs in one of these primitives so it stays covered.
+ * Six categories, in the order they can happen to a visitor:
  *
- *   .hero-*             load entrance, no observer, no dependency on hydration
- *   [data-reveal]       the element itself, on scroll
- *   [data-reveal-stagger]   direct children, short walk (a row of peers)
- *   [data-reveal-sequence]  direct children, longer walk (something that reads
- *                           in order: a flow, a stack, a set of layers)
+ *   1. Entrance choreography   the wordmark, once per visit, on load
+ *   2. Scroll state            what changes as the page moves under the reader
+ *   3. Section transitions     one element carrying into the next scene
+ *   4. Diagram motion          systems assembling and rearranging
+ *   5. Route transition        index title to case study cover
+ *   6. Reveal (fallback)       the generic primitive, for secondary content
+ *
+ * Rules for adding to this file:
+ *   - a major moment gets its own transition. The generic reveal is for
+ *     supporting content only.
+ *   - nothing animates unless the reader caused it: load, scroll, pointer,
+ *     focus, or press. There is no ambient movement anywhere on this site.
+ *   - transform, opacity, clip-path. Never width, height, top, or left.
+ *   - every hidden state declared here is mirrored in the escape hatch at the
+ *     bottom. If a new effect starts invisible, it belongs in that list.
  */
 
 /* ==========================================================================
-   1. Scroll reveal
+   1. Entrance choreography — hero only, on load
+
+     0ms    the page is already there: background, header, rules
+     80ms   the structural rules draw
+     150ms  the wordmark is cut out of its mask, letter by letter
+     420ms  the positioning line resolves
+     520ms  the two paths become live
+   ========================================================================== */
+
+[data-motion="on"] .hero-meta-rule,
+[data-motion="on"] .hero-base::before {
+  animation: rule-draw var(--dur-signature) 80ms var(--ease-cinematic) both;
+}
+
+[data-motion="on"] .hero-meta .label {
+  animation: enter var(--dur-ui) 80ms var(--ease-enter) both;
+}
+
+/* Each letter clears its own mask rather than fading, which is what makes the
+   word read as being set rather than appearing. */
+[data-motion="on"] .wordmark-letter {
+  animation: glyph-mask var(--dur-signature) var(--ease-cinematic) both;
+  animation-delay: calc(150ms + var(--letter-index) * 52ms);
+}
+
+[data-motion="on"] .wordmark-glyph {
+  animation: glyph-lift var(--dur-signature) var(--ease-cinematic) both;
+  animation-delay: calc(150ms + var(--letter-index) * 52ms);
+}
+
+/* The cover's stem draws from the project number down to its name, arriving
+   just as the schematic beside it finishes assembling. */
+[data-motion="on"] .cover-stem {
+  animation: rule-drop var(--dur-signature) 220ms var(--ease-cinematic) both;
+}
+
+@keyframes rule-drop {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+[data-motion="on"] .hero-statement {
+  animation: enter var(--dur-editorial) 420ms var(--ease-enter) both;
+}
+
+[data-motion="on"] .hero-paths .path-link {
+  animation: enter var(--dur-editorial) var(--ease-enter) both;
+}
+
+[data-motion="on"] .hero-paths .path-link:nth-child(1) {
+  animation-delay: 520ms;
+}
+
+[data-motion="on"] .hero-paths .path-link:nth-child(2) {
+  animation-delay: 590ms;
+}
+
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes glyph-mask {
+  from {
+    clip-path: inset(-25% -10% 100% -10%);
+  }
+}
+
+@keyframes glyph-lift {
+  from {
+    transform: translateY(108%);
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-shift));
+  }
+}
+
+/* ==========================================================================
+   2 + 3. Scroll state and section transitions
+
+   Scroll-driven animations, where the browser has them. These are the only
+   effects on the site tied to scroll position rather than to an event, and
+   they are what makes the hero and the work index read as one scene rather
+   than two: the wordmark recedes instead of cutting, and the marker on the
+   spine the two sections share travels the whole distance between them.
+
+   Everything in this block is enhancement. Without support the sections still
+   follow one another normally.
+   ========================================================================== */
+
+@supports (animation-timeline: view()) {
+  [data-motion="on"] .continuum {
+    view-timeline: --continuum block;
+  }
+
+  [data-motion="on"] .continuum-mark {
+    animation: spine-run linear both;
+    animation-timeline: --continuum;
+  }
+
+  /* The word does not fade out. It settles back and lets the index take the
+     foreground, which keeps it present while the next section arrives. */
+  [data-motion="on"] .wordmark {
+    animation: wordmark-depart linear both;
+    animation-timeline: view();
+    animation-range: exit 0% exit 100%;
+  }
+
+}
+
+@keyframes spine-run {
+  from {
+    transform: translateY(-40%);
+  }
+  to {
+    transform: translateY(455%);
+  }
+}
+
+@keyframes wordmark-depart {
+  to {
+    opacity: 0.24;
+    transform: translateY(-9%) scale(0.965);
+  }
+}
+
+/* ==========================================================================
+   4. Diagram motion
+
+   A system arrives unassembled and puts itself together, once. Node positions
+   and edge geometry are transitions on transforms, declared in globals.css —
+   what lives here is the entrance and the single highlight that runs the
+   forward path afterwards.
+   ========================================================================== */
+
+[data-motion="on"] .sys[data-live="false"] .sys-node-body {
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+[data-motion="on"] .sys-node-body {
+  transition:
+    opacity var(--dur-ui) var(--ease-out),
+    transform var(--dur-ui) var(--ease-enter);
+  transition-delay: calc(var(--node-order) * 70ms);
+}
+
+[data-motion="on"] .sys[data-live="false"] .sys-wire-grow {
+  transform: scaleX(0);
+}
+
+[data-motion="on"] .sys-wire-grow {
+  transform-origin: 0 0;
+  transition: transform var(--dur-morph) var(--ease-enter);
+  transition-delay: 160ms;
+}
+
+/* One highlight travels the forward path when a system becomes live or is
+   rearranged, and then stops. Nothing on this site loops. */
+[data-motion="on"] .sys[data-live="true"] .sys-pulse-dot {
+  animation: pulse-run 900ms var(--ease-cinematic) both;
+  animation-delay: calc(420ms + var(--wire-order) * 130ms);
+}
+
+@keyframes pulse-run {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(var(--wire-length, 0px));
+  }
+}
+
+/* The architecture spine draws, then each layer's node arrives on it in
+   order. Same idea, told with the layers the project actually has. */
+[data-motion="on"] .arch[data-live="false"] .arch-layers::before {
+  transform: scaleY(0);
+}
+
+[data-motion="on"] .arch-layers::before {
+  transition: transform var(--dur-signature) var(--ease-cinematic);
+}
+
+[data-motion="on"] .arch[data-live="false"] .arch-layer {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+[data-motion="on"] .arch-layer {
+  transition:
+    opacity var(--dur-editorial) var(--ease-out),
+    transform var(--dur-editorial) var(--ease-enter);
+  transition-delay: calc(220ms + var(--layer-index) * 110ms);
+}
+
+/* The chosen path in a decision, and the rule that closes an outcome: both
+   draw as the block arrives rather than fading with it. */
+[data-motion="on"] .decision .decision-choice::before {
+  transform: scaleY(0);
+}
+
+[data-motion="on"] .decision.is-visible .decision-choice::before {
+  transform: scaleY(1);
+  transition: transform var(--dur-editorial) 160ms var(--ease-enter);
+}
+
+[data-motion="on"] .outcome .outcome-rule {
+  transform: scaleX(0);
+}
+
+[data-motion="on"] .outcome.is-visible .outcome-rule {
+  transform: scaleX(1);
+  transition: transform var(--dur-signature) 240ms var(--ease-cinematic);
+}
+
+/* The closing mark draws its rule toward the letters it ends on. */
+[data-motion="on"] .footer-mark-dash {
+  transform: scaleX(0);
+}
+
+[data-motion="on"] .footer-mark.is-visible .footer-mark-dash {
+  transform: scaleX(1);
+  transition: transform var(--dur-signature) var(--ease-cinematic);
+}
+
+/* ==========================================================================
+   5. Route transition — index title to case study cover
+   ========================================================================== */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(project-name),
+::view-transition-new(project-name) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.15, 1);
+}
+
+/* ==========================================================================
+   6. Reveal — the fallback primitive
+
+   Supporting content only. Every moment that matters has its own transition
+   above; this exists so a paragraph that nobody choreographed still arrives
+   in keeping with the rest.
    ========================================================================== */
 
 [data-motion="on"] [data-reveal],
-[data-motion="on"] [data-reveal-stagger] > *,
-[data-motion="on"] [data-reveal-sequence] > * {
+[data-motion="on"] [data-reveal-stagger] > * {
   opacity: 0;
   transform: translateY(var(--reveal-shift));
 }
 
 [data-motion="on"] [data-reveal].is-visible,
-[data-motion="on"] [data-reveal-stagger].is-visible > *,
-[data-motion="on"] [data-reveal-sequence].is-visible > * {
+[data-motion="on"] [data-reveal-stagger].is-visible > * {
   opacity: 1;
   transform: none;
   transition:
@@ -54,62 +320,6 @@
   transition-delay: 150ms;
 }
 
-/* Sequences: slower and further, because the order is the point. A booking
-   flow that appears all at once says nothing; one that walks says "step,
-   then step, then step". */
-[data-motion="on"] [data-reveal-sequence] > * {
-  transform: translateY(calc(var(--reveal-shift) * 0.6));
-}
-
-[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(1) {
-  transition-delay: 60ms;
-}
-[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(2) {
-  transition-delay: 150ms;
-}
-[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(3) {
-  transition-delay: 240ms;
-}
-[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(4) {
-  transition-delay: 330ms;
-}
-[data-motion="on"] [data-reveal-sequence].is-visible > *:nth-child(n + 5) {
-  transition-delay: 420ms;
-}
-
-/* The connector between flow steps draws downward as the step it leads to
-   arrives, so the line reads as the link between them rather than decoration. */
-[data-motion="on"] .visual-flow li::after {
-  transform: scaleY(0);
-  transform-origin: top;
-}
-
-[data-motion="on"] .visual-flow.is-visible li::after {
-  transform: scaleY(1);
-  transition: transform var(--dur-ui) var(--ease-out);
-}
-
-[data-motion="on"] .visual-flow.is-visible li:nth-child(1)::after {
-  transition-delay: 130ms;
-}
-[data-motion="on"] .visual-flow.is-visible li:nth-child(2)::after {
-  transition-delay: 220ms;
-}
-[data-motion="on"] .visual-flow.is-visible li:nth-child(n + 3)::after {
-  transition-delay: 310ms;
-}
-
-/* The flagship's accent edge draws down as the card arrives. */
-[data-motion="on"] .featured::before {
-  transform: scaleY(0);
-  transform-origin: top;
-}
-
-[data-motion="on"] .featured.is-visible::before {
-  transform: scaleY(1);
-  transition: transform var(--dur-enter) 120ms var(--ease-out);
-}
-
 /* The opening statement of a case study gets a slower entrance than the
    sections under it. It is the sentence the whole page rests on. */
 [data-motion="on"] .case-block[data-tone="lede"].is-visible {
@@ -117,198 +327,7 @@
 }
 
 /* ==========================================================================
-   2. Hero entrance
-   ========================================================================== */
-/* Above the fold, so it animates on load rather than on scroll. No observer
-   involved, and no dependency on hydration having finished. */
-
-/* The one piece of choreography on the site. Runs once, on load, in CSS, so
-   it needs neither hydration nor an observer:
-
-     0ms    identity line
-     140ms  headline assembles, line by line
-     420ms  supporting sentence
-     520ms  actions
-     600ms  availability
-     660ms  evidence panel, then its rows count out
-
-   Lines are lifted out of their masks rather than faded, which is why the
-   headline reads as being set rather than appearing. */
-
-[data-motion="on"] .hero-label {
-  animation: enter var(--dur-ui) var(--ease-enter) both;
-}
-
-[data-motion="on"] .hero-line > span {
-  animation: line-lift var(--dur-signature) var(--ease-cinematic) both;
-}
-
-[data-motion="on"] .hero-line:nth-child(1) > span {
-  animation-delay: 140ms;
-}
-[data-motion="on"] .hero-line:nth-child(2) > span {
-  animation-delay: 230ms;
-}
-[data-motion="on"] .hero-line:nth-child(3) > span {
-  animation-delay: 320ms;
-}
-
-[data-motion="on"] .hero-intro,
-[data-motion="on"] .hero-actions,
-[data-motion="on"] .hero-availability,
-[data-motion="on"] .hero-evidence {
-  animation: enter var(--dur-editorial) var(--ease-enter) both;
-}
-
-[data-motion="on"] .hero-intro {
-  animation-delay: 420ms;
-}
-[data-motion="on"] .hero-actions {
-  animation-delay: 520ms;
-}
-[data-motion="on"] .hero-availability {
-  animation-delay: 600ms;
-}
-[data-motion="on"] .hero-evidence {
-  animation-delay: 660ms;
-}
-
-@keyframes line-lift {
-  from {
-    transform: translateY(var(--line-shift));
-  }
-}
-
-/* Each evidence row arrives after the panel it sits in, so the three facts
-   read as a list being counted out rather than a block appearing. */
-[data-motion="on"] .evidence-strip > div {
-  animation: enter var(--dur-enter) var(--ease-out) both;
-}
-
-[data-motion="on"] .evidence-strip > div:nth-child(1) {
-  animation-delay: 760ms;
-}
-[data-motion="on"] .evidence-strip > div:nth-child(2) {
-  animation-delay: 840ms;
-}
-[data-motion="on"] .evidence-strip > div:nth-child(3) {
-  animation-delay: 920ms;
-}
-
-@keyframes enter {
-  from {
-    opacity: 0;
-    transform: translateY(var(--reveal-shift));
-  }
-}
-
-/* ==========================================================================
-   3. Hover and focus
-   ========================================================================== */
-/* Feedback only. Nothing here moves unless a pointer or a key put it there. */
-
-.project-visual {
-  transition:
-    border-color var(--dur-ui) var(--ease-out),
-    transform var(--dur-ui) var(--ease-out);
-}
-
-.project-row:hover .project-visual,
-.featured:hover .project-visual {
-  border-color: color-mix(in srgb, var(--project-accent, var(--accent)) 40%, transparent);
-  transform: translateY(-2px);
-}
-
-/* The step numbers pick up the project colour on hover, which ties the card
-   to the schematic beside it. */
-.visual-flow li span {
-  transition: color var(--dur-ui) var(--ease-out);
-}
-
-.project-row:hover .visual-flow li span,
-.featured:hover .visual-flow li span {
-  color: var(--project-accent, var(--accent-text));
-}
-
-.featured::before {
-  transition: width var(--dur-ui) var(--ease-out);
-}
-
-.featured:hover::before {
-  width: 3px;
-}
-
-
-/* Screenshots respond inside their own frame — the capture drifts, the frame
-   does not, which reads as looking closer rather than as the page moving. */
-.project-row .shot,
-.flagship .shot {
-  transition: border-color var(--dur-ui) var(--ease-enter);
-}
-
-.project-row:hover .shot,
-.flagship:hover .shot {
-  border-color: color-mix(in srgb, var(--project-accent, var(--accent)) 45%, transparent);
-}
-
-.project-row:hover .shot-viewport img,
-.flagship:hover .shot-viewport img {
-  transform: scale(1.018);
-}
-
-.shot-url {
-  transition: color var(--dur-micro) var(--ease-responsive);
-}
-
-.project-row:hover .shot-url,
-.flagship:hover .shot-url {
-  color: var(--text);
-}
-
-/* Architecture rows lift their parts on hover so a layer reads as one unit. */
-.architecture-layer {
-  transition: background-color var(--dur-micro) var(--ease-out);
-}
-
-.architecture-layer:hover {
-  background: var(--surface-raised);
-}
-
-.stack-list li,
-.evidence-item {
-  transition:
-    border-color var(--dur-micro) var(--ease-out),
-    color var(--dur-micro) var(--ease-out);
-}
-
-.stack-list li:hover {
-  border-color: var(--line-strong);
-  color: var(--text);
-}
-
-.button:hover {
-  transform: translateY(-1px);
-}
-
-.button:active {
-  transform: translateY(0);
-}
-
-/* The whole card is the target, so its hover drives the inner arrow. */
-.case-next a svg {
-  transition: transform var(--dur-micro) var(--ease-out);
-}
-
-.case-next a:hover svg {
-  transform: translateX(3px);
-}
-
-.case-next a:first-child:hover svg {
-  transform: translateX(-3px);
-}
-
-/* ==========================================================================
-   4. Escape hatch
+   7. Escape hatch
    ========================================================================== */
 /* `!important` is correct here: this rule exists precisely to beat an
    in-flight transition that can no longer complete. It must stay in sync with
@@ -317,27 +336,37 @@
 [data-motion="off"] [data-reveal],
 [data-motion="off"] [data-reveal-stagger],
 [data-motion="off"] [data-reveal-stagger] > *,
-[data-motion="off"] [data-reveal-sequence],
-[data-motion="off"] [data-reveal-sequence] > *,
-[data-motion="off"] .visual-flow li::after,
-[data-motion="off"] .featured::before,
-[data-motion="off"] .hero-label,
-[data-motion="off"] .hero h1,
-[data-motion="off"] .hero-line > span,
-[data-motion="off"] .hero-intro,
-[data-motion="off"] .hero-actions,
-[data-motion="off"] .hero-availability,
-[data-motion="off"] .hero-evidence,
-[data-motion="off"] .shot-viewport img,
-[data-motion="off"] .evidence-strip > div {
+[data-motion="off"] .hero-meta .label,
+[data-motion="off"] .hero-meta-rule,
+[data-motion="off"] .hero-base::before,
+[data-motion="off"] .wordmark,
+[data-motion="off"] .wordmark-letter,
+[data-motion="off"] .wordmark-glyph,
+[data-motion="off"] .hero-statement,
+[data-motion="off"] .cover-stem,
+[data-motion="off"] .path-link,
+[data-motion="off"] .sys-node-body,
+[data-motion="off"] .sys-wire-grow,
+[data-motion="off"] .arch-layers::before,
+[data-motion="off"] .arch-layer,
+[data-motion="off"] .decision-choice::before,
+[data-motion="off"] .outcome-rule,
+[data-motion="off"] .footer-mark-dash,
+[data-motion="off"] .continuum-mark {
   opacity: 1 !important;
   transform: none !important;
+  clip-path: none !important;
   transition: none !important;
   animation: none !important;
 }
 
 /* ==========================================================================
-   5. Reduced motion
+   8. Reduced motion
+
+   The choreography is switched off at the source — `data-motion` is never set
+   — so this block only has to catch the interaction feedback declared in
+   globals.css. The composition is unchanged: same scale, same rules, same
+   colour. It simply stops moving.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -351,5 +380,10 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* The pointer mask is a movement, not a state, so it does not run either. */
+  .hero-scan {
+    display: none;
   }
 }

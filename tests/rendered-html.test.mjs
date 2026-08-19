@@ -1,6 +1,17 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+const ROUTES = [
+  "/",
+  "/work",
+  "/work/99-aktau",
+  "/work/tuesday-lounge-bar",
+  "/work/mangystau-trials",
+  "/about",
+  "/contact",
+  "/privacy",
+];
+
 async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
@@ -18,36 +29,29 @@ async function html(path) {
   return response.text();
 }
 
-test("the homepage server-renders its headline and evidence", async () => {
+test("the homepage server-renders its identity and its work", async () => {
   const body = await html("/");
   assert.match(body, /Altair Tolesh/);
-  assert.match(body, /design and build/);
+  assert.match(body, /design and build websites/);
   assert.match(body, /99 AKTAU/);
-  assert.match(body, /Tuesday Lounge Bar/);
+  assert.match(body, /TUESDAY/);
   assert.doesNotMatch(body, /codex-preview|react-loading-skeleton/);
 });
 
 test("content is present in the HTML, not revealed by client JS", async () => {
-  // Regression guard: reveal animations must never gate content on scripting.
-  // The headline is composed of masked lines, so assert every line is in the
-  // server HTML rather than assuming one text node.
+  // Regression guard: no entrance may gate content on scripting. The wordmark
+  // is cut into one masked element per letter, so assert every letter is in
+  // the server HTML and that the whole name is still one accessible string.
   const body = await html("/");
-  for (const line of ["I design and build", "websites that go", "into production."]) {
-    assert.match(body, new RegExp(`<span>${line.replace(".", "\\.")}</span>`));
+  for (const letter of ["A", "L", "T", "I", "R"]) {
+    assert.match(body, new RegExp(`<span class="wordmark-glyph">${letter}</span>`));
   }
+  assert.match(body, /aria-label="Altair Tolesh"/);
   assert.doesNotMatch(body, /data-motion="on"/);
 });
 
 test("every route server-renders", async () => {
-  for (const path of [
-    "/work",
-    "/work/99-aktau",
-    "/work/tuesday-lounge-bar",
-    "/work/mangystau-trials",
-    "/about",
-    "/contact",
-    "/privacy",
-  ]) {
+  for (const path of ROUTES.slice(1)) {
     await html(path);
   }
 });
@@ -61,13 +65,25 @@ test("case studies carry verifiable links and decisions", async () => {
   assert.match(body, /Architecture/);
 });
 
+test("project visuals are drawn, never captured", async () => {
+  // Every project visual is an SVG the page draws from the project's own
+  // structure. A screenshot, a photograph, or a raster asset of any kind
+  // reappearing here is a regression.
+  for (const path of ["/", "/work", ...ROUTES.slice(2, 5)]) {
+    const body = await html(path);
+    assert.doesNotMatch(body, /\.(webp|png|jpg|jpeg|avif)\b/i, path);
+    assert.doesNotMatch(body, /<img\b/i, path);
+    assert.doesNotMatch(body, /<picture\b/i, path);
+  }
+
+  const home = await html("/");
+  assert.match(home, /class="sys-canvas"/);
+  assert.match(home, /role="img" aria-label="System diagram/);
+});
+
 test("project schematics contain no invented product data", async () => {
-  // The old visuals showed fake booking IDs, times, and trip distances.
-  for (const path of [
-    "/work/99-aktau",
-    "/work/tuesday-lounge-bar",
-    "/work/mangystau-trials",
-  ]) {
+  // No fake booking IDs, distances, prices, or times may appear in a visual.
+  for (const path of ROUTES.slice(2, 5)) {
     const body = await html(path);
     assert.doesNotMatch(body, /Request #\d/);
     assert.doesNotMatch(body, /\d+ km/);
@@ -75,33 +91,31 @@ test("project schematics contain no invented product data", async () => {
   }
 });
 
-test("case studies open on a real screenshot of the live site", async () => {
-  const body = await html("/work/99-aktau");
-  // Captured from the public pages of the deployed site, not a mockup.
-  assert.match(body, /\/projects\/99-aktau\/desktop\.webp/);
-  assert.match(body, /\/projects\/99-aktau\/mobile\.webp/);
-  // Small screens must get the mobile capture, not a shrunken desktop one.
-  assert.match(body, /media="\(max-width: 720px\)"/);
-  // Every shipped capture needs a real description.
-  assert.doesNotMatch(body, /alt=""/);
-});
+test("no page exposes where the author lives, studies, or is right now", async () => {
+  // The public site describes the work. It does not place the person: no city,
+  // no country, no campus, no timezone, no coordinates, no study plans.
+  const forbidden = [
+    /Kazakhstan/i,
+    /Nazarbayev/i,
+    /Intellectual School/i,
+    /\bUTC\s*\+?\s*5\b/i,
+    /\bin Aktau\b/i,
+    /\bfrom Aktau\b/i,
+    /\bBased in\b/i,
+    /\bStudying at\b/i,
+    /\bStanford\b/i,
+    /\d{1,3}\.\d+°\s*[NEWS]\b/,
+    /homeLocation/,
+    /alumniOf/,
+    /og\.png/,
+  ];
 
-test("project screenshots exist on disk at the referenced paths", async () => {
-  const { existsSync, statSync } = await import("node:fs");
-  for (const slug of ["99-aktau", "tuesday", "mangystau"]) {
-    for (const shot of ["desktop", "mobile"]) {
-      const file = new URL(`../public/projects/${slug}/${shot}.webp`, import.meta.url);
-      assert.ok(existsSync(file), `missing ${slug}/${shot}.webp`);
-      // Guard against shipping an unoptimised capture by accident.
-      assert.ok(statSync(file).size < 250_000, `${slug}/${shot}.webp is too heavy`);
+  for (const path of ROUTES) {
+    const body = await html(path);
+    for (const pattern of forbidden) {
+      assert.doesNotMatch(body, pattern, `${pattern} appears on ${path}`);
     }
   }
-});
-
-test("the hero headline is server-rendered with its full accessible name", async () => {
-  const body = await html("/");
-  assert.match(body, /aria-label="I design and build websites that go into production\./);
-  assert.match(body, /class="hero-line"/);
 });
 
 test("merged pages keep their old URLs working", async () => {
@@ -119,15 +133,13 @@ test("merged pages keep their old URLs working", async () => {
   }
 });
 
-test("project hierarchy puts the client project first", async () => {
-  // Phase 2 differentiates featured from supporting work by composition, so a
-  // broken tier would silently promote the prototype.
+test("the work index keeps the client project first", async () => {
   const body = await html("/work");
-  const featured = body.indexOf("featured");
-  const prototype = body.indexOf("Mangystau Trials");
-  assert.ok(featured > -1, "featured treatment is rendered");
+  const client = body.indexOf("99 AKTAU");
+  const prototype = body.indexOf("MANGYSTAU");
+  assert.ok(client > -1, "the commercial project is in the index");
   assert.ok(
-    body.indexOf("99 AKTAU") < prototype,
+    client < prototype,
     "the commercial project appears before the hackathon prototype",
   );
   // The prototype must never be dressed up as finished work.

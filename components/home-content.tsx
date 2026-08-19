@@ -1,124 +1,61 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { SectionHeading } from "@/components/section-heading";
-import { FeaturedProject } from "@/components/featured-project";
-import { ProjectCard } from "@/components/project-card";
+import { Hero } from "@/components/hero";
+import { ProjectIndex } from "@/components/project-index";
+import { ProcessTrack } from "@/components/process-track";
 import { ContactBlock } from "@/components/contact-block";
-import { ExternalLink } from "@/components/external-link";
-import { processSteps } from "@/content/process";
-import { homepageCopy, profile } from "@/content/profile";
-import { featuredProject, supportingProjects } from "@/content/projects";
+import { homepageCopy } from "@/content/profile";
+import { projects } from "@/content/projects";
 
 export function HomeContent() {
   return (
     <>
-      <section className="hero shell">
-        <div className="hero-grid">
-          <div>
-            <p className="label hero-label">{homepageCopy.heroLabel}</p>
-            {/* Each line is masked by its own overflow box, so the reveal
-                lifts lines rather than fading a block. The full sentence is
-                one accessible string. */}
-            <h1 aria-label={homepageCopy.heroLines.join(" ")}>
-              {homepageCopy.heroLines.map((line) => (
-                <span className="hero-line" key={line} aria-hidden="true">
-                  <span>{line}</span>
-                </span>
-              ))}
-            </h1>
-            <p className="hero-intro">{homepageCopy.heroBody}</p>
+      {/* Hero and index share one spine: the rule that starts under the
+          wordmark is the rule the project index hangs from, and the marker on
+          it travels as the reader moves between them. */}
+      <div className="continuum">
+        <span className="continuum-spine" aria-hidden="true">
+          <span className="continuum-mark" />
+        </span>
 
-            <div className="hero-actions">
-              <Link href="/work" className="button button-primary">
-                See the work <ArrowRight size={16} aria-hidden="true" />
-              </Link>
-              <ExternalLink
-                href={profile.github}
-                className="button button-quiet"
-                size={15}
-              >
-                GitHub
-              </ExternalLink>
-            </div>
+        <Hero />
 
-            <p className="label hero-availability">{profile.availability}</p>
-          </div>
+        <ProjectIndex
+          projects={projects}
+          eyebrow={homepageCopy.workEyebrow}
+          heading={homepageCopy.workHeading}
+          body={homepageCopy.workBody}
+        />
+      </div>
 
-          <div className="hero-evidence">
-            <p className="label">What you can check</p>
-            <dl className="evidence-strip">
-              {homepageCopy.heroEvidence.map((item) => (
-                <div key={item.label}>
-                  <dt>{item.value}</dt>
-                  <dd>{item.label}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </section>
-
-      <section className="section section-ruled">
+      <section className="section ledger-section">
         <div className="shell">
-          <SectionHeading eyebrow="Featured" title={homepageCopy.featuredHeading} />
-          <FeaturedProject project={featuredProject} />
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="shell">
-          <SectionHeading
-            eyebrow="Selected work"
-            title={homepageCopy.workHeading}
-            body={homepageCopy.workBody}
-          />
-          <div className="project-list">
-            {supportingProjects.map((project) => (
-              <ProjectCard project={project} key={project.slug} />
+          <p className="label">What you can check</p>
+          <dl className="ledger" data-reveal-stagger>
+            {homepageCopy.ledger.map((item) => (
+              <div key={item.label}>
+                <dt>{item.value}</dt>
+                <dd>{item.label}</dd>
+              </div>
             ))}
-          </div>
-          <div className="section-more">
-            <Link href="/work" className="text-link">
-              All work and case studies <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-          </div>
+          </dl>
         </div>
       </section>
 
       <section className="section section-ruled">
         <div className="shell statement-block" data-reveal>
-          <div>
-            <p className="label">Approach</p>
-            <h2 className="statement-heading">{homepageCopy.noteHeading}</h2>
-          </div>
-          <div className="prose">
-            <p>{homepageCopy.noteBody}</p>
-          </div>
+          <p className="label">Approach</p>
+          <h2 className="statement-heading">{homepageCopy.noteHeading}</h2>
+          <p className="statement-body">{homepageCopy.noteBody}</p>
         </div>
       </section>
 
-      <section className="section section-ruled">
+      <section className="section section-ruled" id="process">
         <div className="shell">
-          <SectionHeading
-            eyebrow="Process"
-            title={homepageCopy.processHeading}
-            body={homepageCopy.processBody}
-          />
-          <ol className="process-list" data-reveal-stagger>
-            {processSteps.map((step) => (
-              <li key={step.number}>
-                <p className="label">{step.number}</p>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="section-more">
-            <Link href="/about#process" className="text-link">
-              How this played out on each project{" "}
-              <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-          </div>
+          <header className="index-head" data-reveal>
+            <p className="label">{homepageCopy.processEyebrow}</p>
+            <h2>{homepageCopy.processHeading}</h2>
+            <p className="index-head-body">{homepageCopy.processBody}</p>
+          </header>
+          <ProcessTrack />
         </div>
       </section>
 

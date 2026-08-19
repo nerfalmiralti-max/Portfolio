@@ -39,18 +39,41 @@ export type Decision = {
 };
 
 /**
- * A real screenshot of the live site, captured from its public pages only.
- * Two crops so small screens get the mobile build rather than a shrunken
- * desktop one.
+ * An abstract diagram of how a project is put together. Nodes and edges come
+ * from what the project actually does. There are no product screenshots on
+ * this site, and nothing here invents a record, a price, or a metric.
+ *
+ * Coordinates live in a 120 x 100 space so the renderer can draw straight
+ * edges at true angles. Slots are positional: node 0 of one project becomes
+ * node 0 of the next, which is what makes switching read as one system
+ * rearranging rather than three diagrams swapping places.
  */
-export type ProjectImage = {
-  desktop: string;
-  mobile: string;
-  width: number;
-  height: number;
-  mobileWidth: number;
-  mobileHeight: number;
+export type SystemNodeKind = "input" | "core" | "gate" | "output";
+
+export type SystemNode = {
+  label: string;
+  x: number;
+  y: number;
+  kind: SystemNodeKind;
+};
+
+export type SystemEdge = {
+  from: number;
+  to: number;
+  /** `return` edges draw dashed: information coming back, not moving on. */
+  kind?: "primary" | "return";
+};
+
+export type ProjectSystem = {
+  caption: string;
+  outcomeLabel: string;
+  outcome: string;
+  /** Read out to assistive technology in place of the drawing. */
   alt: string;
+  /** The same system in words, for small screens and for no-JS. */
+  steps: string[];
+  nodes: SystemNode[];
+  edges: SystemEdge[];
 };
 
 export type ProjectSection = {
@@ -75,7 +98,10 @@ export type Project = {
   role: string[];
   stack: string[];
   evidence: Evidence[];
-  image: ProjectImage;
+  /** How the name is set in the index and on the case study cover. */
+  indexName: string;
+  wordmarkLines: string[];
+  system: ProjectSystem;
   architecture: ArchitectureLayer[];
   decisions: Decision[];
   result: string;
@@ -98,7 +124,7 @@ export const projects: Project[] = [
     status: "Completed",
     year: "2025",
     tagline:
-      "A website for a PlayStation club in Aktau, with guest booking requests and an admin area to manage them.",
+      "A website for a PlayStation club, with guest booking requests and an admin area to manage them.",
     summary:
       "A guest picks a hall and sends a booking request. The administrator opens it and accepts, rejects, or deletes it. The guest sees the updated status. The public site and the admin tools read the same booking data.",
     problem:
@@ -119,14 +145,34 @@ export const projects: Project[] = [
       { kind: "database", label: "Supabase database" },
       { kind: "auth", label: "Admin authentication" },
     ],
-    image: {
-      desktop: "/projects/99-aktau/desktop.webp",
-      mobile: "/projects/99-aktau/mobile.webp",
-      width: 1600,
-      height: 1000,
-      mobileWidth: 780,
-      mobileHeight: 1688,
-      alt: "The 99 AKTAU home page: club navigation, hall pricing, a booking call to action, and an administrator sign-in entry point.",
+    indexName: "99 AKTAU",
+    wordmarkLines: ["99", "AKTAU"],
+    system: {
+      caption: "Booking flow",
+      outcomeLabel: "Result",
+      outcome: "One record, two views",
+      alt: "System diagram of the 99 AKTAU booking flow. A guest sends a request, the request becomes a stored record with a status, an authenticated administrator reads that record and writes a decision back to it, and the guest sees the resulting status. Both sides read the same record.",
+      steps: [
+        "Guest chooses a hall and sends a request",
+        "The request is stored with a status",
+        "An authenticated administrator reviews it",
+        "Accept, reject, or delete writes back",
+        "The guest sees the status that was set",
+      ],
+      nodes: [
+        { label: "Guest", x: 0, y: 14, kind: "input" },
+        { label: "Request", x: 40, y: 14, kind: "core" },
+        { label: "Record", x: 66, y: 56, kind: "core" },
+        { label: "Admin", x: 120, y: 14, kind: "gate" },
+        { label: "Status", x: 66, y: 100, kind: "output" },
+      ],
+      edges: [
+        { from: 0, to: 1 },
+        { from: 1, to: 2 },
+        { from: 2, to: 3 },
+        { from: 3, to: 2, kind: "return" },
+        { from: 2, to: 4 },
+      ],
     },
     architecture: [
       {
@@ -234,14 +280,34 @@ export const projects: Project[] = [
       { kind: "responsive", label: "Mobile-first layout" },
       { kind: "languages", label: "Russian and Kazakh" },
     ],
-    image: {
-      desktop: "/projects/tuesday/desktop.webp",
-      mobile: "/projects/tuesday/mobile.webp",
-      width: 1600,
-      height: 1000,
-      mobileWidth: 780,
-      mobileHeight: 1688,
-      alt: "The Tuesday Lounge Bar home page: a full-bleed food photograph behind a large headline, with menu and table booking actions and a Russian and Kazakh language switch.",
+    indexName: "TUESDAY",
+    wordmarkLines: ["TUESDAY"],
+    system: {
+      caption: "Information path",
+      outcomeLabel: "On mobile",
+      outcome: "Practical content lifts",
+      alt: "System diagram of the Tuesday Lounge Bar information path. The page runs from venue and atmosphere down through menu, location and contacts, to a table enquiry. On a small screen the menu and the location branch upward, so the practical content is reached first.",
+      steps: [
+        "Venue and atmosphere",
+        "Menu",
+        "Location and contacts",
+        "Table enquiry",
+        "On mobile the practical content moves up",
+      ],
+      nodes: [
+        { label: "Venue", x: 14, y: 0, kind: "input" },
+        { label: "Menu", x: 14, y: 33, kind: "core" },
+        { label: "Location", x: 14, y: 66, kind: "core" },
+        { label: "Enquiry", x: 14, y: 100, kind: "output" },
+        { label: "Mobile order", x: 104, y: 50, kind: "gate" },
+      ],
+      edges: [
+        { from: 0, to: 1 },
+        { from: 1, to: 2 },
+        { from: 2, to: 3 },
+        { from: 1, to: 4, kind: "return" },
+        { from: 2, to: 4, kind: "return" },
+      ],
     },
     architecture: [
       {
@@ -339,14 +405,36 @@ export const projects: Project[] = [
       { kind: "live", label: "Deployed and reachable" },
       { kind: "repository", label: "Source on GitHub" },
     ],
-    image: {
-      desktop: "/projects/mangystau/desktop.webp",
-      mobile: "/projects/mangystau/mobile.webp",
-      width: 1600,
-      height: 1000,
-      mobileWidth: 780,
-      mobileHeight: 1688,
-      alt: "The Mangystau Trials home page: a landscape photograph of chalk canyons behind a large headline, with route creation actions and trip length, transport and season figures.",
+    indexName: "MANGYSTAU",
+    wordmarkLines: ["MANGYSTAU"],
+    system: {
+      caption: "Route output",
+      outcomeLabel: "Single output",
+      outcome: "The route",
+      alt: "System diagram of the Mangystau Trials route output. Budget, trip length, and interests feed one route. The route drives both the map and the location list, and the two share a single ordering.",
+      steps: [
+        "Budget, days, interests, transport",
+        "One route is ordered from those inputs",
+        "The map reads that route",
+        "The location list reads the same route",
+        "Map and list share one order",
+      ],
+      nodes: [
+        { label: "Budget", x: 6, y: 4, kind: "input" },
+        { label: "Days", x: 6, y: 50, kind: "input" },
+        { label: "Interests", x: 6, y: 96, kind: "input" },
+        { label: "Route", x: 58, y: 50, kind: "core" },
+        { label: "Map", x: 120, y: 12, kind: "output" },
+        { label: "List", x: 120, y: 88, kind: "output" },
+      ],
+      edges: [
+        { from: 0, to: 3 },
+        { from: 1, to: 3 },
+        { from: 2, to: 3 },
+        { from: 3, to: 4 },
+        { from: 3, to: 5 },
+        { from: 4, to: 5, kind: "return" },
+      ],
     },
     architecture: [
       {

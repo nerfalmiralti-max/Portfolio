@@ -13,9 +13,29 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <header className="page-hero shell">
-        <p className="label">Contact · Aktau · UTC+5</p>
-        <h1>{contactCopy.heading}</h1>
+      <header className="contact-hero shell">
+        <p className="label">{contactCopy.eyebrow}</p>
+
+        {/* Authored line breaks: the question is a graphic object here, not a
+            paragraph that happens to end in a question mark. */}
+        <h1
+          className="question"
+          aria-label={contactCopy.questionLines.join(" ")}
+          style={
+            {
+              "--question-chars": Math.max(
+                ...contactCopy.questionLines.map((line) => line.length),
+              ),
+            } as React.CSSProperties
+          }
+        >
+          {contactCopy.questionLines.map((line) => (
+            <span className="question-line" key={line} aria-hidden="true">
+              <span>{line}</span>
+            </span>
+          ))}
+        </h1>
+
         <p className="lede">{contactCopy.body}</p>
       </header>
 

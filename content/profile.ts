@@ -1,7 +1,16 @@
+/**
+ * Public identity and page copy.
+ *
+ * Privacy rule for this file: a visitor is here to judge the work. Nothing
+ * here states where the owner lives, studies, or spends the rest of the day.
+ * No city, no campus, no timezone, no schedule, no study plans.
+ */
 export const profile = {
   name: "Altair Tolesh",
-  location: "Aktau, Kazakhstan",
-  school: "Nazarbayev Intellectual School in Aktau",
+  /** The hero is built out of this word, so it lives with the identity. */
+  wordmark: "ALTAIR",
+  initials: "AT",
+  role: "Web design and development",
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
   github:
     process.env.NEXT_PUBLIC_GITHUB_URL ??
@@ -10,51 +19,75 @@ export const profile = {
 } as const;
 
 export const homepageCopy = {
-  heroLabel: "Web design and development · Aktau, Kazakhstan",
-  /** Authored line breaks: the reveal masks each line, and the composition
-   *  should not change shape because a viewport is 40px wider. */
-  heroLines: ["I design and build", "websites that go", "into production."],
+  heroIndex: "Index",
+  heroSystem: "Live system",
+  /** One line of positioning. Not a biography, not a location. */
+  heroStatement: "I design and build websites that go into production.",
   heroBody:
-    "I do the design, the frontend, the backend wiring, and the deploy. Three sites are live: one for a paying client, one for a lounge bar, and one hackathon prototype that did not place.",
-  /** Only claims that can be checked from the linked projects and repositories. */
-  heroEvidence: [
-    { value: "3", label: "sites deployed and reachable" },
-    { value: "1", label: "built for a paying client" },
-    { value: "3", label: "public repositories" },
+    "Interface, frontend, data, deployment. Three sites are live: one for a paying client, one for a lounge bar, and one hackathon prototype that did not place.",
+  /** Only claims a visitor can check by following the site's own links. */
+  ledger: [
+    { value: "03", label: "sites deployed and reachable" },
+    { value: "01", label: "built for a paying client" },
+    { value: "03", label: "public repositories" },
   ],
+  workEyebrow: "Selected work",
+  workHeading: "Three systems",
+  workBody:
+    "Each one is live, each one has a case study, and each one has its source in the open.",
   noteHeading: "I would rather show finished work than describe intentions.",
   noteBody:
     "A website can look good and still be hard to use. What decides it is duller than the visual design: the mobile layout, the error states, and everything that still has to be true a month after launch.",
-  featuredHeading: "The project that taught me the most",
-  workHeading: "A hospitality site and a hackathon prototype",
-  workBody:
-    "One is live and finished. One did not reach the hackathon final, and is listed as the prototype it is.",
-  processHeading: "How I work",
+  processEyebrow: "Process",
+  processHeading: "Six stages, one order",
   processBody:
-    "The steps change with the project. The order does not.",
+    "The steps change with the project. The order does not. Each one below carries a real example.",
   contactHeading: "Need a website?",
   contactBody:
     "Send a short description of the project, the pages you need, and any examples you like. I will read it and reply with questions.",
 } as const;
 
 export const aboutCopy = {
-  heading: "I am Altair, a student and developer from Aktau.",
+  eyebrow: "About",
+  heading: "I build the whole website, not a slice of it.",
+  lede: "Student developer. Interface, frontend, data, and deployment on every project here.",
   opening: [
-    "I study at Nazarbayev Intellectual School and build websites outside school. Web development held my attention because the result of every decision shows up on the screen immediately.",
+    "Web development held my attention because the result of every decision shows up on the screen immediately.",
     "At first I worked on appearance. The harder part sits behind the interface: working out what the user actually needs, and then keeping it working once it is deployed and someone else depends on it.",
   ],
+  /** A short manifesto, in order. Each beat is drawn from the projects below. */
+  manifesto: [
+    {
+      number: "01",
+      word: "Build",
+      body: "I take a project end to end — interface, frontend, data, deployment. One person and one system, with no gap in the middle where the work is supposed to be handed over.",
+    },
+    {
+      number: "02",
+      word: "Break",
+      body: "The version that runs locally is not the version that runs. Mobile layouts, authentication state, environment variables: production is where a project tells you what you actually built.",
+    },
+    {
+      number: "03",
+      word: "Ship",
+      body: "A site is finished when its owner can run it without me. That means labelled controls, honest error states, and handover notes they can act on.",
+    },
+    {
+      number: "04",
+      word: "Repeat",
+      body: "Each project so far has corrected something the previous one got wrong. The corrections are specific, and they are written down in the case studies.",
+    },
+  ],
   projects:
-    "99 AKTAU was my first commercial project: a website for a PlayStation club with booking requests, an admin area, Supabase, authentication, and deployment. Tuesday Lounge Bar was a different kind of business website. Mangystau Trials started at a hackathon and taught me to control the size of an idea.",
-  education:
-    "I am also improving my English and preparing for future international study. Stanford is the university I am most interested in, but the immediate goal is simpler: better skills and stronger projects.",
-  judo:
-    "Outside development I train in judo. It is another place where improvement depends on practice, correction, and patience — a weak part gets easier to fix when I test it again instead of guessing.",
+    "99 AKTAU was my first commercial project: booking requests, an admin area, a database, authentication, and a deployment somebody else depends on. Tuesday Lounge Bar was a different problem — no backend, all ordering. Mangystau Trials started at a hackathon and taught me to control the size of an idea.",
   closing:
     "I am still early in this. This portfolio is what I have finished so far, and what I learned while building it.",
 } as const;
 
 export const contactCopy = {
-  heading: "Tell me what website you need.",
+  eyebrow: "Contact",
+  /** Authored line breaks: the question is a graphic object, not a sentence. */
+  questionLines: ["What are", "we building?"],
   body:
     "Share the purpose of the site, the pages you expect, and any examples that explain the direction. I will read the details and reply with questions.",
 } as const;

@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 
 const TITLE = "Altair Tolesh — Web Designer and Developer";
 const DESCRIPTION =
-  "Altair Tolesh designs and builds websites in Aktau, Kazakhstan. Commercial client work, a hospitality site, and a hackathon prototype — each deployed, with the source public.";
+  "Altair Tolesh designs and builds websites that go into production. Commercial client work, a hospitality site, and a hackathon prototype — each deployed, with the source public.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const headerList = await headers();
@@ -49,20 +49,11 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: "en_US",
       siteName: profile.name,
-      images: [
-        {
-          url: "/og.png",
-          width: 1730,
-          height: 909,
-          alt: "Altair Tolesh web design and development portfolio",
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: TITLE,
       description: DESCRIPTION,
-      images: ["/og.png"],
     },
   };
 }
@@ -84,8 +75,6 @@ export default function RootLayout({
     jobTitle: "Web designer and developer",
     url: "/",
     sameAs: [profile.github],
-    homeLocation: { "@type": "Place", name: profile.location },
-    alumniOf: { "@type": "EducationalOrganization", name: profile.school },
     knowsAbout: [
       "Web design",
       "Frontend development",

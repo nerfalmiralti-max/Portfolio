@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { navigation } from "@/content/navigation";
@@ -11,6 +11,33 @@ export function SiteHeader() {
   const pathname = usePathname();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  /**
+   * One indicator travels between navigation items instead of each item
+   * drawing its own underline. Position is written as two custom properties on
+   * the nav, so the movement is a single transform on a single element.
+   */
+  const placeIndicator = useCallback(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const current = nav.querySelector<HTMLElement>('a[aria-current="page"]');
+    if (!current) {
+      nav.dataset.indicator = "off";
+      return;
+    }
+    const navBox = nav.getBoundingClientRect();
+    const box = current.getBoundingClientRect();
+    nav.dataset.indicator = "on";
+    nav.style.setProperty("--nav-x", `${box.left - navBox.left}px`);
+    nav.style.setProperty("--nav-w", `${box.width}px`);
+  }, []);
+
+  useEffect(() => {
+    placeIndicator();
+    window.addEventListener("resize", placeIndicator);
+    return () => window.removeEventListener("resize", placeIndicator);
+  }, [placeIndicator, pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -62,10 +89,11 @@ export function SiteHeader() {
           <span className="monogram" aria-hidden="true">
             AT
           </span>
-          Altair Tolesh
+          <span className="brand-name">Altair Tolesh</span>
         </Link>
 
-        <nav className="desktop-nav" aria-label="Primary">
+        <nav className="desktop-nav" aria-label="Primary" ref={navRef}>
+          <span className="nav-indicator" aria-hidden="true" />
           {navigation.map((item) => (
             <Link
               href={item.href}

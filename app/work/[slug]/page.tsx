@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { ProjectVisual } from "@/components/project-visual";
-import { ProjectShot } from "@/components/project-shot";
+import { SystemDiagram, SystemSteps } from "@/components/system-diagram";
 import { EvidenceRow } from "@/components/evidence-row";
-import { ArchitectureDiagram } from "@/components/architecture-diagram";
+import { ArchitectureMap } from "@/components/architecture-map";
 import { DecisionList } from "@/components/decision-list";
 import { ExternalLink } from "@/components/external-link";
 import { projects } from "@/content/projects";
@@ -50,14 +49,19 @@ export default async function WorkCaseStudy({ params }: Props) {
   const next = projects[(index + 1) % projects.length];
   const previous = projects[(index - 1 + projects.length) % projects.length];
 
-  // Reads as one argument: what it is, why it existed, what it had to solve,
-  // what got built, and where it broke. `tone` varies the typographic weight
-  // so five consecutive sections do not read as one undifferentiated wall.
-  const find = (id: string) => project.sections.find((section) => section.id === id);
-  const narrative = [
+  const find = (id: string) =>
+    project.sections.find((section) => section.id === id);
+
+  // Reads as one argument: what it is, why it existed, and what it had to
+  // solve. The written system follows, then the architecture, then the
+  // decisions — the page answers its own problem in that order.
+  const opening = [
     { id: "overview", title: "Overview", body: project.summary, tone: "lede" },
     find("context") && { ...find("context")!, tone: "default" },
     { id: "problem", title: "The problem", body: project.problem, tone: "default" },
+  ].filter(Boolean) as { id: string; title: string; body: string; tone: string }[];
+
+  const closing = [
     find("product") && { ...find("product")!, tone: "default" },
     find("problems") && { ...find("problems")!, tone: "callout" },
   ].filter(Boolean) as { id: string; title: string; body: string; tone: string }[];
@@ -91,17 +95,52 @@ export default async function WorkCaseStudy({ params }: Props) {
   };
 
   return (
-    <div style={{ "--project-accent": project.accent } as React.CSSProperties}>
-      <header className="case-hero shell">
+    <div
+      className="case"
+      style={{ "--project-accent": project.accent } as React.CSSProperties}
+    >
+      <header className="cover shell">
         <Link href="/work" className="back-link">
           <ArrowLeft size={15} aria-hidden="true" /> All work
         </Link>
 
-        <p className="label label-accent">
+        <p className="label label-accent cover-tag">
           {project.type} · {project.year} · {project.status}
         </p>
-        <h1>{project.name}</h1>
-        <p className="lede">{project.tagline}</p>
+
+        <div className="cover-grid">
+          <h1
+            className="cover-title"
+            style={
+              {
+                "--cover-chars": Math.max(
+                  ...project.wordmarkLines.map((line) => line.length),
+                ),
+              } as React.CSSProperties
+            }
+          >
+            <span className="cover-number" aria-hidden="true">
+              {project.number}
+            </span>
+            {/* Carries the number down to the name, so the height the drawing
+                occupies beside it is composition rather than a gap. */}
+            <span className="cover-stem" aria-hidden="true" />
+            <span className="cover-word" aria-hidden="true">
+              {project.wordmarkLines.map((line) => (
+                <span className="cover-line" key={line}>
+                  <span>{line}</span>
+                </span>
+              ))}
+            </span>
+            <span className="visually-hidden">{project.name}</span>
+          </h1>
+
+          <div className="cover-system">
+            <SystemDiagram systems={[project.system]} />
+          </div>
+        </div>
+
+        <p className="lede cover-lede">{project.tagline}</p>
 
         <EvidenceRow
           evidence={project.evidence}
@@ -145,12 +184,8 @@ export default async function WorkCaseStudy({ params }: Props) {
         </dl>
       </header>
 
-      <div className="case-plate shell" data-reveal>
-        <ProjectShot project={project} priority />
-      </div>
-
       <div className="shell case-body">
-        {narrative.map((section) => (
+        {opening.map((section) => (
           <section
             className="case-block"
             data-tone={section.tone}
@@ -164,32 +199,48 @@ export default async function WorkCaseStudy({ params }: Props) {
           </section>
         ))}
 
-        <section className="case-block case-block-wide" data-reveal>
-          <h2>Architecture</h2>
+        {/* The cover carries the drawing. This is the same system in words,
+            which is also what a small screen and a printed page get. */}
+        <section className="case-block case-block-wide case-system" data-reveal>
+          <h2 id="system">The system, step by step</h2>
           <div className="case-block-body">
-            <ArchitectureDiagram
+            <SystemSteps system={project.system} />
+          </div>
+        </section>
+
+        <section className="case-block case-block-wide" data-reveal>
+          <h2 id="architecture">Architecture</h2>
+          <div className="case-block-body">
+            <ArchitectureMap
               layers={project.architecture}
-              note="Only the layers this project actually uses."
+              note="Only the layers this project actually uses. Select one to trace it."
             />
           </div>
         </section>
 
         <section className="case-block case-block-wide" data-reveal>
-          <h2>Key decisions</h2>
+          <h2 id="decisions">Key decisions</h2>
           <div className="case-block-body">
             <DecisionList decisions={project.decisions} />
           </div>
         </section>
 
-        <section className="case-block case-block-wide" data-reveal>
-          <h2>How it works</h2>
-          <div className="case-block-body">
-            <ProjectVisual variant={project.slug} />
-          </div>
-        </section>
+        {closing.map((section) => (
+          <section
+            className="case-block"
+            data-tone={section.tone}
+            data-reveal
+            key={section.id}
+          >
+            <h2 id={section.id}>{section.title}</h2>
+            <div className="case-block-body">
+              <p>{section.body}</p>
+            </div>
+          </section>
+        ))}
 
-        <section className="case-block" data-reveal>
-          <h2>Outcome</h2>
+        <section className="case-block case-block-wide outcome" data-reveal>
+          <h2 id="outcome">Outcome</h2>
           <div className="case-block-body">
             <div className="case-outcome">
               <div>
@@ -201,11 +252,12 @@ export default async function WorkCaseStudy({ params }: Props) {
                 <p>{project.learned}</p>
               </div>
             </div>
+            <span className="outcome-rule" aria-hidden="true" />
           </div>
         </section>
 
         <section className="case-block" data-reveal>
-          <h2>Stack</h2>
+          <h2 id="stack">Stack</h2>
           <div className="case-block-body">
             <ul className="stack-list" aria-label={`${project.name} stack`}>
               {project.stack.map((tech) => (

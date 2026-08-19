@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { ProjectCard } from "@/components/project-card";
-import { FeaturedProject } from "@/components/featured-project";
-import { SectionHeading } from "@/components/section-heading";
+import Link from "next/link";
+import { ProjectIndex } from "@/components/project-index";
+import { EvidenceRow } from "@/components/evidence-row";
 import { ContactBlock } from "@/components/contact-block";
-import { featuredProject, supportingProjects } from "@/content/projects";
+import { ExternalLink } from "@/components/external-link";
+import { projects } from "@/content/projects";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -17,7 +18,10 @@ export default function WorkPage() {
     <>
       <header className="page-hero shell">
         <p className="label">Work</p>
-        <h1>Three projects, three different reasons.</h1>
+        <h1 className="page-title">
+          <span>Three projects,</span>
+          <span>three different reasons.</span>
+        </h1>
         <p className="lede">
           One was built for a paying client, one for a lounge bar, one started at
           a hackathon and did not place. Each case study covers what I built, the
@@ -25,23 +29,82 @@ export default function WorkPage() {
         </p>
       </header>
 
-      <section className="section-tight shell">
-        <SectionHeading
-          eyebrow="Start here"
-          title="The one with a client, a database, and an admin area"
-        />
-        <FeaturedProject project={featuredProject} />
-      </section>
+      <div className="continuum">
+        <span className="continuum-spine" aria-hidden="true">
+          <span className="continuum-mark" />
+        </span>
 
-      <section className="section shell">
-        <SectionHeading
-          eyebrow="Also shipped"
-          title="A hospitality site and a hackathon prototype"
+        <ProjectIndex
+          projects={projects}
+          eyebrow="Index"
+          heading="Three systems"
+          body="Move between them and the drawing rearranges rather than restarting: the same nodes, in the shape each project actually took."
         />
-        <div className="project-list">
-          {supportingProjects.map((project) => (
-            <ProjectCard project={project} key={project.slug} showStack />
-          ))}
+      </div>
+
+      <section className="section section-ruled">
+        <div className="shell">
+          <header className="index-head" data-reveal>
+            <p className="label">Records</p>
+            <h2>What each one is</h2>
+          </header>
+
+          <ol className="dossier">
+            {projects.map((project) => (
+              <li
+                className="record"
+                key={project.slug}
+                style={
+                  { "--project-accent": project.accent } as React.CSSProperties
+                }
+                data-reveal
+              >
+                <div className="record-head">
+                  <span className="record-index">{project.number}</span>
+                  <h3>{project.name}</h3>
+                  <p className="label">
+                    {project.type} · {project.year} · {project.status}
+                  </p>
+                </div>
+
+                <div className="record-body">
+                  <p className="record-tagline">{project.tagline}</p>
+                  <p className="record-role">
+                    <strong>My role:</strong> {project.role.join(", ")}.
+                  </p>
+
+                  <EvidenceRow
+                    evidence={project.evidence}
+                    label={`${project.name} evidence`}
+                  />
+
+                  <ul className="stack-list" aria-label={`${project.name} stack`}>
+                    {project.stack.map((tech) => (
+                      <li key={tech}>{tech}</li>
+                    ))}
+                  </ul>
+
+                  <div className="record-actions">
+                    <Link href={project.caseStudyUrl} className="text-link">
+                      Read the case study
+                    </Link>
+                    <ExternalLink
+                      href={project.liveUrl}
+                      className="text-link text-link-quiet"
+                    >
+                      {project.liveLabel}
+                    </ExternalLink>
+                    <ExternalLink
+                      href={project.repositoryUrl}
+                      className="text-link text-link-quiet"
+                    >
+                      Source
+                    </ExternalLink>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
