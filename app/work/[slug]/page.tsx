@@ -50,15 +50,16 @@ export default async function WorkCaseStudy({ params }: Props) {
   const previous = projects[(index - 1 + projects.length) % projects.length];
 
   // Reads as one argument: what it is, why it existed, what it had to solve,
-  // what got built, and where it broke.
-  const context = project.sections.filter((section) => section.id === "context");
-  const rest = project.sections.filter((section) => section.id !== "context");
+  // what got built, and where it broke. `tone` varies the typographic weight
+  // so five consecutive sections do not read as one undifferentiated wall.
+  const find = (id: string) => project.sections.find((section) => section.id === id);
   const narrative = [
-    { id: "overview", title: "Overview", body: project.summary },
-    ...context,
-    { id: "problem", title: "The problem", body: project.problem },
-    ...rest,
-  ];
+    { id: "overview", title: "Overview", body: project.summary, tone: "lede" },
+    find("context") && { ...find("context")!, tone: "default" },
+    { id: "problem", title: "The problem", body: project.problem, tone: "default" },
+    find("product") && { ...find("product")!, tone: "default" },
+    find("problems") && { ...find("problems")!, tone: "callout" },
+  ].filter(Boolean) as { id: string; title: string; body: string; tone: string }[];
 
   const creativeWorkJsonLd = {
     "@context": "https://schema.org",
@@ -145,7 +146,12 @@ export default async function WorkCaseStudy({ params }: Props) {
 
       <div className="shell case-body">
         {narrative.map((section) => (
-          <section className="case-block" data-reveal key={section.id}>
+          <section
+            className="case-block"
+            data-tone={section.tone}
+            data-reveal
+            key={section.id}
+          >
             <h2 id={section.id}>{section.title}</h2>
             <div className="case-block-body">
               <p>{section.body}</p>

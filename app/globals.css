@@ -77,10 +77,11 @@ main {
   color: var(--bg);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  transition: top var(--dur-ui) var(--ease-out);
 }
 
-.skip-link:focus-visible {
+/* Plain :focus, not :focus-visible. Any focus of a skip link means a keyboard
+   user has landed on it, and it must never stay parked off-screen. */
+.skip-link:focus {
   top: var(--space-3);
 }
 
@@ -159,10 +160,14 @@ main {
   border-top: 1px solid var(--line);
 }
 
+/* Label and title on the left, supporting sentence on the right, so a wide
+   viewport reads as one line of thought instead of a narrow left column. */
 .section-heading {
   display: grid;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--line);
 }
 
 .section-heading h2 {
@@ -180,6 +185,30 @@ main {
   margin: 0;
   color: var(--text-muted);
   line-height: var(--leading-relaxed);
+  text-wrap: pretty;
+}
+
+@media (min-width: 900px) {
+  .section-heading {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    column-gap: clamp(var(--space-6), 5vw, var(--space-9));
+    align-items: end;
+  }
+
+  .section-heading .label {
+    grid-column: 1;
+  }
+
+  .section-heading h2 {
+    grid-column: 1;
+  }
+
+  .section-heading p {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+    padding-bottom: 0.35em;
+  }
 }
 
 /* ==========================================================================
@@ -414,7 +443,25 @@ main {
    ========================================================================== */
 
 .hero {
-  padding-block: clamp(3.5rem, 9vw, 8rem) var(--section-gap-tight);
+  padding-block: clamp(3.5rem, 7vw, 6rem) var(--section-gap-tight);
+}
+
+/* Above 1100px the hero becomes two columns: the argument on the left, the
+   evidence for it on the right. Below that it stacks, and the evidence
+   returns to a row under the copy. */
+@media (min-width: 1100px) {
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(19rem, 0.65fr);
+    gap: clamp(var(--space-8), 6vw, var(--space-11));
+    align-items: start;
+  }
+
+  .hero-evidence {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-8));
+    padding-top: var(--space-3);
+  }
 }
 
 .hero-label {
@@ -474,35 +521,44 @@ main {
   background: var(--positive);
 }
 
-/* Evidence strip: numbers that can be checked by following the links. */
+/* Evidence: facts a visitor can confirm by following the links, not metrics.
+   Stacked as a short list so the three read as one statement rather than
+   three billboard numbers spread across the viewport. */
 .evidence-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  margin-top: var(--space-9);
-  padding-top: var(--space-6);
+  gap: 0;
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-2);
   border-top: 1px solid var(--line);
 }
 
 .evidence-strip div {
   display: flex;
   align-items: baseline;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.evidence-strip div:last-child {
+  border-bottom: 0;
 }
 
 .evidence-strip dt {
-  font-size: var(--text-xl);
+  min-width: 1.2ch;
+  color: var(--accent-text);
+  font-size: var(--text-lg);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-tight);
   font-variant-numeric: tabular-nums;
 }
 
 .evidence-strip dd {
-  max-width: 18ch;
   margin: 0;
   color: var(--text-muted);
   font-size: var(--text-sm);
   line-height: var(--leading-normal);
+  text-wrap: pretty;
 }
 
 /* ==========================================================================
@@ -567,6 +623,21 @@ main {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
+}
+
+/* A hairline of the project's own colour, so the flagship reads as flagship
+   before a single word is parsed. */
+.featured {
+  position: relative;
+  overflow: hidden;
+}
+
+.featured::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--project-accent, var(--accent));
 }
 
 .featured-meta {
@@ -643,13 +714,25 @@ main {
   border-top: 1px solid var(--line);
 }
 
+/* Supporting work: copy-led, with a smaller schematic. Deliberately not the
+   featured composition at a reduced scale — the difference has to survive the
+   layout collapsing on narrow screens. */
 .project-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
-  gap: clamp(var(--space-5), 4vw, var(--space-9));
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(var(--space-5), 4vw, var(--space-8));
   align-items: center;
   padding-block: clamp(var(--space-7), 5vw, var(--space-9));
   border-bottom: 1px solid var(--line);
+}
+
+.project-row .project-visual {
+  padding: var(--space-4);
+  gap: var(--space-4);
+}
+
+.project-row .visual-flow li {
+  padding: var(--space-2) var(--space-3);
 }
 
 .project-row-copy h3 {
@@ -714,14 +797,15 @@ main {
    Project visuals — schematic diagrams, not product screenshots
    ========================================================================== */
 
+/* Sized by its content, not a fixed ratio: a four-step flow in a 4/3 box left
+   most of the panel empty at wide viewports. */
 .project-visual {
   position: relative;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
   padding: var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--bg-sunken);
@@ -756,9 +840,7 @@ main {
 .visual-body {
   position: relative;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  justify-content: center;
   gap: var(--space-3);
 }
 
@@ -804,9 +886,10 @@ main {
 .visual-outcome {
   position: relative;
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-1) var(--space-4);
   padding-top: var(--space-3);
   border-top: 1px solid var(--line);
   color: var(--text-quiet);
@@ -814,6 +897,10 @@ main {
   font-size: var(--text-2xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.visual-outcome > span {
+  flex: 0 0 auto;
 }
 
 .visual-outcome strong {
@@ -824,6 +911,10 @@ main {
 /* ==========================================================================
    Architecture diagram
    ========================================================================== */
+
+.architecture-figure {
+  margin: 0;
+}
 
 .architecture {
   margin: 0;
@@ -1074,6 +1165,30 @@ figcaption.figure-note {
   font-size: var(--text-md);
 }
 
+/* Tone variants break up what would otherwise be five identical blocks.
+   The opening states the product, the closing one admits what broke. */
+.case-block[data-tone="lede"] > .case-block-body > p {
+  max-width: 34ch;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.case-block[data-tone="callout"] > .case-block-body {
+  padding: var(--space-6);
+  border-left: 2px solid var(--project-accent, var(--accent));
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: var(--surface);
+}
+
+.case-block[data-tone="callout"] > .case-block-body > p {
+  color: var(--text-muted);
+  font-size: var(--text-md);
+}
+
 /* A wide block breaks the rail so diagrams get the full measure. */
 .case-block-wide {
   grid-template-columns: minmax(0, 1fr);
@@ -1182,6 +1297,25 @@ figcaption.figure-note {
   gap: var(--space-5) clamp(var(--space-5), 4vw, var(--space-8));
 }
 
+/* Statement block: the claim and the detail behind it, side by side, so a wide
+   viewport is not left with an empty right half. */
+.statement-block {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.statement-block .statement-heading {
+  margin: var(--space-4) 0 0;
+}
+
+@media (min-width: 900px) {
+  .statement-block {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    column-gap: clamp(var(--space-6), 5vw, var(--space-9));
+    align-items: start;
+  }
+}
+
 /* A statement that carries a section on its own, without a section-heading. */
 .statement-heading {
   max-width: 20ch;
@@ -1197,15 +1331,29 @@ figcaption.figure-note {
   margin-top: var(--space-7);
 }
 
+/* Explicit column counts: auto-fit left the sixth step orphaned on its own
+   row at wide viewports. Six steps divide cleanly by three and two. */
 .process-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 0;
   margin: 0;
   padding: 0;
   border-top: 1px solid var(--line);
   border-left: 1px solid var(--line);
   list-style: none;
+}
+
+@media (min-width: 640px) {
+  .process-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .process-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .process-list li {
@@ -1508,6 +1656,29 @@ figcaption.figure-note {
    Contact block (repeated at the end of pages)
    ========================================================================== */
 
+@media (min-width: 900px) {
+  .contact-cta .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(var(--space-6), 5vw, var(--space-9));
+    align-items: start;
+  }
+
+  .contact-cta .label,
+  .contact-cta h2 {
+    grid-column: 1;
+  }
+
+  .contact-cta > .shell > p:not(.label),
+  .contact-cta-actions {
+    grid-column: 2;
+  }
+
+  .contact-cta > .shell > p:not(.label) {
+    margin-top: 0;
+  }
+}
+
 .contact-cta h2 {
   max-width: 16ch;
   margin: var(--space-5) 0 0;
@@ -1638,14 +1809,6 @@ figcaption.figure-note {
     order: -1;
   }
 
-  .project-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .project-row .project-visual {
-    order: -1;
-  }
-
   .contact-layout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1742,6 +1905,16 @@ figcaption.figure-note {
   }
 }
 
+@media (max-width: 720px) {
+  .project-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-row .project-visual {
+    order: -1;
+  }
+}
+
 @media (max-width: 560px) {
   .evidence-strip {
     grid-template-columns: minmax(0, 1fr);
@@ -1755,11 +1928,6 @@ figcaption.figure-note {
   .hero-actions .button,
   .case-actions .button {
     flex: 1 1 auto;
-  }
-
-  .project-visual {
-    aspect-ratio: auto;
-    min-height: 17rem;
   }
 
   .form-submit .button {

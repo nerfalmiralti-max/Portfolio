@@ -97,7 +97,10 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    // `data-motion` is set on <html> by the script below, before React
+    // hydrates. Suppression is scoped to this element's own attributes, which
+    // is exactly the intended difference.
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
       </head>

@@ -13,29 +13,40 @@ export function HomeContent() {
   return (
     <>
       <section className="hero shell">
-        <p className="label hero-label">{homepageCopy.heroLabel}</p>
-        <h1>{homepageCopy.heroHeading}</h1>
-        <p className="hero-intro">{homepageCopy.heroBody}</p>
+        <div className="hero-grid">
+          <div>
+            <p className="label hero-label">{homepageCopy.heroLabel}</p>
+            <h1>{homepageCopy.heroHeading}</h1>
+            <p className="hero-intro">{homepageCopy.heroBody}</p>
 
-        <div className="hero-actions">
-          <Link href="/work" className="button button-primary">
-            See the work <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-          <ExternalLink href={profile.github} className="button button-quiet" size={15}>
-            GitHub
-          </ExternalLink>
-        </div>
-
-        <p className="label hero-availability">{profile.availability}</p>
-
-        <dl className="evidence-strip">
-          {homepageCopy.heroEvidence.map((item) => (
-            <div key={item.label}>
-              <dt>{item.value}</dt>
-              <dd>{item.label}</dd>
+            <div className="hero-actions">
+              <Link href="/work" className="button button-primary">
+                See the work <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+              <ExternalLink
+                href={profile.github}
+                className="button button-quiet"
+                size={15}
+              >
+                GitHub
+              </ExternalLink>
             </div>
-          ))}
-        </dl>
+
+            <p className="label hero-availability">{profile.availability}</p>
+          </div>
+
+          <div className="hero-evidence">
+            <p className="label">What you can check</p>
+            <dl className="evidence-strip">
+              {homepageCopy.heroEvidence.map((item) => (
+                <div key={item.label}>
+                  <dt>{item.value}</dt>
+                  <dd>{item.label}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
       </section>
 
       <section className="section section-ruled">
@@ -66,10 +77,12 @@ export function HomeContent() {
       </section>
 
       <section className="section section-ruled">
-        <div className="shell split" data-reveal>
-          <p className="label">Approach</p>
-          <div className="prose">
+        <div className="shell statement-block" data-reveal>
+          <div>
+            <p className="label">Approach</p>
             <h2 className="statement-heading">{homepageCopy.noteHeading}</h2>
+          </div>
+          <div className="prose">
             <p>{homepageCopy.noteBody}</p>
           </div>
         </div>

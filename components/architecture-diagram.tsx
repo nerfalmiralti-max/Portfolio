@@ -12,7 +12,7 @@ export function ArchitectureDiagram({
   note?: string;
 }) {
   return (
-    <figure style={{ margin: 0 }}>
+    <figure className="architecture-figure">
       <div className="architecture">
         {layers.map((layer) => (
           <div className="architecture-layer" key={layer.layer}>

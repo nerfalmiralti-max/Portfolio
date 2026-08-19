@@ -1,6 +1,5 @@
 export const profile = {
   name: "Altair Tolesh",
-  initials: "AT",
   location: "Aktau, Kazakhstan",
   school: "Nazarbayev Intellectual School in Aktau",
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
@@ -14,7 +13,7 @@ export const homepageCopy = {
   heroLabel: "Web design and development · Aktau, Kazakhstan",
   heroHeading: "I design and build websites for real projects.",
   heroBody:
-    "I work on the design, the frontend, the backend connections, and the deployment. Three sites are live: one built for a paying client, one for a lounge bar, one prototype from a hackathon.",
+    "I do the design, the frontend, the backend wiring, and the deploy. Three sites are live: one for a paying client, one for a lounge bar, and one hackathon prototype that did not place.",
   /** Only claims that can be checked from the linked projects and repositories. */
   heroEvidence: [
     { value: "3", label: "sites deployed and reachable" },
@@ -23,7 +22,7 @@ export const homepageCopy = {
   ],
   noteHeading: "I would rather show finished work than describe intentions.",
   noteBody:
-    "A website can look good and still be hard to use. The parts that decide that are mobile layout, navigation, loading speed, forms, error states, and everything that has to be true after deployment.",
+    "A website can look good and still be hard to use. What decides it is duller than the visual design: the mobile layout, the error states, and everything that still has to be true a month after launch.",
   featuredHeading: "The project that taught me the most",
   workHeading: "A hospitality site and a hackathon prototype",
   workBody:
@@ -31,11 +30,6 @@ export const homepageCopy = {
   processHeading: "How I work",
   processBody:
     "The steps change with the project. The order does not.",
-  aboutHeading: "I started with small websites and kept making the next one harder.",
-  aboutParagraphs: [
-    "The projects grew into databases, login systems, deployment settings, client requirements, and problems that do not appear in tutorials.",
-    "I still have a lot to learn. That is one reason I prefer projects with a clear goal and a finished result.",
-  ],
   contactHeading: "Need a website?",
   contactBody:
     "Send a short description of the project, the pages you need, and any examples you like. I will read it and reply with questions.",
@@ -45,7 +39,7 @@ export const aboutCopy = {
   heading: "I am Altair, a student and developer from Aktau.",
   opening: [
     "I study at Nazarbayev Intellectual School and build websites outside school. Web development held my attention because the result of every decision shows up on the screen immediately.",
-    "At first I focused on appearance. The harder part turned out to sit behind the interface: deciding what the user needs, organising the content, handling data, fixing errors, and keeping the project working after deployment.",
+    "At first I worked on appearance. The harder part sits behind the interface: working out what the user actually needs, and then keeping it working once it is deployed and someone else depends on it.",
   ],
   projects:
     "99 AKTAU was my first commercial project: a website for a PlayStation club with booking requests, an admin area, Supabase, authentication, and deployment. Tuesday Lounge Bar was a different kind of business website. Mangystau Trials started at a hackathon and taught me to control the size of an idea.",

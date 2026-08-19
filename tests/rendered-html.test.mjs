@@ -85,3 +85,18 @@ test("merged pages keep their old URLs working", async () => {
     assert.equal(response.headers.get("location"), to, from);
   }
 });
+
+test("project hierarchy puts the client project first", async () => {
+  // Phase 2 differentiates featured from supporting work by composition, so a
+  // broken tier would silently promote the prototype.
+  const body = await html("/work");
+  const featured = body.indexOf("featured");
+  const prototype = body.indexOf("Mangystau Trials");
+  assert.ok(featured > -1, "featured treatment is rendered");
+  assert.ok(
+    body.indexOf("99 AKTAU") < prototype,
+    "the commercial project appears before the hackathon prototype",
+  );
+  // The prototype must never be dressed up as finished work.
+  assert.match(body, /Prototype, not a finished product/);
+});

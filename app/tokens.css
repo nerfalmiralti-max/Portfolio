@@ -65,9 +65,10 @@
   --space-10: 5rem;
   --space-11: 7rem;
 
-  /* Vertical rhythm between major sections. */
-  --section-gap: clamp(4.5rem, 9vw, 9rem);
-  --section-gap-tight: clamp(3rem, 6vw, 5.5rem);
+  /* Vertical rhythm between major sections. Adjacent sections each contribute
+     their own padding, so this is half of the gap a reader actually sees. */
+  --section-gap: clamp(3.25rem, 5.5vw, 5.5rem);
+  --section-gap-tight: clamp(2.5rem, 4vw, 4rem);
 
   /* ---- Layout ---------------------------------------------------------- */
   --header-height: 64px;
