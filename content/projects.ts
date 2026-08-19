@@ -17,6 +17,7 @@ export type EvidenceKind =
   | "database"
   | "auth"
   | "responsive"
+  | "languages"
   | "prototype";
 
 export type Evidence = {
@@ -35,6 +36,21 @@ export type Decision = {
   question: string;
   choice: string;
   reason: string;
+};
+
+/**
+ * A real screenshot of the live site, captured from its public pages only.
+ * Two crops so small screens get the mobile build rather than a shrunken
+ * desktop one.
+ */
+export type ProjectImage = {
+  desktop: string;
+  mobile: string;
+  width: number;
+  height: number;
+  mobileWidth: number;
+  mobileHeight: number;
+  alt: string;
 };
 
 export type ProjectSection = {
@@ -59,6 +75,7 @@ export type Project = {
   role: string[];
   stack: string[];
   evidence: Evidence[];
+  image: ProjectImage;
   architecture: ArchitectureLayer[];
   decisions: Decision[];
   result: string;
@@ -102,6 +119,15 @@ export const projects: Project[] = [
       { kind: "database", label: "Supabase database" },
       { kind: "auth", label: "Admin authentication" },
     ],
+    image: {
+      desktop: "/projects/99-aktau/desktop.webp",
+      mobile: "/projects/99-aktau/mobile.webp",
+      width: 1600,
+      height: 1000,
+      mobileWidth: 780,
+      mobileHeight: 1688,
+      alt: "The 99 AKTAU home page: club navigation, hall pricing, a booking call to action, and an administrator sign-in entry point.",
+    },
     architecture: [
       {
         layer: "Frontend",
@@ -206,7 +232,17 @@ export const projects: Project[] = [
       { kind: "live", label: "Live in production" },
       { kind: "repository", label: "Source on GitHub" },
       { kind: "responsive", label: "Mobile-first layout" },
+      { kind: "languages", label: "Russian and Kazakh" },
     ],
+    image: {
+      desktop: "/projects/tuesday/desktop.webp",
+      mobile: "/projects/tuesday/mobile.webp",
+      width: 1600,
+      height: 1000,
+      mobileWidth: 780,
+      mobileHeight: 1688,
+      alt: "The Tuesday Lounge Bar home page: a full-bleed food photograph behind a large headline, with menu and table booking actions and a Russian and Kazakh language switch.",
+    },
     architecture: [
       {
         layer: "Frontend",
@@ -303,6 +339,15 @@ export const projects: Project[] = [
       { kind: "live", label: "Deployed and reachable" },
       { kind: "repository", label: "Source on GitHub" },
     ],
+    image: {
+      desktop: "/projects/mangystau/desktop.webp",
+      mobile: "/projects/mangystau/mobile.webp",
+      width: 1600,
+      height: 1000,
+      mobileWidth: 780,
+      mobileHeight: 1688,
+      alt: "The Mangystau Trials home page: a landscape photograph of chalk canyons behind a large headline, with route creation actions and trip length, transport and season figures.",
+    },
     architecture: [
       {
         layer: "Frontend",

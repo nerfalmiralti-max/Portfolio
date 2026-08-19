@@ -122,29 +122,61 @@
 /* Above the fold, so it animates on load rather than on scroll. No observer
    involved, and no dependency on hydration having finished. */
 
-[data-motion="on"] .hero-label,
-[data-motion="on"] .hero h1,
+/* The one piece of choreography on the site. Runs once, on load, in CSS, so
+   it needs neither hydration nor an observer:
+
+     0ms    identity line
+     140ms  headline assembles, line by line
+     420ms  supporting sentence
+     520ms  actions
+     600ms  availability
+     660ms  evidence panel, then its rows count out
+
+   Lines are lifted out of their masks rather than faded, which is why the
+   headline reads as being set rather than appearing. */
+
+[data-motion="on"] .hero-label {
+  animation: enter var(--dur-ui) var(--ease-enter) both;
+}
+
+[data-motion="on"] .hero-line > span {
+  animation: line-lift var(--dur-signature) var(--ease-cinematic) both;
+}
+
+[data-motion="on"] .hero-line:nth-child(1) > span {
+  animation-delay: 140ms;
+}
+[data-motion="on"] .hero-line:nth-child(2) > span {
+  animation-delay: 230ms;
+}
+[data-motion="on"] .hero-line:nth-child(3) > span {
+  animation-delay: 320ms;
+}
+
 [data-motion="on"] .hero-intro,
 [data-motion="on"] .hero-actions,
 [data-motion="on"] .hero-availability,
 [data-motion="on"] .hero-evidence {
-  animation: enter var(--dur-enter) var(--ease-out) both;
+  animation: enter var(--dur-editorial) var(--ease-enter) both;
 }
 
-[data-motion="on"] .hero h1 {
-  animation-delay: 60ms;
-}
 [data-motion="on"] .hero-intro {
-  animation-delay: 120ms;
+  animation-delay: 420ms;
 }
 [data-motion="on"] .hero-actions {
-  animation-delay: 180ms;
+  animation-delay: 520ms;
 }
 [data-motion="on"] .hero-availability {
-  animation-delay: 220ms;
+  animation-delay: 600ms;
 }
 [data-motion="on"] .hero-evidence {
-  animation-delay: 240ms;
+  animation-delay: 660ms;
+}
+
+@keyframes line-lift {
+  from {
+    transform: translateY(var(--line-shift));
+  }
 }
 
 /* Each evidence row arrives after the panel it sits in, so the three facts
@@ -154,13 +186,13 @@
 }
 
 [data-motion="on"] .evidence-strip > div:nth-child(1) {
-  animation-delay: 320ms;
+  animation-delay: 760ms;
 }
 [data-motion="on"] .evidence-strip > div:nth-child(2) {
-  animation-delay: 400ms;
+  animation-delay: 840ms;
 }
 [data-motion="on"] .evidence-strip > div:nth-child(3) {
-  animation-delay: 480ms;
+  animation-delay: 920ms;
 }
 
 @keyframes enter {
@@ -206,6 +238,33 @@
   width: 3px;
 }
 
+
+/* Screenshots respond inside their own frame — the capture drifts, the frame
+   does not, which reads as looking closer rather than as the page moving. */
+.project-row .shot,
+.flagship .shot {
+  transition: border-color var(--dur-ui) var(--ease-enter);
+}
+
+.project-row:hover .shot,
+.flagship:hover .shot {
+  border-color: color-mix(in srgb, var(--project-accent, var(--accent)) 45%, transparent);
+}
+
+.project-row:hover .shot-viewport img,
+.flagship:hover .shot-viewport img {
+  transform: scale(1.018);
+}
+
+.shot-url {
+  transition: color var(--dur-micro) var(--ease-responsive);
+}
+
+.project-row:hover .shot-url,
+.flagship:hover .shot-url {
+  color: var(--text);
+}
+
 /* Architecture rows lift their parts on hover so a layer reads as one unit. */
 .architecture-layer {
   transition: background-color var(--dur-micro) var(--ease-out);
@@ -216,7 +275,7 @@
 }
 
 .stack-list li,
-.evidence-chip {
+.evidence-item {
   transition:
     border-color var(--dur-micro) var(--ease-out),
     color var(--dur-micro) var(--ease-out);
@@ -264,10 +323,12 @@
 [data-motion="off"] .featured::before,
 [data-motion="off"] .hero-label,
 [data-motion="off"] .hero h1,
+[data-motion="off"] .hero-line > span,
 [data-motion="off"] .hero-intro,
 [data-motion="off"] .hero-actions,
 [data-motion="off"] .hero-availability,
 [data-motion="off"] .hero-evidence,
+[data-motion="off"] .shot-viewport img,
 [data-motion="off"] .evidence-strip > div {
   opacity: 1 !important;
   transform: none !important;

@@ -449,7 +449,19 @@ main {
 /* Above 1100px the hero becomes two columns: the argument on the left, the
    evidence for it on the right. Below that it stacks, and the evidence
    returns to a row under the copy. */
+.hero-evidence {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--line);
+}
+
 @media (min-width: 1100px) {
+  .hero-evidence {
+    margin-top: 0;
+    padding-top: var(--space-3);
+    border-top: 0;
+  }
+
   .hero-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(19rem, 0.65fr);
@@ -480,13 +492,30 @@ main {
 }
 
 .hero h1 {
-  max-width: 15ch;
   margin: 0;
   font-size: var(--text-4xl);
   font-weight: var(--weight-medium);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tighter);
-  text-wrap: balance;
+}
+
+/* Each line owns a mask. The inner span is what moves. */
+.hero-line {
+  display: block;
+  overflow: hidden;
+  /* Descenders and the italic-ish overhang of "j"/"p" need room or the mask
+     clips them. */
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.hero-line > span {
+  display: block;
+}
+
+/* The third line is the claim, so it carries the accent. */
+.hero-line:last-child > span {
+  color: var(--accent-text);
 }
 
 .hero-intro {
@@ -574,7 +603,7 @@ main {
   list-style: none;
 }
 
-.evidence-chip {
+.evidence-item {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -586,27 +615,27 @@ main {
   line-height: 1.6;
 }
 
-.evidence-chip svg {
+.evidence-item svg {
   flex: 0 0 auto;
   color: var(--text-quiet);
 }
 
 /* Only the two chips that carry real weight get colour. */
-.evidence-chip[data-kind="client"] {
+.evidence-item[data-kind="client"] {
   border-color: color-mix(in srgb, var(--accent) 45%, transparent);
   color: var(--accent-text);
 }
 
-.evidence-chip[data-kind="client"] svg {
+.evidence-item[data-kind="client"] svg {
   color: var(--accent-text);
 }
 
-.evidence-chip[data-kind="live"] {
+.evidence-item[data-kind="live"] {
   border-color: color-mix(in srgb, var(--positive) 35%, transparent);
   color: var(--positive);
 }
 
-.evidence-chip[data-kind="live"] svg {
+.evidence-item[data-kind="live"] svg {
   color: var(--positive);
 }
 
@@ -654,33 +683,9 @@ main {
   letter-spacing: var(--tracking-tight);
 }
 
-.featured-tagline {
-  max-width: 46ch;
-  margin: var(--space-3) 0 0;
-  color: var(--text);
-  font-size: var(--text-lg);
-  line-height: var(--leading-normal);
-  text-wrap: pretty;
-}
 
-.featured-summary {
-  max-width: var(--prose-width);
-  margin: var(--space-4) 0 0;
-  color: var(--text-muted);
-  font-size: var(--text-base);
-  line-height: var(--leading-relaxed);
-}
 
-.featured .evidence-row {
-  margin-top: var(--space-6);
-}
 
-.featured-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  margin-top: var(--space-6);
-}
 
 .status-badge {
   display: inline-flex;
@@ -700,6 +705,267 @@ main {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: var(--text-2xs);
   letter-spacing: var(--tracking-label);
+}
+
+
+/* ==========================================================================
+   Project screenshots
+   ========================================================================== */
+/* Real captures of the live sites, in a frame this site draws itself. The
+   chrome carries the project's actual URL, so the frame is evidence too. */
+
+.shot {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-sunken);
+}
+
+.shot-chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+}
+
+.shot-dots {
+  display: flex;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.shot-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.shot-url {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shot-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+  color: var(--positive);
+  text-transform: uppercase;
+}
+
+.shot-status::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.shot-viewport {
+  position: relative;
+  overflow: hidden;
+}
+
+.shot-viewport img {
+  width: 100%;
+  height: auto;
+  /* A hair over 100% so the hover scale never exposes an edge. */
+  transform: scale(1.004);
+  transition: transform var(--dur-editorial) var(--ease-enter);
+}
+
+/* ==========================================================================
+   Flagship composition
+   ========================================================================== */
+/* Not a card. The screenshot runs wide, the title crosses its lower edge, and
+   the register of verified facts sits outside the reading rail. */
+
+.flagship {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(var(--space-4), 2vw, var(--space-6));
+  row-gap: var(--space-6);
+}
+
+.flagship-shot {
+  position: relative;
+  grid-column: 1 / -1;
+}
+
+/* The scrim fades the capture into the page so the title can cross the edge
+   and stay readable whatever the screenshot happens to contain. */
+.flagship-shot::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 24%;
+  pointer-events: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--bg) 70%, transparent) 45%,
+    var(--bg) 92%
+  );
+}
+
+.flagship-head {
+  position: relative;
+  z-index: 2;
+  grid-column: 1 / -1;
+}
+
+.flagship-index {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.flagship-index span {
+  color: var(--project-accent, var(--accent-text));
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.flagship-head h3 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tighter);
+}
+
+.flagship-body {
+  grid-column: 1 / -1;
+}
+
+.flagship-tagline {
+  max-width: 34ch;
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+
+.flagship-summary {
+  max-width: 56ch;
+  margin: var(--space-5) 0 0;
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+  text-wrap: pretty;
+}
+
+.flagship-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.flagship-register,
+.flagship-schematic {
+  grid-column: 1 / -1;
+}
+
+.flagship-register .label,
+.flagship-schematic .label {
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 900px) {
+  /* Four bands, each one full-height with no column left waiting:
+       1  the product, full width
+       2  its name, lifted into the screenshot's scrim
+       3  the argument, beside the register of what can be checked
+       4  what is underneath it                                        */
+  .flagship-shot {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  /* Controlled overlap: the title lifts into the screenshot's own scrim, which
+     fades to the page colour, so it stays readable over any capture. */
+  .flagship-head {
+    grid-column: 1 / 9;
+    grid-row: 2;
+    align-self: start;
+    margin-top: clamp(-8rem, -7vw, -4.5rem);
+  }
+
+  .flagship-body {
+    grid-column: 1 / 7;
+    grid-row: 3;
+  }
+
+  .flagship-register {
+    grid-column: 8 / 13;
+    grid-row: 3;
+  }
+
+  .flagship-schematic {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin-top: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   Evidence
+   ========================================================================== */
+
+.evidence-register {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.evidence-register .evidence-item {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+}
+
+.evidence-index {
+  color: var(--text-quiet);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.evidence-register .evidence-item[data-kind="client"],
+.evidence-register .evidence-item[data-kind="live"] {
+  color: var(--text);
 }
 
 /* ==========================================================================
@@ -1255,6 +1521,78 @@ figcaption.figure-note {
 
 .case-next .text-link {
   color: var(--text-muted);
+}
+
+
+/* ==========================================================================
+   Case study plate
+   ========================================================================== */
+/* The product before any explanation of it. Runs wider than the reading rail
+   so the case study opens on the thing itself. */
+
+.case-plate {
+  padding-bottom: var(--section-gap-tight);
+}
+
+@media (min-width: 1100px) {
+  .case-plate {
+    max-width: calc(var(--content-width) + var(--page-gutter) * 2 + 6rem);
+  }
+}
+
+/* ==========================================================================
+   Scroll trace
+   ========================================================================== */
+/* A hairline that fills as the case study is read. Pure CSS scroll-linked
+   animation where supported; a static rule everywhere else. */
+
+.case-body {
+  position: relative;
+}
+
+@media (min-width: 1100px) {
+  .case-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--page-gutter) - 1.75rem);
+    width: 1px;
+    background: var(--line);
+  }
+
+  .case-body::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(var(--page-gutter) - 1.75rem);
+    width: 1px;
+    height: 100%;
+    background: var(--project-accent, var(--accent));
+    transform-origin: top;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .case-body::after {
+      transform: scaleY(0);
+      animation: trace linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  /* Without scroll-timeline support the trace simply is not drawn, rather
+     than sitting there full-height and lying about progress. */
+  @supports not (animation-timeline: scroll()) {
+    .case-body::after {
+      display: none;
+    }
+  }
+}
+
+@keyframes trace {
+  to {
+    transform: scaleY(1);
+  }
 }
 
 /* ==========================================================================

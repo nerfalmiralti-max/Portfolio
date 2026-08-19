@@ -11,7 +11,9 @@ export const profile = {
 
 export const homepageCopy = {
   heroLabel: "Web design and development · Aktau, Kazakhstan",
-  heroHeading: "I design and build websites for real projects.",
+  /** Authored line breaks: the reveal masks each line, and the composition
+   *  should not change shape because a viewport is 40px wider. */
+  heroLines: ["I design and build", "websites that go", "into production."],
   heroBody:
     "I do the design, the frontend, the backend wiring, and the deploy. Three sites are live: one for a paying client, one for a lounge bar, and one hackathon prototype that did not place.",
   /** Only claims that can be checked from the linked projects and repositories. */

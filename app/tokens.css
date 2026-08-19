@@ -83,16 +83,35 @@
   --radius-pill: 999px;
 
   /* ---- Motion ---------------------------------------------------------- */
-  /* Three durations, three jobs. Anything outside this needs justifying. */
-  --dur-micro: 140ms; /* hover, focus, button press */
-  --dur-ui: 240ms; /* menus, state change */
-  --dur-enter: 460ms; /* section and content entrances */
+  /* Five timing groups, each with a job. A new value needs a new job.
+     Character: precise and quick to respond, unhurried when it is telling
+     you something. */
+  --dur-instant: 110ms; /* press, toggle, immediate acknowledgement */
+  --dur-micro: 180ms; /* link underline, arrow, small state change */
+  --dur-ui: 300ms; /* menu, panel, image response */
+  --dur-editorial: 560ms; /* section and composition entrances */
+  --dur-signature: 900ms; /* the hero line assembly, once per visit */
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Kept as the entrance alias so existing rules stay readable. */
+  --dur-enter: var(--dur-editorial);
+
+  /* Four curves. Anything else is a variation nobody asked for.
+     responsive — leaves immediately, lands soft. Interaction feedback.
+     enter      — decelerates into place. Content arriving.
+     exit       — accelerates away. Content leaving.
+     cinematic  — slow in, slow out. Reserved for the hero. */
+  --ease-responsive: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-cinematic: cubic-bezier(0.65, 0, 0.15, 1);
+
+  --ease-out: var(--ease-enter);
+  --ease-in-out: var(--ease-cinematic);
 
   /* Distance a revealed element travels. One value, used everywhere. */
   --reveal-shift: 14px;
+  /* A headline line clears its own mask by slightly more than its height. */
+  --line-shift: 108%;
 }
 
 /* Project accents are supplied per case study via --project-accent. */

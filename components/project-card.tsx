@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Project } from "@/content/projects";
-import { ProjectVisual } from "@/components/project-visual";
+import { ProjectShot } from "@/components/project-shot";
 import { EvidenceRow } from "@/components/evidence-row";
 import { ExternalLink } from "@/components/external-link";
 
@@ -70,7 +70,7 @@ export function ProjectCard({
         </div>
       </div>
 
-      <ProjectVisual variant={project.slug} />
+      <ProjectShot project={project} />
     </article>
   );
 }

@@ -16,7 +16,16 @@ export function HomeContent() {
         <div className="hero-grid">
           <div>
             <p className="label hero-label">{homepageCopy.heroLabel}</p>
-            <h1>{homepageCopy.heroHeading}</h1>
+            {/* Each line is masked by its own overflow box, so the reveal
+                lifts lines rather than fading a block. The full sentence is
+                one accessible string. */}
+            <h1 aria-label={homepageCopy.heroLines.join(" ")}>
+              {homepageCopy.heroLines.map((line) => (
+                <span className="hero-line" key={line} aria-hidden="true">
+                  <span>{line}</span>
+                </span>
+              ))}
+            </h1>
             <p className="hero-intro">{homepageCopy.heroBody}</p>
 
             <div className="hero-actions">

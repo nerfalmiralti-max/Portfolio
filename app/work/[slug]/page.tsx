@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ProjectVisual } from "@/components/project-visual";
+import { ProjectShot } from "@/components/project-shot";
 import { EvidenceRow } from "@/components/evidence-row";
 import { ArchitectureDiagram } from "@/components/architecture-diagram";
 import { DecisionList } from "@/components/decision-list";
@@ -143,6 +144,10 @@ export default async function WorkCaseStudy({ params }: Props) {
           </div>
         </dl>
       </header>
+
+      <div className="case-plate shell" data-reveal>
+        <ProjectShot project={project} priority />
+      </div>
 
       <div className="shell case-body">
         {narrative.map((section) => (
