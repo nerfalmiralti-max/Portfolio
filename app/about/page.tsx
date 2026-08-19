@@ -1,97 +1,149 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { SectionHeading } from "@/components/section-heading";
+import { ContactBlock } from "@/components/contact-block";
 import { aboutCopy, profile } from "@/content/profile";
+import { processSteps, skillGroups } from "@/content/process";
+import { lessons } from "@/content/journey";
 
 export const metadata: Metadata = {
   title: "About",
   description:
-    "About Altair Tolesh, a student and web developer from Aktau.",
+    "Altair Tolesh is a student and web developer in Aktau, Kazakhstan. How he works, what each project taught him, and what he currently builds with.",
   alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
-    <div className="page-shell about-page">
-      <header className="page-hero about-hero" data-motion="about-signature">
-        <div className="about-hero-monogram" aria-hidden="true"><span>A</span><span>T</span></div>
-        <div>
-          <span className="overline">About</span>
-          <h1>{aboutCopy.heading}</h1>
+    <>
+      <header className="page-hero shell">
+        <p className="label">About</p>
+        <h1>{aboutCopy.heading}</h1>
+        <div className="prose about-intro">
+          {aboutCopy.opening.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </div>
-        <div>
-          {aboutCopy.opening.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-        </div>
+
+        <dl className="about-facts">
+          <div>
+            <dt>Based in</dt>
+            <dd>{profile.location}</dd>
+          </div>
+          <div>
+            <dt>Studying at</dt>
+            <dd>{profile.school}</dd>
+          </div>
+          <div>
+            <dt>Languages</dt>
+            <dd>Kazakh · Russian · English</dd>
+          </div>
+          <div>
+            <dt>Current focus</dt>
+            <dd>Web design, frontend development, and stronger English</dd>
+          </div>
+        </dl>
       </header>
 
-      <section className="about-coordinate" aria-label="Aktau coordinates" data-motion="monogram-align">
-        <div className="about-coordinate-mark" aria-hidden="true">
-          <span>A</span>
-          <span>T</span>
-        </div>
-        <div>
-          <span className="overline">Based in</span>
-          <strong>{profile.coordinates}</strong>
-          <p>Aktau, on the Caspian coast of Kazakhstan.</p>
-        </div>
-      </section>
-
-      <section className="about-story" data-motion="split-reveal">
-        <aside className="story-aside">
-          <span className="overline">At a glance</span>
-          <dl>
-            <div>
-              <dt>Based in</dt>
-              <dd>{profile.location}</dd>
-            </div>
-            <div>
-              <dt>Learning at</dt>
-              <dd>{profile.school}</dd>
-            </div>
-            <div>
-              <dt>Languages</dt>
-              <dd>Kazakh · Russian · English</dd>
-            </div>
-            <div>
-              <dt>Current focus</dt>
-              <dd>Web design, frontend development, and stronger English</dd>
-            </div>
-          </dl>
-        </aside>
-        <div className="story-copy">
-          <p>{aboutCopy.projects}</p>
-          <div className="about-project-line" aria-label="Featured projects">
-            <span>99 AKTAU</span><i /><span>TUESDAY</span><i /><span>MANGYSTAU TRIALS</span>
+      <section className="section section-ruled">
+        <div className="shell split" data-reveal>
+          <p className="label">Projects</p>
+          <div className="prose">
+            <p>{aboutCopy.projects}</p>
+            <p>
+              The details are in the{" "}
+              <Link href="/work/99-aktau">99 AKTAU</Link>,{" "}
+              <Link href="/work/tuesday-lounge-bar">Tuesday Lounge Bar</Link>, and{" "}
+              <Link href="/work/mangystau-trials">Mangystau Trials</Link> case
+              studies.
+            </p>
+            <p>{aboutCopy.education}</p>
           </div>
-          <p>
-            Read the <Link href="/work/99-aktau">99 AKTAU case study</Link>, the{" "}
-            <Link href="/work/tuesday-lounge-bar">Tuesday Lounge Bar case study</Link>, or the{" "}
-            <Link href="/work/mangystau-trials">Mangystau Trials case study</Link> for the project details.
-          </p>
-          <p>{aboutCopy.education}</p>
         </div>
       </section>
 
-      <section className="judo-story" data-motion="judo-line">
-        <svg className="judo-curve" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M12 118 C244 8 350 16 498 98 S770 164 988 30" />
-        </svg>
-        <div>
-          <span className="overline">Judo</span>
-          <h2>Judo is part of how I learn.</h2>
-        </div>
-        <div>
-          <p>{aboutCopy.judo}</p>
+      <section className="section section-ruled" id="process">
+        <div className="shell">
+          <SectionHeading
+            eyebrow="Process"
+            title="How I work on a website"
+            body="The steps change with the project. The order does not. Each one below carries a real example."
+          />
+          <ol className="process-list" data-reveal>
+            {processSteps.map((step) => (
+              <li key={step.number}>
+                <p className="label">{step.number}</p>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+                <p className="process-example">{step.example}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
-      <section className="academic-direction" data-motion="trajectory-forward">
-        <span className="overline">Current direction</span>
-        <h2>{aboutCopy.closing}</h2>
-        <Link href="/journey" className="text-link">
-          View my journey <ArrowRight size={18} />
-        </Link>
+      <section className="section section-ruled" id="lessons">
+        <div className="shell">
+          <SectionHeading
+            eyebrow="What I learned"
+            title="Each project taught me something the previous one did not"
+            body="Including the hackathon that did not reach the final."
+          />
+          <ol className="lesson-list">
+            {lessons.map((entry) => (
+              <li className="lesson" key={entry.title} data-reveal>
+                <p className="label">{entry.period}</p>
+                <div>
+                  <h3>{entry.title}</h3>
+                  <p>{entry.story}</p>
+                  <p className="lesson-takeaway">{entry.lesson}</p>
+                  {entry.relatedHref ? (
+                    <Link href={entry.relatedHref} className="text-link">
+                      {entry.relatedLabel}{" "}
+                      <ArrowRight size={15} aria-hidden="true" />
+                    </Link>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
-    </div>
+
+      <section className="section section-ruled">
+        <div className="shell">
+          <SectionHeading
+            eyebrow="Tools"
+            title="What I currently build with"
+            body="Grouped by what it is for. The projects show how much of each I have actually used."
+          />
+          <div className="skill-groups" data-reveal>
+            {skillGroups.map((group) => (
+              <div key={group.title}>
+                <h3>{group.title}</h3>
+                <ul>
+                  {group.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section section-ruled">
+        <div className="shell split" data-reveal>
+          <p className="label">Outside development</p>
+          <div className="prose">
+            <p>{aboutCopy.judo}</p>
+            <p>{aboutCopy.closing}</p>
+          </div>
+        </div>
+      </section>
+
+      <ContactBlock />
+    </>
   );
 }

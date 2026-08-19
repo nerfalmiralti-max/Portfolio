@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
 import { privacyCopy } from "@/content/profile";
 
-export const metadata: Metadata = { title: "Privacy", description: "Privacy information for the Altair Tolesh portfolio.", alternates: { canonical: "/privacy" } };
+export const metadata: Metadata = {
+  title: "Privacy",
+  description: "Privacy information for the Altair Tolesh portfolio.",
+  alternates: { canonical: "/privacy" },
+  robots: { index: false, follow: true },
+};
 
 export default function PrivacyPage() {
   return (
-    <div className="page-shell legal-page">
-      <header>
-        <span className="overline">Privacy</span>
+    <>
+      <header className="page-hero shell">
+        <p className="label">Privacy</p>
         <h1>{privacyCopy.heading}</h1>
-        <p>{privacyCopy.updated}</p>
+        <p className="lede">{privacyCopy.updated}</p>
       </header>
-      <section>
+
+      <section className="section-tight shell legal">
         {privacyCopy.sections.map((section) => (
           <div key={section.title}>
             <h2>{section.title}</h2>
@@ -19,6 +25,6 @@ export default function PrivacyPage() {
           </div>
         ))}
       </section>
-    </div>
+    </>
   );
 }

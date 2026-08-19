@@ -4,7 +4,7 @@ import { HomeContent } from "@/components/home-content";
 export const metadata: Metadata = {
   title: { absolute: "Altair Tolesh — Web Designer and Developer" },
   description:
-    "Altair Tolesh is a student from Aktau who designs, builds, and deploys websites.",
+    "Altair Tolesh designs and builds websites in Aktau, Kazakhstan. Commercial client work, a hospitality site, and a hackathon prototype — each deployed, with the source public.",
   alternates: { canonical: "/" },
 };
 

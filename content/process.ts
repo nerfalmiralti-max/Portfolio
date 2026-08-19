@@ -1,86 +1,49 @@
-export const homepageProcessSteps = [
-  {
-    number: "01",
-    title: "Understand the request",
-    body: "I collect the business information, required pages, main actions, and technical requirements.",
-  },
-  {
-    number: "02",
-    title: "Plan the structure",
-    body: "I decide how the pages connect and where each piece of information belongs.",
-  },
-  {
-    number: "03",
-    title: "Design the interface",
-    body: "I create the layouts, typography, components, mobile version, and interaction states.",
-  },
-  {
-    number: "04",
-    title: "Build the website",
-    body: "I develop the frontend and connect forms, databases, authentication, or APIs when they are needed.",
-  },
-  {
-    number: "05",
-    title: "Test it",
-    body: "I check mobile screens, links, forms, error states, loading speed, and the production build.",
-  },
-  {
-    number: "06",
-    title: "Publish and prepare handover",
-    body: "I configure deployment, environment variables, documentation, and the details the project owner will need later.",
-  },
-] as const;
-
+/**
+ * One canonical process list. Each step carries a real example from one of the
+ * three projects, so the page is evidence rather than a generic checklist.
+ */
 export const processSteps = [
   {
     number: "01",
-    title: "Collect information",
-    body: "I ask for the business details, available content, required pages, examples, deadline, and technical limits.",
+    title: "Understand",
+    body: "Collect the business information, the required pages, the main actions, and the technical limits.",
+    example:
+      "99 AKTAU: the guest and the administrator needed the same booking to make sense from two sides.",
   },
   {
     number: "02",
-    title: "Define pages and actions",
-    body: "I list what visitors need to find and what they should be able to do on each page.",
+    title: "Structure",
+    body: "Decide how the pages connect and where each piece of information belongs.",
+    example:
+      "Tuesday: practical information moves above the atmospheric content on a phone.",
   },
   {
     number: "03",
-    title: "Plan the site structure",
-    body: "I connect the pages, organize the navigation, and place information where visitors expect to find it.",
+    title: "Design",
+    body: "Build the layouts, typography, components, mobile version, and interaction states.",
+    example:
+      "99 AKTAU: accept, reject, and delete got labels that are hard to confuse.",
   },
   {
     number: "04",
-    title: "Design desktop and mobile layouts",
-    body: "I work on both sizes together, then check typography, spacing, touch targets, and important states.",
+    title: "Build",
+    body: "Develop the frontend, and connect forms, databases, authentication, or APIs when the project needs them.",
+    example:
+      "Tuesday needed no backend, so it did not get one.",
   },
   {
     number: "05",
-    title: "Build the frontend",
-    body: "I develop the pages and reusable components in React, Next.js, and TypeScript.",
+    title: "Test",
+    body: "Check mobile screens, links, forms, error states, loading speed, and the production build.",
+    example:
+      "99 AKTAU: most of the real bugs only appeared in the deployed build.",
   },
   {
     number: "06",
-    title: "Connect required services",
-    body: "I add forms, databases, authentication, or API connections only when the project needs them.",
-  },
-  {
-    number: "07",
-    title: "Test forms and edge cases",
-    body: "I test valid and invalid input, empty states, errors, mobile navigation, links, and browser history.",
-  },
-  {
-    number: "08",
-    title: "Optimize performance",
-    body: "I remove unnecessary scripts and effects, check image sizes, and review the production version on mobile.",
-  },
-  {
-    number: "09",
-    title: "Deploy",
-    body: "I configure the host, environment variables, domains, metadata, and the production build.",
-  },
-  {
-    number: "10",
-    title: "Prepare documentation and handover",
-    body: "I record the settings and routine tasks the project owner will need after launch.",
+    title: "Deliver",
+    body: "Configure deployment, environment variables, metadata, and the notes the owner will need later.",
+    example:
+      "The client keeps a working admin area, not a project only I can operate.",
   },
 ] as const;
 
@@ -97,7 +60,7 @@ export const skillGroups = [
   },
   {
     title: "Frontend",
-    items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "CSS"],
   },
   {
     title: "Backend and services",
@@ -105,6 +68,6 @@ export const skillGroups = [
   },
   {
     title: "Deployment",
-    items: ["GitHub", "Vercel", "Environment variables", "SEO setup", "Project documentation"],
+    items: ["GitHub", "Vercel", "Environment variables", "SEO setup", "Handover notes"],
   },
 ] as const;

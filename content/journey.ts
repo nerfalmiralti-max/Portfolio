@@ -1,50 +1,56 @@
-export const journey = [
+/**
+ * What each stage actually taught me. Ordered by when it happened, not by how
+ * flattering it is — the hackathon that did not place stays in the list.
+ */
+export const lessons = [
   {
     period: "First projects",
-    category: "Learn",
     title: "Started with small websites",
-    story: "I learned the basics by changing layouts, rebuilding simple pages, and checking the result in the browser.",
-    lesson: "Small finished pages taught me more than collecting unfinished experiments.",
+    story:
+      "I learned the basics by changing layouts, rebuilding simple pages, and checking the result in the browser.",
+    lesson:
+      "Small finished pages taught me more than a collection of unfinished experiments.",
     relatedHref: null,
+    relatedLabel: null,
   },
   {
     period: "Hackathon",
-    category: "Compete",
     title: "Built Mangystau Trials",
-    story: "I worked on a tourism prototype with a route flow, map, budget input, and trip preferences. It did not reach the final selection.",
-    lesson: "The idea needed a smaller first version and a clearer main feature.",
+    story:
+      "A tourism prototype with a route flow, map, budget input, and trip preferences. It did not reach the final selection.",
+    lesson:
+      "The idea needed a smaller first version and one clearly named main feature.",
     relatedHref: "/work/mangystau-trials",
+    relatedLabel: "Mangystau Trials case study",
   },
   {
     period: "Commercial work",
-    category: "Build",
     title: "Delivered 99 AKTAU",
-    story: "I built the public site, booking requests, admin login, status controls, Supabase connection, and deployment setup.",
-    lesson: "The client still needs clear controls and documentation after the website is published.",
+    story:
+      "The public site, booking requests, admin login, status controls, Supabase connection, and deployment setup.",
+    lesson:
+      "The client still needs clear controls and documentation after the website is published.",
     relatedHref: "/work/99-aktau",
+    relatedLabel: "99 AKTAU case study",
   },
   {
     period: "Hospitality work",
-    category: "Build",
     title: "Built Tuesday Lounge Bar",
-    story: "I organized the venue information and built a responsive site with direct access to the menu, location, contacts, and reservation action.",
-    lesson: "Content order and mobile navigation strongly affect a business website.",
+    story:
+      "I organised the venue information and built a responsive site with direct access to the menu, location, contacts, and reservation action.",
+    lesson:
+      "Content order and mobile navigation decide how a business website performs.",
     relatedHref: "/work/tuesday-lounge-bar",
-  },
-  {
-    period: "Outside school",
-    category: "Train",
-    title: "Continued judo training",
-    story: "Training gives me a separate place to practise, notice mistakes, correct a technique, and repeat it.",
-    lesson: "A weak part becomes easier to fix when I test it again instead of guessing.",
-    relatedHref: null,
+    relatedLabel: "Tuesday Lounge Bar case study",
   },
   {
     period: "Now",
-    category: "Learn",
     title: "Improving English and web development",
-    story: "I am working on clearer writing, stronger frontend fundamentals, better performance, and more reliable project handover.",
-    lesson: "My current goal is to make each new project more complete than the previous one.",
+    story:
+      "Clearer writing, stronger frontend fundamentals, better performance, and more reliable project handover.",
+    lesson:
+      "The goal is to make each new project more complete than the previous one.",
     relatedHref: null,
+    relatedLabel: null,
   },
 ] as const;

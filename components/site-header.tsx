@@ -17,6 +17,7 @@ export function SiteHeader() {
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     const focusable = Array.from(
       menuRef.current?.querySelectorAll<HTMLElement>("a, button") ?? [],
     );
@@ -49,83 +50,76 @@ export function SiteHeader() {
     };
   }, [open]);
 
+  const close = () => setOpen(false);
+
   const isCurrent = (href: string) =>
-    href === "/"
-      ? pathname === "/"
-      : pathname === href || pathname.startsWith(`${href}/`);
+    pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <header className="site-header">
-      <div className="header-inner">
-        <Link href="/" className="brand" aria-label="Altair Tolesh" onClick={() => setOpen(false)}>
+      <div className="header-inner shell">
+        <Link href="/" className="brand" onClick={close}>
           <span className="monogram" aria-hidden="true">
-            <i>A</i>
-            <i>T</i>
+            AT
           </span>
-          <span className="brand-name">ALTAIR TOLESH</span>
+          Altair Tolesh
         </Link>
 
-        <nav className="desktop-nav" aria-label="Primary navigation">
-          {navigation.map((item) => {
-            const current = isCurrent(item.href);
-            return (
-              <Link
-                href={item.href}
-                className={current ? "is-active" : ""}
-                aria-current={current ? "page" : undefined}
-                key={item.href}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="desktop-nav" aria-label="Primary">
+          {navigation.map((item) => (
+            <Link
+              href={item.href}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
+              key={item.href}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
-        <div className="header-actions">
-          <span className="build-status">
-            <i /> Available for selected work
-          </span>
-          <Link href="/contact" className="header-contact">
-            Discuss a project
-          </Link>
-          <button
-            className="menu-button"
-            type="button"
-            ref={menuButtonRef}
-            onClick={() => setOpen((current) => !current)}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label={open ? "Close navigation" : "Open navigation"}
-          >
-            {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-          </button>
-        </div>
+        <Link href="/contact" className="header-cta">
+          Start a project
+        </Link>
+
+        <button
+          className="menu-button"
+          type="button"
+          ref={menuButtonRef}
+          onClick={() => setOpen((current) => !current)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? "Close navigation" : "Open navigation"}
+        >
+          {open ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
+        </button>
       </div>
 
       <div
         id="mobile-menu"
         ref={menuRef}
-        className={`mobile-menu ${open ? "is-open" : ""}`}
-        aria-hidden={!open}
+        className="mobile-menu"
+        data-open={open}
         inert={!open ? true : undefined}
       >
-        <div className="mobile-menu-inner">
-          <span className="overline">Navigate</span>
+        <div className="mobile-menu-inner shell">
           {navigation.map((item, index) => (
             <Link
               href={item.href}
               key={item.href}
-              onClick={() => setOpen(false)}
+              onClick={close}
               aria-current={isCurrent(item.href) ? "page" : undefined}
             >
-              <span>0{index + 1}</span>
+              <span>{String(index + 1).padStart(2, "0")}</span>
               {item.label}
             </Link>
           ))}
-          <div className="mobile-menu-meta">
-            <span>43.6411° N</span>
-            <span>51.1985° E</span>
-          </div>
+          <Link
+            href="/contact"
+            className="button button-primary mobile-menu-cta"
+            onClick={close}
+          >
+            Start a project
+          </Link>
         </div>
       </div>
     </header>

@@ -1,78 +1,106 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import PortfolioHero from "@/components/ui/portfolio-hero";
+import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
-import { SelectedWorkStage } from "@/components/selected-work-stage";
-import { homepageProcessSteps } from "@/content/process";
+import { FeaturedProject } from "@/components/featured-project";
+import { ProjectCard } from "@/components/project-card";
+import { ContactBlock } from "@/components/contact-block";
+import { ExternalLink } from "@/components/external-link";
+import { processSteps } from "@/content/process";
 import { homepageCopy, profile } from "@/content/profile";
+import { featuredProject, supportingProjects } from "@/content/projects";
 
 export function HomeContent() {
   return (
-    <div className="home-experience">
-      <PortfolioHero />
+    <>
+      <section className="hero shell">
+        <p className="label hero-label">{homepageCopy.heroLabel}</p>
+        <h1>{homepageCopy.heroHeading}</h1>
+        <p className="hero-intro">{homepageCopy.heroBody}</p>
 
-      <section className="intro-section" data-motion="section-wipe">
-        <h2>{homepageCopy.introductionHeading}</h2>
-        <p>{homepageCopy.introductionBody}</p>
-      </section>
-
-      <SelectedWorkStage />
-
-      <section className="section process-section" data-motion="process-preview">
-        <SectionHeading
-          eyebrow="02 / How I work"
-          title="My usual process"
-          body="The exact steps change between projects, but I normally work in this order."
-        />
-        <ol className="process-grid">
-          {homepageProcessSteps.map((step) => (
-            <li key={step.number}>
-              <span>{step.number}</span>
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
-            </li>
-          ))}
-        </ol>
-        <Link href="/process" className="text-link section-link">
-          Read the full process <ArrowRight size={17} />
-        </Link>
-      </section>
-
-      <section className="about-preview" data-motion="split-reveal">
-        <div className="about-preview-label">
-          <span className="overline">03 / About</span>
-        </div>
-        <div>
-          <h2>{homepageCopy.aboutHeading}</h2>
-          {homepageCopy.aboutParagraphs.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-          <Link href="/about" className="text-link">
-            More about me <ArrowRight size={17} />
+        <div className="hero-actions">
+          <Link href="/work" className="button button-primary">
+            See the work <ArrowRight size={16} aria-hidden="true" />
           </Link>
+          <ExternalLink href={profile.github} className="button button-quiet" size={15}>
+            GitHub
+          </ExternalLink>
+        </div>
+
+        <p className="label hero-availability">{profile.availability}</p>
+
+        <dl className="evidence-strip">
+          {homepageCopy.heroEvidence.map((item) => (
+            <div key={item.label}>
+              <dt>{item.value}</dt>
+              <dd>{item.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="section section-ruled">
+        <div className="shell">
+          <SectionHeading eyebrow="Featured" title={homepageCopy.featuredHeading} />
+          <FeaturedProject project={featuredProject} />
         </div>
       </section>
 
-      <section className="contact-cta" data-motion="cta-reveal">
-        <span className="overline">04 / Contact</span>
-        <h2>{homepageCopy.contactHeading}</h2>
-        <p>{homepageCopy.contactBody}</p>
-        <div>
-          <Link href="/contact" className="button button-primary">
-            Discuss a project <ArrowRight size={18} />
-          </Link>
-          {profile.email ? (
-            <a href={`mailto:${profile.email}`} className="button button-quiet">
-              Email <ArrowUpRight size={16} />
-            </a>
-          ) : null}
-          {profile.github ? (
-            <a href={profile.github} className="button button-quiet" target="_blank" rel="noopener noreferrer">
-              GitHub <ArrowUpRight size={16} />
-            </a>
-          ) : null}
+      <section className="section">
+        <div className="shell">
+          <SectionHeading
+            eyebrow="Selected work"
+            title={homepageCopy.workHeading}
+            body={homepageCopy.workBody}
+          />
+          <div className="project-list">
+            {supportingProjects.map((project) => (
+              <ProjectCard project={project} key={project.slug} />
+            ))}
+          </div>
+          <div className="section-more">
+            <Link href="/work" className="text-link">
+              All work and case studies <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </section>
-    </div>
+
+      <section className="section section-ruled">
+        <div className="shell split" data-reveal>
+          <p className="label">Approach</p>
+          <div className="prose">
+            <h2 className="statement-heading">{homepageCopy.noteHeading}</h2>
+            <p>{homepageCopy.noteBody}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section section-ruled">
+        <div className="shell">
+          <SectionHeading
+            eyebrow="Process"
+            title={homepageCopy.processHeading}
+            body={homepageCopy.processBody}
+          />
+          <ol className="process-list" data-reveal>
+            {processSteps.map((step) => (
+              <li key={step.number}>
+                <p className="label">{step.number}</p>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="section-more">
+            <Link href="/about#process" className="text-link">
+              How this played out on each project{" "}
+              <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <ContactBlock />
+    </>
   );
 }

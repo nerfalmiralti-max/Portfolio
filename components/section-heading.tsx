@@ -8,8 +8,8 @@ export function SectionHeading({
   body?: string;
 }) {
   return (
-    <header className="section-heading">
-      <span className="overline">{eyebrow}</span>
+    <header className="section-heading" data-reveal>
+      <p className="label">{eyebrow}</p>
       <h2>{title}</h2>
       {body ? <p>{body}</p> : null}
     </header>

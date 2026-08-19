@@ -5,24 +5,15 @@ import { ProjectVisual } from "@/components/project-visual";
 import { EvidenceRow } from "@/components/evidence-row";
 import { ExternalLink } from "@/components/external-link";
 
-/**
- * A project at normal weight. The featured project uses `FeaturedProject`
- * instead, so the two never compete for the same visual rank.
- */
-export function ProjectCard({
-  project,
-  showStack = false,
-}: {
-  project: Project;
-  showStack?: boolean;
-}) {
+/** The strongest project, given the weight to match. */
+export function FeaturedProject({ project }: { project: Project }) {
   return (
     <article
-      className="project-row"
+      className="featured"
       style={{ "--project-accent": project.accent } as React.CSSProperties}
       data-reveal
     >
-      <div className="project-row-copy">
+      <div>
         <div className="featured-meta">
           <span className="project-index">{project.number}</span>
           <span className="status-badge">{project.status}</span>
@@ -32,25 +23,15 @@ export function ProjectCard({
         </div>
 
         <h3>{project.name}</h3>
-        <p className="project-row-tagline">{project.tagline}</p>
-        <p className="project-row-role">
-          <strong>My role:</strong> {project.role.join(", ")}.
-        </p>
+        <p className="featured-tagline">{project.tagline}</p>
+        <p className="featured-summary">{project.summary}</p>
 
         <EvidenceRow
           evidence={project.evidence}
           label={`${project.name} evidence`}
         />
 
-        {showStack ? (
-          <ul className="stack-list" aria-label={`${project.name} stack`}>
-            {project.stack.map((tech) => (
-              <li key={tech}>{tech}</li>
-            ))}
-          </ul>
-        ) : null}
-
-        <div className="project-actions">
+        <div className="featured-actions">
           <Link href={project.caseStudyUrl} className="text-link">
             Read the case study <ArrowRight size={15} aria-hidden="true" />
           </Link>
