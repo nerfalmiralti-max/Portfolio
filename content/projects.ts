@@ -1,4 +1,5 @@
 export type ProjectSlug =
+  | "alt-qr"
   | "99-aktau"
   | "tuesday-lounge-bar"
   | "mangystau-trials";
@@ -18,7 +19,9 @@ export type EvidenceKind =
   | "auth"
   | "responsive"
   | "languages"
-  | "prototype";
+  | "prototype"
+  | "tests"
+  | "deterministic";
 
 export type Evidence = {
   kind: EvidenceKind;
@@ -46,7 +49,7 @@ export type Decision = {
  * Coordinates live in a 120 x 100 space so the renderer can draw straight
  * edges at true angles. Slots are positional: node 0 of one project becomes
  * node 0 of the next, which is what makes switching read as one system
- * rearranging rather than three diagrams swapping places.
+ * rearranging rather than several diagrams swapping places.
  */
 export type SystemNodeKind = "input" | "core" | "gate" | "output";
 
@@ -116,8 +119,193 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: "99-aktau",
+    slug: "alt-qr",
     number: "01",
+    tier: "featured",
+    name: "ALT QR",
+    type: "Release quality scanner",
+    status: "Runs locally",
+    year: "2026",
+    tagline:
+      "A deterministic release scanner that turns a website into evidence, then decides whether that release is allowed to ship.",
+    summary:
+      "You give it a URL. It crawls the site in a real Chromium browser inside a bounded envelope, records typed evidence from every page, turns that evidence into findings with fixed rules, compares them against a chosen baseline scan, and runs a release gate. The result is a verdict — ready to ship, ready with warnings, needs attention, or blocked — and every finding behind it can be opened.",
+    problem:
+      "A score does not tell you whether a release is safe to ship. A site can average well and still have a page returning 500, a form control with no accessible name, or a regression that arrived since the last deploy. What a release decision needs is which findings block it, which are new since the baseline, and what evidence supports each one.",
+    role: [
+      "Scanner architecture",
+      "Rule and scoring model",
+      "Release gate and verdict logic",
+      "Cross-scan comparison engine",
+      "SSRF and request safety",
+      "Test and reliability suites",
+    ],
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "Playwright",
+      "Chromium",
+      "axe-core",
+      "Lighthouse",
+      "Zod",
+      "Supabase",
+      "Docker",
+    ],
+    evidence: [
+      { kind: "repository", label: "Source on GitHub" },
+      { kind: "deterministic", label: "Fixed rules, no model inference" },
+      { kind: "tests", label: "Unit, scanner, reliability, and E2E suites" },
+      { kind: "responsive", label: "Overflow checked 320 to 1440" },
+      { kind: "database", label: "Optional Supabase mirror" },
+    ],
+    indexName: "ALT QR",
+    wordmarkLines: ["ALT", "QR"],
+    system: {
+      caption: "Release pipeline",
+      outcomeLabel: "Result",
+      outcome: "A gate, not an opinion",
+      alt: "System diagram of the ALT QR release pipeline. A target URL is scanned in a real browser, the scan produces typed evidence, a baseline scan is compared back against that evidence to classify what changed, a release gate checks the evidence against fixed thresholds, and the gate produces a ship verdict.",
+      steps: [
+        "A target URL is crawled inside a bounded, same-origin envelope",
+        "Each page produces typed evidence: HTTP, DOM, accessibility, console, and network",
+        "Fixed rules turn that evidence into findings with stable fingerprints",
+        "The baseline scan is compared to classify new, fixed, changed, and regressed findings",
+        "A release gate checks score, critical findings, broken pages, and broken links",
+        "The verdict is ready to ship, ready with warnings, needs attention, or blocked",
+      ],
+      nodes: [
+        { label: "Target", x: 0, y: 30, kind: "input" },
+        { label: "Scan", x: 30, y: 30, kind: "core" },
+        { label: "Evidence", x: 60, y: 30, kind: "core" },
+        { label: "Gate", x: 90, y: 30, kind: "gate" },
+        { label: "Verdict", x: 120, y: 30, kind: "output" },
+        { label: "Baseline", x: 60, y: 92, kind: "core" },
+      ],
+      edges: [
+        { from: 0, to: 1 },
+        { from: 1, to: 2 },
+        { from: 2, to: 3 },
+        { from: 3, to: 4 },
+        { from: 5, to: 2, kind: "return" },
+      ],
+    },
+    architecture: [
+      {
+        layer: "Scanner",
+        detail:
+          "A bounded same-origin crawl in real Chromium, with each page isolated so one failure cannot end the scan",
+        parts: ["Playwright", "Chromium", "axe-core", "Lighthouse"],
+      },
+      {
+        layer: "Rules",
+        detail:
+          "A fixed registry where every rule carries its own category, severity, and score impact",
+        parts: ["Rule registry", "Weighted categories"],
+      },
+      {
+        layer: "Evidence",
+        detail:
+          "Typed findings with stable fingerprints, deduplicated so one problem is one finding",
+        parts: ["Typed evidence", "Fingerprints", "Dedupe"],
+      },
+      {
+        layer: "Comparison",
+        detail:
+          "A chosen project baseline and the previous scan, classified into new, fixed, unchanged, changed, and regression",
+        parts: ["Baseline", "Delta engine", "Pixel diff"],
+      },
+      {
+        layer: "Release gate",
+        detail:
+          "Four configurable checks — minimum score, critical findings, broken pages, broken links — where a blocker fails the release on its own",
+        parts: ["Gate config", "Ship verdict"],
+      },
+      {
+        layer: "Safety",
+        detail:
+          "A request policy that keeps the scanner from being pointed at anything it should not reach",
+        parts: ["Public-DNS only", "Method allowlist", "robots.txt", "Bounds"],
+      },
+      {
+        layer: "Storage",
+        detail:
+          "Local JSON and PNG evidence written atomically and treated as canonical, with an optional server-only mirror",
+        parts: ["Local records", "Supabase mirror"],
+      },
+      {
+        layer: "Delivery",
+        detail:
+          "A container running a persistent worker, because the browser and its scan state have to outlive a request",
+        parts: ["Docker", "Railway"],
+      },
+    ],
+    decisions: [
+      {
+        question: "Should a model decide whether a release is ready?",
+        choice:
+          "No. Fixed rules, real browser measurements, and typed evidence only.",
+        reason:
+          "A release decision has to be reproducible and arguable. The same site in the same state has to produce the same verdict every time, and every finding has to point at the evidence that produced it. A generated judgement can do neither.",
+      },
+      {
+        question: "Is the score the release decision?",
+        choice:
+          "No. The gate is separate, with its own four checks: minimum score, zero critical findings, zero broken pages, zero broken links.",
+        reason:
+          "A weighted average can stay high while a page returns an error, because one broken page is diluted by everything that still works. The gate checks those conditions directly, so a blocker fails the release on its own rather than being averaged away.",
+      },
+      {
+        question: "How does a finding stay the same finding across two scans?",
+        choice:
+          "A stable fingerprint derived from the normalized finding, not from a database ID.",
+        reason:
+          "Records are rewritten on every scan, so an identifier assigned at write time cannot survive. A fingerprint computed from the finding itself is what makes new, fixed, and regressed classifications possible at all.",
+      },
+      {
+        question: "Can the scanner run on serverless?",
+        choice:
+          "No. It runs as a persistent worker in a container.",
+        reason:
+          "A scan holds a live browser, cancellation state in memory, and local evidence files. A serverless request can end, move instance, or be terminated mid-scan, which would leave that state stranded. The trade-off is real: there is no one-click serverless deploy, and a serverless architecture would need a durable queue, a dedicated browser worker, and shared object storage first.",
+      },
+      {
+        question: "What stops a scanner from becoming an attack tool?",
+        choice:
+          "A layered request policy: public DNS results only, same origin, a read-only method allowlist, and hard bounds on pages, redirects, size, and time.",
+        reason:
+          "Anything that fetches a URL on request is a way to reach systems the caller cannot reach directly. The policy is enforced on the initial URL, the final URL after redirects, and every resource the browser itself requests, because checking only the first one leaves the other two open.",
+      },
+    ],
+    result:
+      "The scanner runs end to end: it crawls, records evidence, applies rules, compares against a baseline, evaluates the gate, and writes a verdict with a downloadable release receipt. A fixture test proves the comparison engine by scanning a site, mutating it, and scanning again — the run asserts findings classified as fixed, new, and regressed, a score movement, a measured visual change, and a failing gate.",
+    learned:
+      "Deciding what counts as evidence was harder than collecting it. The first version could report a great deal and still not answer whether to ship, because nothing separated a finding that blocks a release from a finding that is merely worth knowing. The gate exists because a score alone kept saying yes when the answer was no.",
+    accent: "#79d19b",
+    liveUrl: "",
+    repositoryUrl: "https://github.com/nerfalmiralti-max/ALT-AI",
+    caseStudyUrl: "/work/alt-qr",
+    liveLabel: "",
+    sections: [
+      {
+        id: "context",
+        title: "Why this is hard",
+        body: "Release checks tend to be either a checklist somebody fills in by hand or a single number from a tool. A checklist records an opinion and cannot tell you what changed since the last deploy. A number tells you a site averages well, which is not the same as it being safe to ship. Neither one holds the evidence, so neither one can be argued with when it disagrees with the person who wants to deploy.",
+      },
+      {
+        id: "product",
+        title: "What I built",
+        body: "A scanner and a release decision on top of it. The scanner drives a real browser through a bounded crawl and records what it finds as typed evidence rather than prose. A fixed rule registry turns that evidence into findings, each with a stable fingerprint, so the same problem in two scans is recognisably the same problem. On top of that sit the parts that make it a release tool rather than a report: a comparison against a chosen baseline, a gate with explicit thresholds, a blocker-aware verdict, an ignore lifecycle for findings a team has accepted, and a receipt that records the decision.",
+      },
+      {
+        id: "problems",
+        title: "What is not finished",
+        body: "Screenshots and visual comparison run on the primary page only, not on every crawled page. Two areas of the request policy are tested but not fully closed: DNS re-resolution between the check and the request, and byte enforcement on chunked responses, both of which need network isolation to test properly. The Supabase migration is additive and reviewed but has never been applied against a live database. And the deployment boundary is a real constraint, not a preference — the current worker cannot run on a serverless platform without a queue, a dedicated browser worker, and shared storage.",
+      },
+    ],
+  },
+  {
+    slug: "99-aktau",
+    number: "02",
     tier: "featured",
     name: "99 AKTAU",
     type: "Commercial website",
@@ -255,7 +443,7 @@ export const projects: Project[] = [
   },
   {
     slug: "tuesday-lounge-bar",
-    number: "02",
+    number: "03",
     tier: "selected",
     name: "Tuesday Lounge Bar",
     type: "Hospitality website",
@@ -379,7 +567,7 @@ export const projects: Project[] = [
   },
   {
     slug: "mangystau-trials",
-    number: "03",
+    number: "04",
     tier: "prototype",
     name: "Mangystau Trials",
     type: "Hackathon prototype",

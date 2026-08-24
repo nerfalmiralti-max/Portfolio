@@ -9,7 +9,7 @@ import { projects } from "@/content/projects";
 export const metadata: Metadata = {
   title: "Work",
   description:
-    "Three shipped websites by Altair Tolesh: a commercial booking site for a PlayStation club, a hospitality site, and a hackathon travel prototype. Each with a case study, a live link, and public source.",
+    "Four projects by Altair Tolesh: a deterministic release scanner, a commercial booking site for a PlayStation club, a hospitality site, and a hackathon travel prototype. Each with a case study and public source.",
   alternates: { canonical: "/work" },
 };
 
@@ -19,13 +19,14 @@ export default function WorkPage() {
       <header className="page-hero shell">
         <p className="label">Work</p>
         <h1 className="page-title">
-          <span>Three projects,</span>
-          <span>three different reasons.</span>
+          <span>Four projects,</span>
+          <span>four different reasons.</span>
         </h1>
         <p className="lede">
-          One was built for a paying client, one for a lounge bar, one started at
-          a hackathon and did not place. Each case study covers what I built, the
-          decisions behind it, and what went wrong.
+          One is a release scanner I built to answer a question a score cannot.
+          One was built for a paying client, one for a lounge bar, and one
+          started at a hackathon and did not place. Each case study covers what I
+          built, the decisions behind it, and what went wrong.
         </p>
       </header>
 
@@ -37,7 +38,7 @@ export default function WorkPage() {
         <ProjectIndex
           projects={projects}
           eyebrow="Index"
-          heading="Three systems"
+          heading="Four systems"
           body="Move between them and the drawing rearranges rather than restarting: the same nodes, in the shape each project actually took."
         />
       </div>
@@ -88,12 +89,16 @@ export default function WorkPage() {
                     <Link href={project.caseStudyUrl} className="text-link">
                       Read the case study
                     </Link>
-                    <ExternalLink
-                      href={project.liveUrl}
-                      className="text-link text-link-quiet"
-                    >
-                      {project.liveLabel}
-                    </ExternalLink>
+                    {/* Not every project is a deployed site. One of them runs
+                        locally, so it has source to read and no URL to visit. */}
+                    {project.liveUrl ? (
+                      <ExternalLink
+                        href={project.liveUrl}
+                        className="text-link text-link-quiet"
+                      >
+                        {project.liveLabel}
+                      </ExternalLink>
+                    ) : null}
                     <ExternalLink
                       href={project.repositoryUrl}
                       className="text-link text-link-quiet"

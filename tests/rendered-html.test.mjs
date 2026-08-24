@@ -4,6 +4,7 @@ import test from "node:test";
 const ROUTES = [
   "/",
   "/work",
+  "/work/alt-qr",
   "/work/99-aktau",
   "/work/tuesday-lounge-bar",
   "/work/mangystau-trials",
@@ -11,6 +12,9 @@ const ROUTES = [
   "/contact",
   "/privacy",
 ];
+
+/** Indices 2..CASE_STUDY_END are the case studies. */
+const CASE_STUDY_END = 6;
 
 async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -69,7 +73,7 @@ test("project visuals are drawn, never captured", async () => {
   // Every project visual is an SVG the page draws from the project's own
   // structure. A screenshot, a photograph, or a raster asset of any kind
   // reappearing here is a regression.
-  for (const path of ["/", "/work", ...ROUTES.slice(2, 5)]) {
+  for (const path of ["/", "/work", ...ROUTES.slice(2, CASE_STUDY_END)]) {
     const body = await html(path);
     assert.doesNotMatch(body, /\.(webp|png|jpg|jpeg|avif)\b/i, path);
     assert.doesNotMatch(body, /<img\b/i, path);
@@ -83,7 +87,7 @@ test("project visuals are drawn, never captured", async () => {
 
 test("project schematics contain no invented product data", async () => {
   // No fake booking IDs, distances, prices, or times may appear in a visual.
-  for (const path of ROUTES.slice(2, 5)) {
+  for (const path of ROUTES.slice(2, CASE_STUDY_END)) {
     const body = await html(path);
     assert.doesNotMatch(body, /Request #\d/);
     assert.doesNotMatch(body, /\d+ km/);

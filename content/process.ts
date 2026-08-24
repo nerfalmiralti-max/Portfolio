@@ -1,6 +1,6 @@
 /**
  * One canonical process list. Each step carries a real example from one of the
- * three projects, so the page is evidence rather than a generic checklist.
+ * projects, so the page is evidence rather than a generic checklist.
  */
 export const processSteps = [
   {

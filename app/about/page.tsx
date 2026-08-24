@@ -39,7 +39,7 @@ export default function AboutPage() {
             ))}
             <p>{aboutCopy.projects}</p>
             <p>
-              The details are in the{" "}
+              The details are in the <Link href="/work/alt-qr">ALT QR</Link>,{" "}
               <Link href="/work/99-aktau">99 AKTAU</Link>,{" "}
               <Link href="/work/tuesday-lounge-bar">Tuesday Lounge Bar</Link>, and{" "}
               <Link href="/work/mangystau-trials">Mangystau Trials</Link> case

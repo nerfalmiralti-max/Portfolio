@@ -24,17 +24,17 @@ export const homepageCopy = {
   /** One line of positioning. Not a biography, not a location. */
   heroStatement: "I design and build websites that go into production.",
   heroBody:
-    "Interface, frontend, data, deployment. Three sites are live: one for a paying client, one for a lounge bar, and one hackathon prototype that did not place.",
+    "Interface, frontend, data, deployment. Three sites are live: one for a paying client, one for a lounge bar, and one hackathon prototype that did not place. A fourth project is a release scanner that runs locally.",
   /** Only claims a visitor can check by following the site's own links. */
   ledger: [
     { value: "03", label: "sites deployed and reachable" },
     { value: "01", label: "built for a paying client" },
-    { value: "03", label: "public repositories" },
+    { value: "04", label: "public repositories" },
   ],
   workEyebrow: "Selected work",
-  workHeading: "Three systems",
+  workHeading: "Four systems",
   workBody:
-    "Each one is live, each one has a case study, and each one has its source in the open.",
+    "Every one has a case study and public source. Three are live sites; the fourth is a scanner that runs locally.",
   noteHeading: "I would rather show finished work than describe intentions.",
   noteBody:
     "A website can look good and still be hard to use. What decides it is duller than the visual design: the mobile layout, the error states, and everything that still has to be true a month after launch.",

@@ -1,9 +1,11 @@
 import {
+  Binary,
   Code,
   Database,
   FlaskConical,
   KeyRound,
   Languages,
+  ListChecks,
   Radio,
   Smartphone,
   Wallet,
@@ -19,6 +21,8 @@ const icons: Record<EvidenceKind, typeof Radio> = {
   responsive: Smartphone,
   languages: Languages,
   prototype: FlaskConical,
+  tests: ListChecks,
+  deterministic: Binary,
 };
 
 /**
