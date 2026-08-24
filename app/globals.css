@@ -365,8 +365,10 @@ main {
   transform: translateY(-1px);
 }
 
+/* Press goes below rest, not back to it. Returning to zero reads as the
+   hover being cancelled; going past it reads as the button being pushed. */
 .button:active {
-  transform: translateY(0);
+  transform: translateY(1px);
 }
 
 /* The hero's two exits. A number, a word, and a rule that runs to an arrow —
@@ -680,22 +682,43 @@ main {
     );
     display: block;
     width: 1px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.14);
+    /* The spine draws downward as the reader scrolls (see motion.css), so it
+       has to scale from the top. */
+    transform-origin: top;
     pointer-events: none;
   }
 
+  /* The travelling marker. This is the object that carries the hero into the
+     work index, so it has to be legible against a near-black page from
+     across the screen — at 1px and 8% white it was technically present and
+     perceptually absent. */
   .continuum-mark {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 1px;
-    height: 18%;
+    left: -1px;
+    width: 3px;
+    height: 24%;
     background: linear-gradient(
       to bottom,
       transparent,
-      var(--accent) 45%,
+      var(--accent) 40%,
+      var(--accent) 60%,
       transparent
     );
+  }
+
+  /* A hard leading edge, so the marker reads as a position rather than a
+     soft glow sliding about. */
+  .continuum-mark::after {
+    content: "";
+    position: absolute;
+    bottom: 38%;
+    left: -2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
   }
 }
 
@@ -721,24 +744,24 @@ main {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 1px;
+  width: 2px;
   background: linear-gradient(
     to bottom,
     transparent,
-    color-mix(in srgb, var(--accent) 55%, transparent) 30%,
-    color-mix(in srgb, var(--accent) 55%, transparent) 70%,
+    color-mix(in srgb, var(--accent) 80%, transparent) 30%,
+    color-mix(in srgb, var(--accent) 80%, transparent) 70%,
     transparent
   );
   opacity: 0;
   transform: translateX(var(--scan, -80px));
   pointer-events: none;
   transition:
-    transform 560ms var(--ease-responsive),
+    transform 440ms var(--ease-responsive),
     opacity var(--dur-ui) var(--ease-out);
 }
 
 .hero[data-pointer="fine"] .hero-scan {
-  opacity: 0.55;
+  opacity: 0.9;
 }
 
 .hero-meta {
@@ -784,6 +807,33 @@ main {
 
 .wordmark-glyph {
   display: block;
+}
+
+/* The cutting edge: a narrow bar with a bright leading edge and a short
+   trailing falloff, translated across the word while the letters are cleared
+   behind it. It is sized in pixels and moved with a transform, so the edge
+   stays the same width for the whole travel — scaling a full-width gradient
+   instead would stretch its stops and turn the edge into a wash. The travel
+   is expressed in `cqw` against `.hero-inner`, which is the element the
+   wordmark is set to the width of. At rest it is transparent and parked off
+   the left edge, so with scripting off it is simply not there. */
+.wordmark-cut {
+  position: absolute;
+  z-index: 2;
+  top: -3%;
+  bottom: -3%;
+  left: 0;
+  width: 84px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 38%, transparent) 66%,
+    var(--accent-text) 97%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateX(-84px);
+  pointer-events: none;
 }
 
 /* Six letters, six offsets, written by one element per frame. */
@@ -946,6 +996,20 @@ main {
   border-bottom: 1px solid var(--line);
 }
 
+/* The row is one action told in five parts, and the parts are offset against
+   each other rather than fired together. The title leaves first and with no
+   delay at all — that is the part a reader reads as "it responded" — and the
+   rest resolve behind it inside the next third of a second. Firing them
+   simultaneously, which is what this used to do, made a rich row read as a
+   single flat state change.
+
+   The offsets live on the active state, never on the base rule. A
+   transition reads its timing from the state it is heading towards, so a
+   delay parked on the base rule would also delay the row switching off —
+   and moving quickly down the list would leave two rows half-lit at once,
+   each waiting out the other's stagger. Entering is layered; leaving is
+   immediate and quicker than entering, so only ever one row reads as the
+   active one. */
 .row-index {
   align-self: start;
   margin-top: 0.6em;
@@ -954,13 +1018,13 @@ main {
   font-size: var(--text-2xs);
   letter-spacing: var(--tracking-label);
   transition:
-    color var(--dur-ui) var(--ease-out),
-    transform var(--dur-ui) var(--ease-responsive);
+    color var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-responsive);
 }
 
 .row-body {
   display: block;
-  transition: transform var(--dur-ui) var(--ease-responsive);
+  transition: transform var(--dur-micro) var(--ease-responsive);
 }
 
 .row-name {
@@ -992,40 +1056,50 @@ main {
 .row-cue {
   color: var(--project-accent, var(--accent-text));
   clip-path: inset(0 100% 0 0);
-  transition: clip-path var(--dur-ui) var(--ease-enter);
+  transition: clip-path var(--dur-micro) var(--ease-enter);
 }
 
 .row-arrow {
   color: var(--text-quiet);
   transition:
-    color var(--dur-ui) var(--ease-out),
-    transform var(--dur-ui) var(--ease-responsive);
+    color var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-responsive);
 }
 
-/* An accent rule grows along the bottom of whichever row is active. */
+/* An accent rule grows along the bottom of whichever row is active. It runs
+   the width of the row, so it needs longer than the parts above it — but at
+   the old `--dur-morph` it finished a third of a second after everything
+   else had settled and read as a straggler rather than a layer. */
 .row-trace {
   position: absolute;
   right: 0;
   bottom: -1px;
   left: 0;
-  height: 1px;
+  height: 2px;
   background: var(--project-accent, var(--accent));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform var(--dur-morph) var(--ease-enter);
+  /* Retracts quickly and from the same edge it grew from, so a row that has
+     just been left does not hold a half-width accent rule under it. */
+  transition: transform var(--dur-micro) var(--ease-enter);
 }
 
 .index-row[data-active="true"] .row-name {
   color: var(--text);
 }
 
+/* --- the active row, and the beats it arrives on ------------------------ */
+
 .index-row[data-active="true"] .row-body {
-  transform: translateX(18px);
+  transform: translateX(26px);
+  transition-duration: var(--dur-ui);
 }
 
 .index-row[data-active="true"] .row-index {
   color: var(--project-accent, var(--accent-text));
   transform: translateX(-8px);
+  transition-duration: var(--dur-ui);
+  transition-delay: 40ms;
 }
 
 .index-row[data-active="true"] .row-meta {
@@ -1034,15 +1108,21 @@ main {
 
 .index-row[data-active="true"] .row-cue {
   clip-path: inset(0 0 0 0);
+  transition-duration: var(--dur-ui);
+  transition-delay: 110ms;
 }
 
 .index-row[data-active="true"] .row-arrow {
   color: var(--project-accent, var(--accent-text));
   transform: translate(6px, -6px);
+  transition-duration: var(--dur-ui);
+  transition-delay: 70ms;
 }
 
 .index-row[data-active="true"] .row-trace {
   transform: scaleX(1);
+  transition-duration: var(--dur-editorial);
+  transition-delay: 30ms;
 }
 
 .index-row:focus-visible {
@@ -1131,10 +1211,17 @@ main {
   transform-origin: 0 0;
 }
 
+/* Object constancy is the whole point of the slot system: slot 0 of one
+   project is slot 0 of the next, so a project change moves the parts instead
+   of swapping two drawings. The stagger is what makes that readable — with
+   every node leaving at the same instant the eye cannot follow any single
+   one, and the rearrangement reads as a dissolve. Offsetting them by slot
+   turns it into one machine reconfiguring itself, part by part. */
 .sys-node {
   transition:
     transform var(--dur-morph) var(--ease-enter),
     opacity var(--dur-ui) var(--ease-out);
+  transition-delay: calc(var(--node-order) * 28ms);
 }
 
 .sys-node[data-present="false"] {
@@ -1171,8 +1258,11 @@ main {
   text-transform: uppercase;
 }
 
+/* Connections follow the parts they connect, so an edge is seen to stretch
+   between two nodes that have already started moving. */
 .sys-wire {
   transition: transform var(--dur-morph) var(--ease-enter);
+  transition-delay: calc(var(--beat-tight) + var(--wire-order, 0) * 22ms);
 }
 
 .sys-wire line {
@@ -1381,6 +1471,9 @@ main {
   background: var(--line);
 }
 
+/* The runner is the only thing on the rail that moves, and it should arrive
+   before the stage it points at finishes changing emphasis — the indicator
+   leads, the content follows. */
 .track-runner {
   position: absolute;
   top: calc(var(--space-4) + 4px);
@@ -1389,7 +1482,7 @@ main {
   height: 3px;
   background: var(--accent);
   transform: translateX(calc(var(--stage) * 100%));
-  transition: transform var(--dur-morph) var(--ease-responsive);
+  transition: transform var(--dur-editorial) var(--ease-responsive);
 }
 
 .track-ticks {
@@ -1440,7 +1533,7 @@ main {
 
 .track-ticks li[data-active="true"] .tick-mark {
   background: var(--accent);
-  transform: scaleY(2);
+  transform: scaleY(2.8);
 }
 
 .track-ticks li[data-active="true"] .tick-number {
@@ -1465,8 +1558,8 @@ main {
   padding-block: clamp(1.75rem, 3.4vw, 2.75rem);
   border-bottom: 1px solid var(--line);
   transition:
-    opacity var(--dur-morph) var(--ease-out),
-    transform var(--dur-morph) var(--ease-responsive);
+    opacity var(--dur-editorial) var(--ease-out),
+    transform var(--dur-editorial) var(--ease-responsive);
 }
 
 .stage-number {
@@ -1522,7 +1615,7 @@ main {
   }
 
   [data-motion="on"] .track-stages > li {
-    opacity: 0.4;
+    opacity: 0.32;
   }
 
   [data-motion="on"] .track-stages > li[data-active="true"] {
@@ -1530,12 +1623,19 @@ main {
   }
 
   .track-stages > li[data-active="true"] .stage-title {
-    transform: translateX(6px);
+    transform: translateX(14px);
+  }
+
+  /* The stage the reader has already passed sits back rather than simply
+     dimming, so the sequence reads as advancing in one direction. */
+  .track-stages > li[data-active="true"] ~ li .stage-title {
+    transform: translateX(-4px);
   }
 
   .stage-title {
     grid-column: auto;
     font-size: var(--text-3xl);
+    transition: transform var(--dur-editorial) var(--ease-responsive);
   }
 
   .stage-copy {
@@ -1982,6 +2082,7 @@ main {
 }
 
 .arch-layer {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr);
   gap: var(--space-4);
@@ -1989,12 +2090,33 @@ main {
   transition: opacity var(--dur-ui) var(--ease-out);
 }
 
+/* The segment of spine this layer owns. Selecting a layer lights its own
+   length of the trunk, so the diagram answers "which part of the system is
+   this" with the drawing rather than with a colour change on a label. */
+.arch-layer::after {
+  content: "";
+  position: absolute;
+  top: 0.85rem;
+  bottom: 0.85rem;
+  left: 5px;
+  width: 1px;
+  background: var(--project-accent, var(--accent));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform var(--dur-ui) var(--ease-enter);
+  pointer-events: none;
+}
+
+.arch-layer[data-state="on"]::after {
+  transform: scaleY(1);
+}
+
 .arch-layer + .arch-layer {
   border-top: 1px solid var(--line-faint);
 }
 
 .arch-layer[data-state="off"] {
-  opacity: 0.42;
+  opacity: 0.34;
 }
 
 .arch-node {
@@ -2038,13 +2160,25 @@ main {
 .arch-layer[data-state="on"] .arch-dot {
   border-color: var(--project-accent, var(--accent));
   background: var(--project-accent, var(--accent));
-  transform: scale(1.4);
+  transform: scale(1.7);
 }
 
 .arch-node:hover .arch-name,
 .arch-node:focus-visible .arch-name,
 .arch-layer[data-state="on"] .arch-name {
-  transform: translateX(4px);
+  color: var(--text);
+  transform: translateX(9px);
+}
+
+/* Held is a different state from pointed-at, and it has to look different:
+   pointing is a preview the reader is about to lose, holding is a choice
+   they made. A ring stays around the dot for as long as the layer is held. */
+.arch-node[aria-pressed="true"] .arch-dot::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid var(--project-accent, var(--accent));
+  border-radius: 50%;
 }
 
 .arch-detail p {
@@ -2517,7 +2651,27 @@ main {
 
 .field:focus-within > span {
   color: var(--text);
-  transform: translateX(3px);
+  transform: translateX(6px);
+}
+
+/* A tick at the start of the rule, so focus reads as a position on the form
+   and not only as a colour. It arrives after the rule has travelled. */
+.field::before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 1px;
+  height: 6px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--dur-micro) var(--ease-responsive);
+  transition-delay: 90ms;
+}
+
+.field:focus-within::before {
+  transform: scaleY(1);
 }
 
 .field input,

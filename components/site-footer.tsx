@@ -48,7 +48,10 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="footer-mark" aria-hidden="true" data-reveal>
+        {/* `data-reveal="mark"` opts this into the same observer as everything
+            else without taking the generic fade: the closing mark has its own
+            rule-draw, in the character the hero opens with. */}
+        <p className="footer-mark" aria-hidden="true" data-reveal="mark">
           <span className="footer-mark-dash" />
           <span className="footer-mark-letters">{profile.initials}</span>
         </p>

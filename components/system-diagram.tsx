@@ -123,9 +123,13 @@ export function SystemDiagram({
                 key={`wire-${slot}`}
                 data-kind={edge?.kind ?? "primary"}
                 data-present={edge ? "true" : "false"}
-                style={{
-                  transform: `translate(${geometry.x}px, ${geometry.y}px) rotate(${geometry.angle}deg) scaleX(${geometry.length || 0.001})`,
-                }}
+                style={
+                  {
+                    transform: `translate(${geometry.x}px, ${geometry.y}px) rotate(${geometry.angle}deg) scaleX(${geometry.length || 0.001})`,
+                    // Lets an edge start moving after the nodes it joins.
+                    "--wire-order": slot,
+                  } as React.CSSProperties
+                }
               >
                 <g className="sys-wire-grow">
                   <line

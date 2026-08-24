@@ -63,13 +63,17 @@ export function Hero() {
       stageEl.style.setProperty("--scan", `${pointerX - stageBox.left}px`);
 
       const localX = pointerX - wordBox.left;
-      const reach = Math.max(wordBox.width / 5, 140);
+      // Tighter than the old width/5: a narrower reach means the letters the
+      // cursor is actually between move a long way and the rest hold still,
+      // which reads as the word resisting the pointer. A wide reach moved
+      // everything a little and read as nothing.
+      const reach = Math.max(wordBox.width / 7, 110);
 
       centres.forEach((centre, index) => {
         const distance = localX - centre;
         // Gaussian falloff: only the letters actually under the cursor move.
         const strength = Math.exp(-((distance / reach) ** 2));
-        const push = distance === 0 ? 0 : -Math.sign(distance) * strength * 7;
+        const push = distance === 0 ? 0 : -Math.sign(distance) * strength * 13;
         wordEl.style.setProperty(`--o${index}`, `${push.toFixed(2)}px`);
       });
     };
@@ -138,6 +142,10 @@ export function Hero() {
               {letters("stroke")}
             </span>
           </span>
+          {/* The cutting edge that runs across the word on load. Purely a
+              motion layer: no text, no state, and it is displayed away
+              entirely under reduced motion and by the escape hatch. */}
+          <span className="wordmark-cut" aria-hidden="true" />
         </h1>
 
         <div className="hero-base">

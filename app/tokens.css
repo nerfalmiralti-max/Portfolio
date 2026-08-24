@@ -93,25 +93,36 @@
 
   /* ---- Motion ---------------------------------------------------------- */
   /* Six timing groups, each with a job. A new value needs a new job.
-     Character: precise and quick to respond, unhurried when it is telling
-     you something. */
-  --dur-instant: 110ms; /* press, toggle, immediate acknowledgement */
-  --dur-micro: 180ms; /* link underline, arrow, small state change */
-  --dur-ui: 300ms; /* menu, panel, pointer response */
-  --dur-editorial: 560ms; /* section and composition entrances */
-  --dur-morph: 680ms; /* one system rearranging into another */
-  --dur-signature: 980ms; /* the wordmark assembly, once per visit */
+     Character: precision under tension. Motion leaves the instant it is
+     asked to and lands without wobbling. Nothing here is slow for effect —
+     the longest value on the site is the wordmark, and it is under a
+     second because a visitor should never wait to see the name. */
+  --dur-instant: 90ms; /* press, toggle, immediate acknowledgement */
+  --dur-micro: 160ms; /* link underline, arrow, small state change */
+  --dur-ui: 260ms; /* menu, panel, pointer response */
+  --dur-editorial: 420ms; /* section and composition entrances */
+  --dur-morph: 520ms; /* one system rearranging into another */
+  --dur-signature: 760ms; /* the wordmark assembly, once per visit */
 
   /* Kept as the entrance alias so existing rules stay readable. */
   --dur-enter: var(--dur-editorial);
 
+  /* Beat lengths for layered choreography. A signature moment is built by
+     offsetting parts against each other, not by making any one part longer. */
+  --beat-tight: 34ms; /* letter to letter */
+  --beat: 60ms; /* one part of a composition to the next */
+  --beat-wide: 90ms; /* one layer of a scene to the next */
+
   /* Four curves. Anything else is a variation nobody asked for.
-     responsive — leaves immediately, lands soft. Interaction feedback.
+     responsive — leaves at once, lands soft. Interaction feedback: most of
+                  the distance is covered inside the first third of the time,
+                  which is what makes a hover feel immediate.
      enter      — decelerates into place. Content arriving.
-     cinematic  — slow in, slow out. Reserved for the wordmark. */
-  --ease-responsive: cubic-bezier(0.2, 0, 0, 1);
+     cinematic  — deliberate attack, firm settle, no rebound. The structural
+                  curve: rules drawing, masks cutting, the wordmark. */
+  --ease-responsive: cubic-bezier(0.16, 0.9, 0.24, 1);
   --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-cinematic: cubic-bezier(0.65, 0, 0.15, 1);
+  --ease-cinematic: cubic-bezier(0.38, 0.04, 0.12, 1);
 
   --ease-out: var(--ease-enter);
   --ease-in-out: var(--ease-cinematic);

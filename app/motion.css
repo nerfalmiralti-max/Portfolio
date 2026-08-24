@@ -33,38 +33,125 @@
 /* ==========================================================================
    1. Entrance choreography — hero only, on load
 
-     0ms    the page is already there: background, header, rules
-     80ms   the structural rules draw
-     150ms  the wordmark is cut out of its mask, letter by letter
-     420ms  the positioning line resolves
-     520ms  the two paths become live
+   The brief this sequence answers: the page should look assembled, not
+   revealed. So the structure arrives first and fast, the name is cut out of
+   it, and only then does anything ask to be read.
+
+     0ms    the page is already there: background, header, type
+     20ms   the cutting edge starts across the wordmark field
+     30ms   the structural rules draw
+     60ms   the wordmark is cut out of its mask, letter by letter (34ms apart)
+     300ms  the base rule closes the composition
+     360ms  the statement resolves
+     440ms  the two paths become live
+     ~760ms rest — nothing on this page moves again until the reader acts
+
+   The previous version spent its first 400ms on an easing curve that had
+   barely left the origin, so the largest object on the page was invisible
+   for half a second after paint. Everything below is timed from the
+   assumption that a visitor is already looking.
    ========================================================================== */
 
 [data-motion="on"] .hero-meta-rule,
 [data-motion="on"] .hero-base::before {
-  animation: rule-draw var(--dur-signature) 80ms var(--ease-cinematic) both;
+  animation: rule-draw var(--dur-editorial) 30ms var(--ease-cinematic) both;
+}
+
+[data-motion="on"] .hero-base::before {
+  animation-delay: 300ms;
 }
 
 [data-motion="on"] .hero-meta .label {
-  animation: enter var(--dur-ui) 80ms var(--ease-enter) both;
+  animation: enter var(--dur-micro) 30ms var(--ease-enter) both;
+}
+
+/* The cutting edge. A single bright edge travels the width of the wordmark
+   while the letters are being cleared behind it, so the word reads as having
+   been machined out of the page rather than having faded onto it. The element
+   is a full-width gradient scaled from its left edge: the bright stop sits at
+   the far end of the gradient, so scaling X walks it across. One transform,
+   no layout, and it removes itself when it reaches the end. */
+/* Paced against the letter stagger rather than against the clock: the head
+   has to stay a little ahead of the last letter it has cleared, so it runs
+   for the length of the whole stagger and leaves just as the final letter
+   settles. Too fast and it arrives at the right-hand edge before the word
+   exists behind it, which reads as an unrelated bar crossing the screen. */
+[data-motion="on"] .wordmark-cut {
+  animation: cut-run calc(var(--dur-signature) + 120ms) 40ms
+    var(--ease-cinematic) both;
+}
+
+@keyframes cut-run {
+  0% {
+    opacity: 0;
+    transform: translateX(-84px);
+  }
+  14% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100cqw);
+  }
 }
 
 /* Each letter clears its own mask rather than fading, which is what makes the
    word read as being set rather than appearing. */
 [data-motion="on"] .wordmark-letter {
   animation: glyph-mask var(--dur-signature) var(--ease-cinematic) both;
-  animation-delay: calc(150ms + var(--letter-index) * 52ms);
+  animation-delay: calc(60ms + var(--letter-index) * var(--beat-tight));
 }
 
 [data-motion="on"] .wordmark-glyph {
   animation: glyph-lift var(--dur-signature) var(--ease-cinematic) both;
-  animation-delay: calc(150ms + var(--letter-index) * 52ms);
+  animation-delay: calc(60ms + var(--letter-index) * var(--beat-tight));
 }
 
-/* The cover's stem draws from the project number down to its name, arriving
-   just as the schematic beside it finishes assembling. */
+[data-motion="on"] .hero-statement {
+  animation: enter var(--dur-editorial) 360ms var(--ease-enter) both;
+}
+
+[data-motion="on"] .hero-paths .path-link {
+  animation: enter var(--dur-editorial) var(--ease-enter) both;
+}
+
+[data-motion="on"] .hero-paths .path-link:nth-child(1) {
+  animation-delay: 440ms;
+}
+
+[data-motion="on"] .hero-paths .path-link:nth-child(2) {
+  animation-delay: calc(440ms + var(--beat));
+}
+
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   1b. Case study cover — the same entrance grammar, one scene later
+
+   A case study is what the reader clicked a project name to get to, so its
+   cover is built in the same order the homepage builds itself: mark, then
+   structure, then the name cut out of that structure, then the system. The
+   title carries `view-transition-name: project-name`, so on a supporting
+   browser the name is already in place when this runs and only the parts
+   around it assemble.
+   -------------------------------------------------------------------------- */
+
+[data-motion="on"] .cover-tag,
+[data-motion="on"] .cover-number {
+  animation: enter var(--dur-micro) 20ms var(--ease-enter) both;
+}
+
+/* The stem draws from the project number down to its name, arriving just
+   before the first line of the title is cut. */
 [data-motion="on"] .cover-stem {
-  animation: rule-drop var(--dur-signature) 220ms var(--ease-cinematic) both;
+  animation: rule-drop var(--dur-editorial) 80ms var(--ease-cinematic) both;
 }
 
 @keyframes rule-drop {
@@ -73,26 +160,27 @@
   }
 }
 
-[data-motion="on"] .hero-statement {
-  animation: enter var(--dur-editorial) 420ms var(--ease-enter) both;
+[data-motion="on"] .cover-line {
+  animation: cover-cut var(--dur-editorial) var(--ease-cinematic) both;
+  animation-delay: calc(100ms + var(--line-index, 0) * var(--beat));
 }
 
-[data-motion="on"] .hero-paths .path-link {
-  animation: enter var(--dur-editorial) var(--ease-enter) both;
+[data-motion="on"] .cover-line > span {
+  animation: glyph-lift var(--dur-editorial) var(--ease-cinematic) both;
+  animation-delay: calc(100ms + var(--line-index, 0) * var(--beat));
 }
 
-[data-motion="on"] .hero-paths .path-link:nth-child(1) {
-  animation-delay: 520ms;
-}
-
-[data-motion="on"] .hero-paths .path-link:nth-child(2) {
-  animation-delay: 590ms;
-}
-
-@keyframes rule-draw {
+/* The resting clip is deliberately loose on every side so descenders and
+   letter-spacing are never shaved; the entrance closes only the bottom. */
+@keyframes cover-cut {
   from {
-    transform: scaleX(0);
+    clip-path: inset(-20% -6% 100% -6%);
   }
+}
+
+[data-motion="on"] .cover-lede,
+[data-motion="on"] .case-meta {
+  animation: enter var(--dur-editorial) 420ms var(--ease-enter) both;
 }
 
 @keyframes glyph-mask {
@@ -132,19 +220,55 @@
     view-timeline: --continuum block;
   }
 
+  /* The spine is not decoration that happens to be there — it is the hero's
+     structure continuing into the next scene. It draws downward as the
+     reader moves, so the line under the wordmark and the line the project
+     index hangs from are visibly the same object. */
+  [data-motion="on"] .continuum-spine {
+    animation: spine-draw linear both;
+    animation-timeline: --continuum;
+    animation-range: entry 0% cover 42%;
+  }
+
   [data-motion="on"] .continuum-mark {
     animation: spine-run linear both;
     animation-timeline: --continuum;
   }
 
   /* The word does not fade out. It settles back and lets the index take the
-     foreground, which keeps it present while the next section arrives. */
+     foreground, which keeps it present while the next section arrives. The
+     delta is deliberately large: at the old values the departure was inside
+     the noise floor of a dark page and read as nothing happening. */
   [data-motion="on"] .wordmark {
     animation: wordmark-depart linear both;
     animation-timeline: view();
     animation-range: exit 0% exit 100%;
   }
 
+  /* The rule under the name goes with it, which is what makes the hero read
+     as one object leaving rather than a heading fading. It keeps its
+     entrance: the two animations run on different timelines — the first on
+     the document clock, the second on this element's own view progress —
+     so they have to be declared together rather than one overriding the
+     other. */
+  [data-motion="on"] .hero-base::before {
+    animation:
+      rule-draw var(--dur-editorial) 300ms var(--ease-cinematic) both,
+      rule-depart linear both;
+    animation-timeline: auto, view();
+    animation-range:
+      normal,
+      exit 0% exit 100%;
+  }
+}
+
+@keyframes spine-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
 @keyframes spine-run {
@@ -158,8 +282,15 @@
 
 @keyframes wordmark-depart {
   to {
-    opacity: 0.24;
-    transform: translateY(-9%) scale(0.965);
+    opacity: 0.14;
+    transform: translateY(-15%) scale(0.92);
+  }
+}
+
+@keyframes rule-depart {
+  to {
+    opacity: 0.2;
+    transform: scaleX(0.55);
   }
 }
 
@@ -174,24 +305,36 @@
 
 [data-motion="on"] .sys[data-live="false"] .sys-node-body {
   opacity: 0;
-  transform: scale(0.4);
+  transform: scale(0.3);
 }
 
 [data-motion="on"] .sys-node-body {
   transition:
     opacity var(--dur-ui) var(--ease-out),
     transform var(--dur-ui) var(--ease-enter);
-  transition-delay: calc(var(--node-order) * 70ms);
+  transition-delay: calc(var(--node-order) * var(--beat));
 }
 
 [data-motion="on"] .sys[data-live="false"] .sys-wire-grow {
   transform: scaleX(0);
 }
 
+/* Connections are drawn after the parts they connect exist. */
 [data-motion="on"] .sys-wire-grow {
   transform-origin: 0 0;
   transition: transform var(--dur-morph) var(--ease-enter);
-  transition-delay: 160ms;
+  transition-delay: calc(var(--beat-wide) + var(--wire-order, 0) * var(--beat-tight));
+}
+
+/* Labels are the last thing to settle, so the drawing reads as a machine
+   that assembled and then told you what its parts are called. */
+[data-motion="on"] .sys[data-live="false"] .sys-node-label {
+  opacity: 0;
+}
+
+[data-motion="on"] .sys-node-label {
+  transition: opacity var(--dur-ui) var(--ease-out);
+  transition-delay: calc(var(--beat-wide) + var(--node-order) * var(--beat));
 }
 
 /* One highlight travels the forward path when a system becomes live or is
@@ -225,19 +368,34 @@
 }
 
 [data-motion="on"] .arch-layers::before {
-  transition: transform var(--dur-signature) var(--ease-cinematic);
+  transition: transform var(--dur-editorial) var(--ease-cinematic);
 }
 
+/* Each layer arrives on the spine from the spine's own side, so the branch
+   reads as growing off the trunk rather than the row fading in place. */
 [data-motion="on"] .arch[data-live="false"] .arch-layer {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateX(-14px);
 }
 
 [data-motion="on"] .arch-layer {
   transition:
     opacity var(--dur-editorial) var(--ease-out),
     transform var(--dur-editorial) var(--ease-enter);
-  transition-delay: calc(220ms + var(--layer-index) * 110ms);
+  transition-delay: calc(var(--beat-wide) + var(--layer-index) * 70ms);
+}
+
+/* The explanation settles after its branch has arrived — spine, branch and
+   node together, then label. The dot is deliberately left out of this: its
+   transition belongs to pointer and focus feedback, and an entrance delay
+   parked on it would still be there the first time somebody points at it. */
+[data-motion="on"] .arch[data-live="false"] .arch-detail {
+  opacity: 0;
+}
+
+[data-motion="on"] .arch-detail {
+  transition: opacity var(--dur-editorial) var(--ease-out);
+  transition-delay: calc(var(--beat-wide) + var(--layer-index) * 70ms + 140ms);
 }
 
 /* The chosen path in a decision, and the rule that closes an outcome: both
@@ -257,33 +415,63 @@
 
 [data-motion="on"] .outcome.is-visible .outcome-rule {
   transform: scaleX(1);
-  transition: transform var(--dur-signature) 240ms var(--ease-cinematic);
+  transition: transform var(--dur-editorial) 200ms var(--ease-cinematic);
 }
 
-/* The closing mark draws its rule toward the letters it ends on. */
+/* The closing mark draws its rule toward the letters it ends on, in exactly
+   the character the hero's rules draw in — same curve, same duration. The
+   page opens on a rule being drawn and closes on one, which is the whole
+   point of the callback. It is punctuation, so it is short. */
 [data-motion="on"] .footer-mark-dash {
   transform: scaleX(0);
 }
 
 [data-motion="on"] .footer-mark.is-visible .footer-mark-dash {
   transform: scaleX(1);
-  transition: transform var(--dur-signature) var(--ease-cinematic);
+  transition: transform var(--dur-editorial) var(--ease-cinematic);
+}
+
+[data-motion="on"] .footer-mark-letters {
+  opacity: 0;
+  transform: translateY(var(--reveal-shift));
+}
+
+[data-motion="on"] .footer-mark.is-visible .footer-mark-letters {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-micro) 220ms var(--ease-out),
+    transform var(--dur-micro) 220ms var(--ease-enter);
 }
 
 /* ==========================================================================
    5. Route transition — index title to case study cover
    ========================================================================== */
 
+/* The page around the title crosses over quickly — it is context, and the
+   reader is not looking at it. The title itself takes the longer time,
+   because it is the object they clicked and the only thing that has to be
+   seen surviving the navigation. Total is inside half a second, which is the
+   point at which a transition stops reading as continuity and starts reading
+   as a wait. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 260ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease-enter);
 }
 
 ::view-transition-old(project-name),
 ::view-transition-new(project-name) {
   animation-duration: 420ms;
-  animation-timing-function: cubic-bezier(0.65, 0, 0.15, 1);
+  animation-timing-function: var(--ease-cinematic);
+}
+
+/* The name is interpolated between two very different sizes, so let the
+   larger of the two govern and keep both copies from being squashed into
+   the other's box while they travel. */
+::view-transition-group(project-name) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-cinematic);
 }
 
 /* ==========================================================================
@@ -294,13 +482,17 @@
    in keeping with the rest.
    ========================================================================== */
 
-[data-motion="on"] [data-reveal],
+/* Scoped to the bare attribute. `data-reveal="mark"` opts an element into
+   being observed — it still gets `.is-visible` — without taking the generic
+   fade, so a moment that has its own choreography can use the same observer
+   without also being faded up by it. */
+[data-motion="on"] [data-reveal=""],
 [data-motion="on"] [data-reveal-stagger] > * {
   opacity: 0;
   transform: translateY(var(--reveal-shift));
 }
 
-[data-motion="on"] [data-reveal].is-visible,
+[data-motion="on"] [data-reveal=""].is-visible,
 [data-motion="on"] [data-reveal-stagger].is-visible > * {
   opacity: 1;
   transform: none;
@@ -343,21 +535,38 @@
 [data-motion="off"] .wordmark-letter,
 [data-motion="off"] .wordmark-glyph,
 [data-motion="off"] .hero-statement,
-[data-motion="off"] .cover-stem,
 [data-motion="off"] .path-link,
+[data-motion="off"] .cover-tag,
+[data-motion="off"] .cover-number,
+[data-motion="off"] .cover-stem,
+[data-motion="off"] .cover-line,
+[data-motion="off"] .cover-line > span,
+[data-motion="off"] .cover-lede,
+[data-motion="off"] .case-meta,
 [data-motion="off"] .sys-node-body,
 [data-motion="off"] .sys-wire-grow,
+[data-motion="off"] .sys-node-label,
 [data-motion="off"] .arch-layers::before,
 [data-motion="off"] .arch-layer,
+[data-motion="off"] .arch-detail,
 [data-motion="off"] .decision-choice::before,
 [data-motion="off"] .outcome-rule,
 [data-motion="off"] .footer-mark-dash,
+[data-motion="off"] .footer-mark-letters,
+[data-motion="off"] .continuum-spine,
 [data-motion="off"] .continuum-mark {
   opacity: 1 !important;
   transform: none !important;
   clip-path: none !important;
   transition: none !important;
   animation: none !important;
+}
+
+/* The cutting edge is a movement, not a state. If motion is cancelled
+   mid-flight there is nothing for it to resolve into, so it leaves rather
+   than freezing across the wordmark. */
+[data-motion="off"] .wordmark-cut {
+  display: none !important;
 }
 
 /* ==========================================================================
@@ -382,8 +591,10 @@
     transition-duration: 0.01ms !important;
   }
 
-  /* The pointer mask is a movement, not a state, so it does not run either. */
-  .hero-scan {
+  /* The pointer mask and the cutting edge are movements, not states, so
+     neither runs. The composition is identical without them. */
+  .hero-scan,
+  .wordmark-cut {
     display: none;
   }
 }

@@ -126,8 +126,12 @@ export default async function WorkCaseStudy({ params }: Props) {
                 occupies beside it is composition rather than a gap. */}
             <span className="cover-stem" aria-hidden="true" />
             <span className="cover-word" aria-hidden="true">
-              {project.wordmarkLines.map((line) => (
-                <span className="cover-line" key={line}>
+              {project.wordmarkLines.map((line, lineIndex) => (
+                <span
+                  className="cover-line"
+                  key={line}
+                  style={{ "--line-index": lineIndex } as React.CSSProperties}
+                >
                   <span>{line}</span>
                 </span>
               ))}
