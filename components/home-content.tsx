@@ -29,7 +29,7 @@ export function HomeContent() {
       <section className="section ledger-section">
         <div className="shell">
           <p className="label">What you can check</p>
-          <dl className="ledger" data-reveal-stagger>
+          <dl className="ledger" data-scene="ruled">
             {homepageCopy.ledger.map((item) => (
               <div key={item.label}>
                 <dt>{item.value}</dt>
@@ -41,7 +41,7 @@ export function HomeContent() {
       </section>
 
       <section className="section section-ruled">
-        <div className="shell statement-block" data-reveal>
+        <div className="shell statement-block" data-scene>
           <p className="label">Approach</p>
           <h2 className="statement-heading">{homepageCopy.noteHeading}</h2>
           <p className="statement-body">{homepageCopy.noteBody}</p>
@@ -50,7 +50,7 @@ export function HomeContent() {
 
       <section className="section section-ruled" id="process">
         <div className="shell">
-          <header className="index-head" data-reveal>
+          <header className="index-head" data-scene>
             <p className="label">{homepageCopy.processEyebrow}</p>
             <h2>{homepageCopy.processHeading}</h2>
             <p className="index-head-body">{homepageCopy.processBody}</p>

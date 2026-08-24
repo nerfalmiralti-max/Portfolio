@@ -185,6 +185,13 @@ main {
   border-top: 1px solid var(--line);
 }
 
+/* A scene that establishes itself by drawing its own rule needs a
+   positioning context for it. Structural, not a motion state, so it is not
+   scoped to `data-motion` — the rule it positions is (see motion.css). */
+[data-scene="ruled"] {
+  position: relative;
+}
+
 .split {
   display: grid;
   gap: var(--space-5);
@@ -976,6 +983,21 @@ main {
   }
 }
 
+/* Wide desktop only. The schematic is the answer to the question the titles
+   ask, and at 1.3fr it was answering it in a corner.
+
+   The longest project name sets the ceiling on how much can be taken. At
+   1.12fr the panel gains 45px but the name closes to 10px of its arrow,
+   which is the title losing hierarchy to pay for the drawing — the wrong
+   trade. At 1.18fr the panel still gains, and the name keeps 26px of air.
+   Most of the legibility below comes from weight and contrast rather than
+   from these pixels anyway. */
+@media (min-width: 1500px) {
+  .index-grid {
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+  }
+}
+
 .index-rows {
   margin: 0;
   padding: 0;
@@ -1088,6 +1110,17 @@ main {
   color: var(--text);
 }
 
+/* While the list is being worked, the projects that are not the answer step
+   back. Half of making the schematic legible is lowering what surrounds it,
+   and that costs no size: the titles keep their scale, they just stop
+   competing for the same moment. */
+@media (min-width: 1100px) {
+  .index-grid:hover .index-row[data-active="false"] .row-name,
+  .index-grid:focus-within .index-row[data-active="false"] .row-name {
+    color: var(--text-quiet);
+  }
+}
+
 /* --- the active row, and the beats it arrives on ------------------------ */
 
 .index-row[data-active="true"] .row-body {
@@ -1170,6 +1203,27 @@ main {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
+  transition:
+    border-color var(--dur-ui) var(--ease-out),
+    background-color var(--dur-ui) var(--ease-out),
+    transform var(--dur-ui) var(--ease-responsive);
+}
+
+/* While the reader is working the list, the schematic is the thing that is
+   answering them, so it comes forward and takes the accent of whichever
+   project is active. Engagement is read from the grid rather than from the
+   panel, because the pointer is over the titles, not over the drawing. */
+@media (min-width: 1100px) {
+  .index-grid:hover .sys,
+  .index-grid:focus-within .sys {
+    border-color: color-mix(
+      in srgb,
+      var(--project-accent, var(--accent)) 55%,
+      var(--line)
+    );
+    background: var(--surface-raised);
+    transform: translateY(-4px);
+  }
 }
 
 .sys-caption,
@@ -1228,10 +1282,15 @@ main {
   opacity: 0;
 }
 
+/* The drawing is rendered from a 152-unit view box into a panel a few
+   hundred pixels wide, so a stroke authored for the geometry reads far
+   lighter on screen than it does in the file. These weights are the
+   difference between a diagram you can read from across the page and one
+   you have to lean towards; the geometry itself is untouched. */
 .sys-node-ring {
   fill: var(--surface);
   stroke: var(--line-strong);
-  stroke-width: 0.7;
+  stroke-width: 1.1;
   transition: stroke var(--dur-ui) var(--ease-out);
 }
 
@@ -1253,7 +1312,7 @@ main {
 .sys-node-label {
   fill: var(--text-quiet);
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 4.6px;
+  font-size: 5.3px;
   letter-spacing: 0.4px;
   text-transform: uppercase;
 }
@@ -1267,7 +1326,7 @@ main {
 
 .sys-wire line {
   stroke: var(--line-strong);
-  stroke-width: 1;
+  stroke-width: 1.5;
 }
 
 .sys-wire[data-kind="return"] line {

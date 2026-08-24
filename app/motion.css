@@ -11,18 +11,21 @@
  *             freezes both transitions and animations, which would otherwise
  *             strand content at `opacity: 0`).
  *
- * Six categories, in the order they can happen to a visitor:
+ * Seven categories, in the order they can happen to a visitor:
  *
  *   1. Entrance choreography   the wordmark, once per visit, on load
  *   2. Scroll state            what changes as the page moves under the reader
  *   3. Section transitions     one element carrying into the next scene
  *   4. Diagram motion          systems assembling and rearranging
  *   5. Route transition        index title to case study cover
- *   6. Reveal (fallback)       the generic primitive, for secondary content
+ *   6. Scene grammar           how a major section arrives: structure first,
+ *                              content resolving in place behind it
+ *   7. Reveal (fallback)       the generic primitive, for secondary content
  *
  * Rules for adding to this file:
- *   - a major moment gets its own transition. The generic reveal is for
- *     supporting content only.
+ *   - a major moment gets its own transition. A major *section* uses the
+ *     scene grammar in section 6 rather than inventing a new effect. The
+ *     generic reveal is for supporting content only.
  *   - nothing animates unless the reader caused it: load, scroll, pointer,
  *     focus, or press. There is no ambient movement anywhere on this site.
  *   - transform, opacity, clip-path. Never width, height, top, or left.
@@ -67,11 +70,9 @@
 
 /* The cutting edge. A single bright edge travels the width of the wordmark
    while the letters are being cleared behind it, so the word reads as having
-   been machined out of the page rather than having faded onto it. The element
-   is a full-width gradient scaled from its left edge: the bright stop sits at
-   the far end of the gradient, so scaling X walks it across. One transform,
-   no layout, and it removes itself when it reaches the end. */
-/* Paced against the letter stagger rather than against the clock: the head
+   been machined out of the page rather than having faded onto it.
+
+   Paced against the letter stagger rather than against the clock: the head
    has to stay a little ahead of the last letter it has cleared, so it runs
    for the length of the whole stagger and leaves just as the final letter
    settles. Too fast and it arrives at the right-hand edge before the word
@@ -475,7 +476,94 @@
 }
 
 /* ==========================================================================
-   6. Reveal — the fallback primitive
+   6. Scene grammar — how a major section arrives
+
+   A small, closed vocabulary. Four primitives, reused everywhere, never
+   recombined into a bespoke effect for one paragraph:
+
+     line establish   the rule the section already hangs from draws itself
+     mask resolve     the element that names the scene clears upward
+     structural
+     activation       the section's own diagram or rule becomes live —
+                      owned by sections 4 and 5, not repeated here
+     content settle   prose resolves where it already is: opacity only
+
+   The distinction from the generic reveal below is the whole point:
+   structure moves, content does not. A major section becomes structurally
+   active instead of sliding up as a card, so scrolling the site reads as
+   "structure establishes, content resolves, calm" rather than as one
+   fade-up after another.
+
+   `data-scene="ruled"` is for a section that already owns a rule to draw.
+   Bare `data-scene` is for one that does not, and uses the other two
+   primitives only. Which children take which primitive is read from
+   position, not from added classes: the first child names the scene, the
+   rest are its content.
+   ========================================================================== */
+
+/* --- line establish ------------------------------------------------------ */
+/* Overlays the border the section already has, so this reads as that rule
+   drawing rather than as a new element arriving on top of it. */
+[data-motion="on"] [data-scene="ruled"]::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--line-strong);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+[data-motion="on"] [data-scene="ruled"].is-visible::before {
+  transform: scaleX(1);
+  transition: transform var(--dur-editorial) var(--ease-cinematic);
+}
+
+/* The first decision in a list drops its border so the block does not open
+   on a rule; there is nothing there to establish, so nothing is drawn. */
+[data-motion="on"] .decision:first-child::before {
+  content: none;
+}
+
+/* --- mask resolve -------------------------------------------------------- */
+[data-motion="on"] [data-scene] > *:first-child,
+[data-motion="on"] [data-scene] > h2,
+[data-motion="on"] [data-scene] > .statement-heading {
+  clip-path: inset(-30% -8% 100% -8%);
+}
+
+[data-motion="on"] [data-scene].is-visible > *:first-child,
+[data-motion="on"] [data-scene].is-visible > h2,
+[data-motion="on"] [data-scene].is-visible > .statement-heading {
+  clip-path: inset(-30% -8% -30% -8%);
+  transition: clip-path var(--dur-editorial) var(--ease-cinematic);
+  transition-delay: var(--beat-wide);
+}
+
+/* --- content settle ------------------------------------------------------ */
+/* Opacity only. Content that travels is what made every section read the
+   same; content that simply resolves lets the structure carry the motion. */
+[data-motion="on"] [data-scene] > * + *:not(h2):not(.statement-heading) {
+  opacity: 0;
+}
+
+[data-motion="on"] [data-scene].is-visible > * + *:not(h2):not(.statement-heading) {
+  opacity: 1;
+  transition: opacity var(--dur-editorial) var(--ease-out);
+  transition-delay: calc(var(--beat-wide) + var(--beat) * 1.5);
+}
+
+/* The sentence a case study rests on takes longer to resolve than the
+   sections under it. Same primitive, one rank slower. */
+[data-motion="on"] .case-block[data-tone="lede"].is-visible > * + * {
+  transition-duration: var(--dur-signature);
+}
+
+/* ==========================================================================
+   7. Reveal — the fallback primitive
 
    Supporting content only. Every moment that matters has its own transition
    above; this exists so a paragraph that nobody choreographed still arrives
@@ -512,14 +600,9 @@
   transition-delay: 150ms;
 }
 
-/* The opening statement of a case study gets a slower entrance than the
-   sections under it. It is the sentence the whole page rests on. */
-[data-motion="on"] .case-block[data-tone="lede"].is-visible {
-  transition-duration: 620ms;
-}
 
 /* ==========================================================================
-   7. Escape hatch
+   8. Escape hatch
    ========================================================================== */
 /* `!important` is correct here: this rule exists precisely to beat an
    in-flight transition that can no longer complete. It must stay in sync with
@@ -528,6 +611,9 @@
 [data-motion="off"] [data-reveal],
 [data-motion="off"] [data-reveal-stagger],
 [data-motion="off"] [data-reveal-stagger] > *,
+[data-motion="off"] [data-scene],
+[data-motion="off"] [data-scene] > *,
+[data-motion="off"] [data-scene="ruled"]::before,
 [data-motion="off"] .hero-meta .label,
 [data-motion="off"] .hero-meta-rule,
 [data-motion="off"] .hero-base::before,
@@ -570,7 +656,7 @@
 }
 
 /* ==========================================================================
-   8. Reduced motion
+   9. Reduced motion
 
    The choreography is switched off at the source — `data-motion` is never set
    — so this block only has to catch the interaction feedback declared in

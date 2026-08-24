@@ -8,7 +8,7 @@ export function DecisionList({ decisions }: { decisions: readonly Decision[] }) 
   return (
     <ol className="decision-list">
       {decisions.map((decision) => (
-        <li className="decision" key={decision.question} data-reveal-stagger>
+        <li className="decision" key={decision.question} data-scene="ruled">
           <div>
             <p className="label">Question</p>
             <h3>{decision.question}</h3>

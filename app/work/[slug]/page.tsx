@@ -193,7 +193,7 @@ export default async function WorkCaseStudy({ params }: Props) {
           <section
             className="case-block"
             data-tone={section.tone}
-            data-reveal
+            data-scene="ruled"
             key={section.id}
           >
             <h2 id={section.id}>{section.title}</h2>
@@ -205,14 +205,14 @@ export default async function WorkCaseStudy({ params }: Props) {
 
         {/* The cover carries the drawing. This is the same system in words,
             which is also what a small screen and a printed page get. */}
-        <section className="case-block case-block-wide case-system" data-reveal>
+        <section className="case-block case-block-wide case-system" data-scene="ruled">
           <h2 id="system">The system, step by step</h2>
           <div className="case-block-body">
             <SystemSteps system={project.system} />
           </div>
         </section>
 
-        <section className="case-block case-block-wide" data-reveal>
+        <section className="case-block case-block-wide" data-scene="ruled">
           <h2 id="architecture">Architecture</h2>
           <div className="case-block-body">
             <ArchitectureMap
@@ -222,7 +222,7 @@ export default async function WorkCaseStudy({ params }: Props) {
           </div>
         </section>
 
-        <section className="case-block case-block-wide" data-reveal>
+        <section className="case-block case-block-wide" data-scene="ruled">
           <h2 id="decisions">Key decisions</h2>
           <div className="case-block-body">
             <DecisionList decisions={project.decisions} />
@@ -233,7 +233,7 @@ export default async function WorkCaseStudy({ params }: Props) {
           <section
             className="case-block"
             data-tone={section.tone}
-            data-reveal
+            data-scene="ruled"
             key={section.id}
           >
             <h2 id={section.id}>{section.title}</h2>
@@ -243,7 +243,7 @@ export default async function WorkCaseStudy({ params }: Props) {
           </section>
         ))}
 
-        <section className="case-block case-block-wide outcome" data-reveal>
+        <section className="case-block case-block-wide outcome" data-scene="ruled">
           <h2 id="outcome">Outcome</h2>
           <div className="case-block-body">
             <div className="case-outcome">
@@ -260,7 +260,7 @@ export default async function WorkCaseStudy({ params }: Props) {
           </div>
         </section>
 
-        <section className="case-block" data-reveal>
+        <section className="case-block" data-scene="ruled">
           <h2 id="stack">Stack</h2>
           <div className="case-block-body">
             <ul className="stack-list" aria-label={`${project.name} stack`}>

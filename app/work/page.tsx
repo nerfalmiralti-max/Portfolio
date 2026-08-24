@@ -44,7 +44,7 @@ export default function WorkPage() {
 
       <section className="section section-ruled">
         <div className="shell">
-          <header className="index-head" data-reveal>
+          <header className="index-head" data-scene>
             <p className="label">Records</p>
             <h2>What each one is</h2>
           </header>
@@ -57,7 +57,7 @@ export default function WorkPage() {
                 style={
                   { "--project-accent": project.accent } as React.CSSProperties
                 }
-                data-reveal
+                data-scene="ruled"
               >
                 <div className="record-head">
                   <span className="record-index">{project.number}</span>

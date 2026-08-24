@@ -4,7 +4,10 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 /**
- * Reveals `[data-reveal]` elements as they enter the viewport.
+ * Marks `[data-reveal]`, `[data-reveal-stagger]` and `[data-scene]` elements
+ * visible as they enter the viewport. One observer for all three: what
+ * differs is only what the CSS does with `.is-visible` — a generic fade for
+ * supporting content, the scene grammar for a major section.
  *
  * The hidden state lives behind `html[data-motion="on"]`, set by an inline
  * script before first paint (see `app/layout.tsx`). That single attribute is
@@ -35,7 +38,7 @@ export function RevealOnScroll() {
 
     const targets = Array.from(
       document.querySelectorAll<HTMLElement>(
-        "[data-reveal], [data-reveal-stagger]",
+        "[data-reveal], [data-reveal-stagger], [data-scene]",
       ),
     );
     if (targets.length === 0) return;

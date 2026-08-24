@@ -31,7 +31,7 @@ export default function AboutPage() {
       </section>
 
       <section className="section section-ruled">
-        <div className="shell split" data-reveal>
+        <div className="shell split" data-scene>
           <p className="label">Where it came from</p>
           <div className="prose">
             {aboutCopy.opening.map((paragraph) => (
@@ -52,7 +52,7 @@ export default function AboutPage() {
 
       <section className="section section-ruled" id="lessons">
         <div className="shell">
-          <header className="index-head" data-reveal>
+          <header className="index-head" data-scene>
             <p className="label">Corrections</p>
             <h2>What each project changed</h2>
             <p className="index-head-body">
@@ -62,7 +62,7 @@ export default function AboutPage() {
 
           <ol className="corrections">
             {lessons.map((entry) => (
-              <li key={entry.title} data-reveal>
+              <li key={entry.title} data-scene="ruled">
                 <p className="label">{entry.period}</p>
                 <div>
                   <h3>{entry.title}</h3>
@@ -83,7 +83,7 @@ export default function AboutPage() {
 
       <section className="section section-ruled" id="tools">
         <div className="shell">
-          <header className="index-head" data-reveal>
+          <header className="index-head" data-scene>
             <p className="label">Tools</p>
             <h2>What I currently build with</h2>
           </header>
